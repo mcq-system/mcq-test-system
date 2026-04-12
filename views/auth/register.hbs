@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #2563eb; 
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --muted-color: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .register-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        /* Logo box styling */
+        .logo-box {
+            width: 56px;
+            height: 56px;
+            background-color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 28px;
+            margin: 0 auto 12px auto;
+        }
+
+        /* Card styling */
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+        
+        .btn-primary:hover, .btn-primary:focus {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        /* Style cho input group */
+        .input-group-text {
+            background-color: transparent;
+            border-right: none;
+            color: var(--muted-color);
+        }
+
+        .form-control.icon-left { border-left: none; }
+        .form-control.icon-right { border-right: none; }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: none;
+            border-color: var(--primary-color);
+        }
+
+        .input-group:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+            border-radius: var(--bs-border-radius);
+        }
+
+        .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+        }
+
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .form-control,
+        .input-group:focus-within .password-toggle {
+            border-color: var(--primary-color);
+        }
+
+        /* Nút ẩn/hiện mật khẩu */
+        .password-toggle {
+            background-color: transparent;
+            border: 1px solid #dee2e6;
+            border-left: none;
+            color: var(--muted-color);
+            cursor: pointer;
+            padding: 0 12px;
+            border-top-right-radius: var(--bs-border-radius);
+            border-bottom-right-radius: var(--bs-border-radius);
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body class="d-flex align-items-center justify-content-center min-vh-100 py-4">
+
+    <div class="register-container">
+        <div class="text-center mb-4">
+            <div class="logo-box">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <h1 class="h5 fw-bold mb-0">MCQ System</h1>
+        </div>
+
+        <div class="card border-0 mb-4">
+            <div class="card-header bg-transparent border-0 text-center pt-4 pb-0">
+                <h5 class="card-title fw-bold mb-1">Đăng ký tài khoản</h5>
+                <p class="text-secondary small">Tạo tài khoản mới để bắt đầu</p>
+            </div>
+
+            <div class="card-body p-4 pt-3">
+                <div id="errorAlert" class="alert alert-danger d-none d-flex align-items-center py-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div id="errorMessage" class="small"></div>
+                </div>
+
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label small fw-medium">Họ và tên</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-person"></i></span>
+                            <input type="text" class="form-control icon-left" id="fullName" placeholder="Nguyễn Văn A" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label small fw-medium">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control icon-left" id="email" placeholder="email@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="phone" class="form-label small fw-medium">Số điện thoại</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                            <input type="tel" class="form-control icon-left" id="phone" placeholder="0123 456 789" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="role" class="form-label small fw-medium">Vai trò</label>
+                        <select class="form-select text-secondary" id="role" required>
+                            <option value="" disabled selected>Chọn vai trò của bạn</option>
+                            <option value="student">Sinh viên</option>
+                            <option value="teacher">Giảng viên</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-medium">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control icon-left icon-right" id="password" placeholder="Nhập mật khẩu" required>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label small fw-medium">Xác nhận mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control icon-left icon-right" id="confirmPassword" placeholder="Nhập lại mật khẩu" required>
+                            <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                        <span id="btnText">Đăng ký</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="card-footer bg-transparent border-top text-center py-3">
+                <p class="mb-0 small text-secondary">
+                    Đã có tài khoản? 
+                    <a href="/login" class="text-primary text-decoration-none fw-medium">Đăng nhập</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ẩn/hiện mật khẩu dùng chung cho 2 ô
+            function setupPasswordToggle(btnId, inputId) {
+                const btn = document.getElementById(btnId);
+                const input = document.getElementById(inputId);
+                btn.addEventListener('click', function() {
+                    const isPassword = input.type === 'password';
+                    input.type = isPassword ? 'text' : 'password';
+                    this.innerHTML = isPassword ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+                });
+            }
+
+            setupPasswordToggle('togglePassword', 'password');
+            setupPasswordToggle('toggleConfirmPassword', 'confirmPassword');
+
+            // Elements Form
+            const form = document.getElementById('registerForm');
+            const fullNameInput = document.getElementById('fullName');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const roleSelect = document.getElementById('role');
+            const passwordInput = document.getElementById('password');
+            const confirmPasswordInput = document.getElementById('confirmPassword');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Đổi màu text của select khi đã chọn option
+            roleSelect.addEventListener('change', function() {
+                this.classList.remove('text-secondary');
+            });
+
+            // Submit form → gọi API POST /register
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+
+                // Reset lỗi
+                errorAlert.classList.add('d-none');
+
+                const password = passwordInput.value;
+                const confirmPassword = confirmPasswordInput.value;
+
+                // Validate phía client trước
+                if (password !== confirmPassword) {
+                    errorMessage.textContent = 'Mật khẩu xác nhận không khớp.';
+                    errorAlert.classList.remove('d-none');
+                    return;
+                }
+                if (password.length < 6) {
+                    errorMessage.textContent = 'Mật khẩu phải có ít nhất 6 ký tự.';
+                    errorAlert.classList.remove('d-none');
+                    return;
+                }
+
+                // Bật loading
+                submitBtn.disabled = true;
+                btnText.textContent = 'Đang xử lý...';
+                btnSpinner.classList.remove('d-none');
+
+                try {
+                    const response = await fetch('/register', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fullName: fullNameInput.value,
+                            email: emailInput.value,
+                            phone: phoneInput.value,
+                            role: roleSelect.value,
+                            password: password,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Đăng ký thành công → chuyển sang trang đăng nhập
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        errorMessage.textContent = data.message;
+                        errorAlert.classList.remove('d-none');
+
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'Đăng ký';
+                        btnSpinner.classList.add('d-none');
+                    }
+                } catch (err) {
+                    errorMessage.textContent = 'Không thể kết nối đến server. Vui lòng thử lại.';
+                    errorAlert.classList.remove('d-none');
+
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Đăng ký';
+                    btnSpinner.classList.add('d-none');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

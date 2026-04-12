@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            /* Tương đương với mảng màu Primary trong file globals.css của bạn */
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --text-color: #0f172a;
+            --muted-color: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            padding: 1rem;
+        }
+
+        /* Logo box styling */
+        .logo-box {
+            width: 64px;
+            height: 64px;
+            background-color: var(--primary-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            margin: 0 auto 16px auto;
+        }
+
+        /* Card styling */
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Nút Button Primary */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        /* Style cho input group (icon nằm trong input) */
+        .input-group-text {
+            background-color: transparent;
+            border-right: none;
+            color: var(--muted-color);
+        }
+
+        .form-control.icon-left {
+            border-left: none;
+        }
+
+        .form-control.icon-right {
+            border-right: none;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #dee2e6;
+        }
+
+        /* Hiệu ứng focus cho toàn bộ ô input */
+        .input-group:focus-within {
+            box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.25);
+            border-radius: var(--bs-border-radius);
+        }
+
+        .input-group:focus-within .input-group-text,
+        .input-group:focus-within .form-control,
+        .input-group:focus-within .password-toggle {
+            border-color: var(--primary-color);
+        }
+
+        /* Nút ẩn/hiện mật khẩu */
+        .password-toggle {
+            background-color: transparent;
+            border: 1px solid #dee2e6;
+            border-left: none;
+            color: var(--muted-color);
+            cursor: pointer;
+            padding: 0 12px;
+            border-top-right-radius: var(--bs-border-radius);
+            border-bottom-right-radius: var(--bs-border-radius);
+            display: flex;
+            align-items: center;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-color);
+        }
+    </style>
+</head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100">
+
+    <div class="login-container">
+        <div class="text-center mb-4">
+            <div class="logo-box">
+                <i class="bi bi-mortarboard-fill"></i>
+            </div>
+            <h1 class="h4 fw-bold mb-1">MCQ System</h1>
+            <p class="text-secondary small">Hệ thống thi trắc nghiệm Tiếng Anh trực tuyến</p>
+        </div>
+
+        <div class="card border-0 mb-4">
+            <div class="card-header bg-transparent border-0 text-center pt-4 pb-0">
+                <h5 class="card-title fw-bold mb-1">Đăng nhập</h5>
+                <p class="text-secondary small">Nhập thông tin tài khoản để tiếp tục</p>
+            </div>
+
+            <div class="card-body p-4 pt-3">
+                <div id="errorAlert" class="alert alert-danger d-none d-flex align-items-center py-2" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    <div id="errorMessage" class="small"></div>
+                </div>
+
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label small fw-medium">Email</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                            <input type="email" class="form-control icon-left" id="email"
+                                placeholder="email@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label small fw-medium">Mật khẩu</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                            <input type="password" class="form-control icon-left icon-right" id="password"
+                                placeholder="Nhập mật khẩu" required>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="remember">
+                            <label class="form-check-label small cursor-pointer" for="remember">
+                                Ghi nhớ đăng nhập
+                            </label>
+                        </div>
+                        <a href="forgot-password.html" class="text-decoration-none small text-primary">Quên mật
+                            khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2" id="submitBtn">
+                        <span id="btnText">Đăng nhập</span>
+                        <span id="btnSpinner" class="spinner-border spinner-border-sm ms-2 d-none" role="status"
+                            aria-hidden="true"></span>
+                    </button>
+                </form>
+            </div>
+
+            <div class="card-footer bg-transparent border-top text-center py-3">
+                <p class="mb-0 small text-secondary">
+                    Chưa có tài khoản?
+                    <a href="/register" class="text-primary text-decoration-none fw-medium">Đăng ký ngay</a>
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('email');
+            const passwordInput = document.getElementById('password');
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const btnSpinner = document.getElementById('btnSpinner');
+            const errorAlert = document.getElementById('errorAlert');
+            const errorMessage = document.getElementById('errorMessage');
+
+            // Ẩn/hiện mật khẩu
+            togglePasswordBtn.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                this.innerHTML = isPassword ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+            });
+
+            // Submit form → gọi API POST /login
+            form.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                // Reset lỗi & bật loading
+                errorAlert.classList.add('d-none');
+                submitBtn.disabled = true;
+                btnText.textContent = 'Đang đăng nhập...';
+                btnSpinner.classList.remove('d-none');
+
+                try {
+                    const response = await fetch('/login', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: emailInput.value,
+                            password: passwordInput.value,
+                        }),
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        // Chuyển hướng dựa theo role trả về từ server
+                        window.location.href = data.redirectUrl;
+                    } else {
+                        // Hiện thông báo lỗi
+                        errorMessage.textContent = data.message;
+                        errorAlert.classList.remove('d-none');
+
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'Đăng nhập';
+                        btnSpinner.classList.add('d-none');
+                    }
+                } catch (err) {
+                    errorMessage.textContent = 'Không thể kết nối đến server. Vui lòng thử lại.';
+                    errorAlert.classList.remove('d-none');
+
+                    submitBtn.disabled = false;
+                    btnText.textContent = 'Đăng nhập';
+                    btnSpinner.classList.add('d-none');
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
