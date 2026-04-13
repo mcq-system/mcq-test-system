@@ -1,0 +1,217 @@
+
+// 1. users
+db.createCollection("users");
+db.users.insertMany([
+  {
+    _id: ObjectId("000000000000000000000001"),
+    first_name: "Nguyen",
+    last_name: "Van A",
+    email: "vana@example.com",
+    phone: "0123456789",
+    password: "<hash1>",
+    role: "student",
+    status: "active",
+    created_at: ISODate("2024-04-13T10:00:00Z")
+  },
+  {
+    _id: ObjectId("000000000000000000000002"),
+    first_name: "Tran",
+    last_name: "Thi B",
+    email: "thib@example.com",
+    phone: "0987654321",
+    password: "<hash2>",
+    role: "teacher",
+    status: "active",
+    created_at: ISODate("2024-04-13T11:00:00Z")
+  },
+  {
+    _id: ObjectId("000000000000000000000003"),
+    first_name: "Le",
+    last_name: "Van C",
+    email: "vanc@example.com",
+    phone: "0111222333",
+    password: "<hash3>",
+    role: "admin",
+    status: "inactive",
+    created_at: ISODate("2024-04-13T12:00:00Z")
+  }
+]);
+
+// 2. classes
+db.createCollection("classes");
+db.classes.insertMany([
+  {
+    _id: ObjectId("000000000000000000000011"),
+    ten: "10A1",
+    teacher_id: ObjectId("000000000000000000000002"),
+    description: "Lop chuyen Toan",
+    created_at: ISODate("2024-04-13T10:00:00Z")
+  },
+  {
+    _id: ObjectId("000000000000000000000012"),
+    ten: "11B2",
+    teacher_id: ObjectId("000000000000000000000002"),
+    description: "Lop chuyen Ly",
+    created_at: ISODate("2024-04-13T11:00:00Z")
+  }
+]);
+
+// 3. class_members
+db.createCollection("class_members");
+db.class_members.insertMany([
+  {
+    class_id: ObjectId("000000000000000000000011"),
+    student_id: ObjectId("000000000000000000000001"),
+    description: "Hoc sinh gioi",
+    created_at: ISODate("2024-04-13T10:10:00Z")
+  },
+  {
+    class_id: ObjectId("000000000000000000000011"),
+    student_id: ObjectId("000000000000000000000003"),
+    description: "Ban canh",
+    created_at: ISODate("2024-04-13T10:20:00Z")
+  }
+]);
+
+// 4. schedules
+db.createCollection("schedules");
+db.schedules.insertMany([
+  {
+    class_id: ObjectId("000000000000000000000011"),
+    day_of_week: 2,
+    start_time: "08:00",
+    end_time: "09:30"
+  },
+  {
+    class_id: ObjectId("000000000000000000000012"),
+    day_of_week: 4,
+    start_time: "10:00",
+    end_time: "11:30"
+  }
+]);
+
+// 5. question_topics
+db.createCollection("question_topics");
+db.question_topics.insertMany([
+  {
+    _id: ObjectId("000000000000000000000021"),
+    name: "Toan hoc",
+    description: "Cac cau hoi ve toan"
+  },
+  {
+    _id: ObjectId("000000000000000000000022"),
+    name: "Vat ly",
+    description: "Cac cau hoi ve ly"
+  }
+]);
+
+// 6. questions (tối ưu: nhúng options vào trong questions)
+db.createCollection("questions");
+db.questions.insertMany([
+  {
+    _id: ObjectId("000000000000000000000101"),
+    topic_id: ObjectId("000000000000000000000021"),
+    created_by: ObjectId("000000000000000000000002"),
+    content: "2 + 2 = ?",
+    level: "easy",
+    status: "active",
+    created_at: ISODate("2024-04-13T10:00:00Z"),
+    options: [
+      { content: "4", is_correct: true },
+      { content: "5", is_correct: false },
+      { content: "3", is_correct: false },
+      { content: "6", is_correct: false }
+    ]
+  },
+  {
+    _id: ObjectId("000000000000000000000102"),
+    topic_id: ObjectId("000000000000000000000022"),
+    created_by: ObjectId("000000000000000000000002"),
+    content: "Tốc độ ánh sáng là bao nhiêu?",
+    level: "medium",
+    status: "active",
+    created_at: ISODate("2024-04-13T11:00:00Z"),
+    options: [
+      { content: "300,000 km/s", is_correct: true },
+      { content: "150,000 km/s", is_correct: false },
+      { content: "1,000 km/s", is_correct: false },
+      { content: "30,000 km/s", is_correct: false }
+    ]
+  }
+]);
+
+// 7. question_options (bỏ, đã nhúng vào questions)
+
+// 8. exams
+db.createCollection("exams");
+db.exams.insertMany([
+  {
+    _id: ObjectId("000000000000000000000201"),
+    class_id: ObjectId("000000000000000000000011"),
+    created_by: ObjectId("000000000000000000000002"),
+    title: "Kiem tra 15 phut Toan",
+    duration_minutes: 15,
+    start_time: ISODate("2024-04-14T08:00:00Z"),
+    end_time: ISODate("2024-04-14T08:15:00Z"),
+    status: "DRAFT"
+  },
+  {
+    _id: ObjectId("000000000000000000000202"),
+    class_id: ObjectId("000000000000000000000012"),
+    created_by: ObjectId("000000000000000000000002"),
+    title: "Kiem tra 1 tiet Ly",
+    duration_minutes: 45,
+    start_time: ISODate("2024-04-15T08:00:00Z"),
+    end_time: ISODate("2024-04-15T08:45:00Z"),
+    status: "PUBLISHED"
+  }
+]);
+
+// 9. exam_questions
+db.createCollection("exam_questions");
+db.exam_questions.insertMany([
+  {
+    exam_id: ObjectId("000000000000000000000201"),
+    question_id: ObjectId("000000000000000000000101")
+  },
+  {
+    exam_id: ObjectId("000000000000000000000202"),
+    question_id: ObjectId("000000000000000000000102")
+  }
+]);
+
+// 10. exam_sessions
+db.createCollection("exam_sessions");
+db.exam_sessions.insertMany([
+  {
+    _id: ObjectId("000000000000000000000301"),
+    exam_id: ObjectId("000000000000000000000201"),
+    student_id: ObjectId("000000000000000000000001"),
+    started_at: ISODate("2024-04-14T08:00:00Z"),
+    submitted_at: ISODate("2024-04-14T08:15:00Z"),
+    status: "SUBMITTED"
+  },
+  {
+    _id: ObjectId("000000000000000000000302"),
+    exam_id: ObjectId("000000000000000000000202"),
+    student_id: ObjectId("000000000000000000000003"),
+    started_at: ISODate("2024-04-15T08:00:00Z"),
+    submitted_at: null,
+    status: "DOING"
+  }
+]);
+
+// 11. student_answers
+db.createCollection("student_answers");
+db.student_answers.insertMany([
+  {
+    exam_session_id: ObjectId("000000000000000000000301"),
+    question_id: ObjectId("000000000000000000000101"),
+    option_content: "4"
+  },
+  {
+    exam_session_id: ObjectId("000000000000000000000302"),
+    question_id: ObjectId("000000000000000000000102"),
+    option_content: "300,000 km/s"
+  }
+]);
