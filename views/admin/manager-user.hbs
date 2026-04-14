@@ -1,0 +1,200 @@
+<div class="admin-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span style="font-size: 24px;">📘</span> English MCQ
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">Tổng quan (Dashboard)</li>
+            <li class="nav-item active">Quản lý người dùng</li>
+            <li class="nav-item">Danh mục Topic</li>
+            <li class="nav-item">Quản lý ngân hàng câu hỏi</li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="header-row">
+            <h1>Quản lý người dùng</h1>
+        </header>
+
+        <section class="table-card">
+            <div class="table-header-tools">
+                <div>
+                    <h3 style="margin: 0;">Danh sách người dùng</h3>
+                    <p style="color: gray; font-size: 14px;">Quản lý tài khoản Giảng viên và Sinh viên</p>
+                </div>
+
+                <button class="btn-add" onclick="toggleModal('modal-add-user', true)">+ Cấp tài khoản</button>
+            </div>
+
+            <!-- Filter Tabs -->
+            <div class="tab-header" style="margin-bottom: 0;">
+                <div class="tab-item active" onclick="switchTab(event, 'teacher-table')">Giảng viên ({{teacherCount}})</div>
+                <div class="tab-item" onclick="switchTab(event, 'student-table')">Sinh viên ({{studentCount}})</div>
+            </div>
+
+            <div id="teacher-table" class="tab-content">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Khoa/Bộ môn</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each teachers}}
+                        <tr id="user-{{this._id}}">
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar-small">{{slice this.last_name 0 1}}</div>
+                                    <div>
+                                        <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
+                                        <div style="font-size: 12px; color: gray;">{{this.email}}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{this.department}}</td>
+                            <td>
+                                <span class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
+                                    {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
+                                </span>
+                            </td>
+                            <td>{{this.created_at}}</td>
+                            <td>
+                                <button class="btn-action" onclick="changeStatus('{{this._id}}')" title="Khóa/Mở khóa">🔒</button>
+                                <button class="btn-action" onclick="deleteUser('{{this._id}}')" title="Xóa" style="color: red;">🗑️</button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="student-table" class="tab-content" style="display: none;">
+                <table class="data-table">
+                    <thead>
+                    <tr>
+                        <th>Thông tin</th>
+                        <th>Mã SV / Lớp</th>
+                        <th>Trạng thái</th>
+                        <th>Ngày tạo</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each students}}
+                        <tr id="user-{{this._id}}">
+                            <td>
+                                <div class="user-info">
+                                    <div class="avatar-small" style="background: #e3f2fd; color: #1976d2;">{{slice this.last_name 0 1}}</div>
+                                    <div>
+                                        <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
+                                        <div style="font-size: 12px; color: gray;">{{this.email}}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{this.student_id}} - {{this.class_name}}</td>
+                            <td>
+                                <span class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
+                                    {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
+                                </span>
+                            </td>
+                            <td>{{this.created_at}}</td>
+                            <td>
+                                <button class="btn-action" onclick="changeStatus('{{this._id}}')">🔒</button>
+                                <button class="btn-action" onclick="deleteUser('{{this._id}}')" style="color: red;">🗑️</button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- MODAL CẤP TÀI KHOẢN -->
+<div id="modal-add-user" class="modal" style="display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+    <div class="card" style="width: 500px; margin: 50px auto; padding: 30px;">
+        <h3>Cấp tài khoản mới</h3>
+        <form action="/admin/manager-user" method="POST">
+            <div class="form-grid" style="grid-template-columns: 1fr; gap: 10px;">
+                <div class="form-group">
+                    <label>Họ và tên đệm</label>
+                    <input type="text" name="last_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Tên</label>
+                    <input type="text" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu</label>
+                    <input type="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label>Vai trò</label>
+                    <select name="role" style="padding: 10px; border-radius: 8px;">
+                        <option value="student">Sinh viên</option>
+                        <option value="teacher">Giảng viên</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Khoa / Bộ môn</label>
+                    <input type="text" name="department">
+                </div>
+            </div>
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <button type="submit" class="btn-save">Xác nhận tạo</button>
+                <button type="button" class="btn-action" onclick="toggleModal('modal-add-user', false)">Hủy bỏ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    function switchTab(evt, tabName) {
+        var i, tabContent, tabLinks;
+        tabContent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabContent.length; i++) {
+            tabContent[i].style.display = "none";
+        }
+        tabLinks = document.getElementsByClassName("tab-item");
+        for (i = 0; i < tabLinks.length; i++) {
+            tabLinks[i].className = tabLinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+
+
+    function toggleModal(id, show) {
+        document.getElementById(id).style.display = show ? 'block' : 'none';
+    }
+
+
+    async function changeStatus(userId) {
+        const res = await fetch(`/admin/manager-user/status/${userId}`, { method: 'PATCH' });
+        if (res.ok) {
+            location.reload(); // Load lại để thấy thay đổi màu sắc status pill
+        }
+    }
+
+
+    async function deleteUser(userId) {
+        if (confirm('Bạn có chắc chắn muốn xóa tài khoản này không?')) {
+            const res = await fetch(`/admin/manager-user/${userId}`, { method: 'DELETE' });
+            if (res.ok) {
+                document.getElementById(`user-${userId}`).remove();
+            }
+        }
+    }
+</script>
