@@ -169,7 +169,7 @@
                                 Ghi nhớ đăng nhập
                             </label>
                         </div>
-                        <a href="forgot-password.html" class="text-decoration-none small text-primary">Quên mật
+                        <a href="/auth/forgot-password" class="text-decoration-none small text-primary">Quên mật
                             khẩu?</a>
                     </div>
 
@@ -184,7 +184,7 @@
             <div class="card-footer bg-transparent border-top text-center py-3">
                 <p class="mb-0 small text-secondary">
                     Chưa có tài khoản?
-                    <a href="/register" class="text-primary text-decoration-none fw-medium">Đăng ký ngay</a>
+                    <a href="/auth/register" class="text-primary text-decoration-none fw-medium">Đăng ký ngay</a>
                 </p>
             </div>
         </div>
@@ -221,7 +221,7 @@
                 btnSpinner.classList.remove('d-none');
 
                 try {
-                    const response = await fetch('/login', {
+                    const response = await fetch('/auth/login', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({

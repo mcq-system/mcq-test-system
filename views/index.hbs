@@ -1,2 +1,273 @@
-<h1>{{title}}</h1>
-<p>Welcome to {{title}}</p>
+{{!-- <h1>{{title}}</h1>
+<p>Welcome to {{title}}</p> --}}
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống thi trắc nghiệm Tiếng Anh trực tuyến</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #2050b8;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f1f8ff;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --muted-color: #64748b;
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        /* Nút cơ bản */
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .btn-outline:hover {
+            background-color: #f1f5f9;
+        }
+
+        .btn-ghost {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .btn-ghost:hover {
+            background-color: #f1f5f9;
+        }
+
+        /* Logo box */
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.25rem;
+        }
+
+        /* Icon boxes cho phần Features */
+        .feature-icon-box {
+            width: 48px;
+            height: 48px;
+            background-color: rgba(37, 99, 235, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Icon boxes cho phần Demo */
+        .demo-icon-box {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem auto;
+        }
+
+        .demo-icon-success {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+
+        .demo-icon-primary {
+            background-color: rgba(37, 99, 235, 0.1);
+            color: var(--primary-color);
+        }
+
+        .demo-icon-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        /* Hiệu ứng hover cho thẻ Card Demo */
+        .card-demo {
+            transition: box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            height: 100%;
+        }
+
+        .card-demo:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Background cho section features */
+        .bg-muted-custom {
+            background-color: rgba(241, 245, 249, 0.5);
+            /* Tương đương bg-muted/30 */
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+
+    <header class="bg-white sticky-top">
+        <div class="container-fluid px-2 py-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <div class="logo-box">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <div>
+                    <h1 class="h6 fw-bold mb-0" style="color: var(--text-color);">MCQ System</h1>
+                    <p class="mb-0 text-secondary" style="font-size: 0.75rem;">Hệ thống thi trắc nghiệm Tiếng Anh</p>
+                </div>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+                <a href="/auth/login" class="btn btn-outline btn-sm d-none d-sm-inline-block px-3">Đăng nhập</a>
+                <a href="/auth/register" class="btn btn-primary btn-sm px-3">Đăng ký</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow-1 d-flex flex-column">
+        <section class="py-5 py-md-5 px-3 mt-md-4">
+            <div class="container text-center" style="max-width: 800px;">
+                <h2 class="display-5 fw-bold mb-4" style="color: var(--text-color); letter-spacing: -0.02em;">
+                    Hệ thống thi trắc nghiệm trực tuyến hiện đại
+                </h2>
+                <p class="text-secondary mb-5 mx-auto" style="font-size: 1.125rem; max-width: 650px; line-height: 1.6;">
+                    Nền tảng tổ chức thi trắc nghiệm chuyên nghiệp dành cho các trường đại học, cao đẳng và tổ chức giáo
+                    dục. Dễ dàng tạo đề thi, quản lý sinh viên và theo dõi kết quả.
+                </p>
+                <div class="d-flex flex-column flex-sm-row justify-content-center gap-3">
+                    <a href="/auth/register"
+                        class="btn btn-primary px-4 py-2 d-flex align-items-center justify-content-center gap-2">
+                        Bắt đầu ngay <i class="bi bi-arrow-right"></i>
+                    </a>
+                    <a href="/auth/login" class="btn btn-outline px-4 py-2 d-flex align-items-center justify-content-center">
+                        Đã có tài khoản? Đăng nhập
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-5 px-3 bg-muted-custom border-bottom">
+            <div class="container-lg">
+                <h3 class="h2 fw-bold text-center mb-5" style="color: var(--text-color);">Tính năng nổi bật</h3>
+
+                <div class="row g-4">
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="feature-icon-box">
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                                <h4 class="h5 fw-semibold mb-2">Thi trắc nghiệm trực tuyến</h4>
+                                <p class="text-secondary small mb-0">Giao diện làm bài thi trực quan với đồng hồ đếm
+                                    ngược
+                                    và theo dõi tiến độ.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="feature-icon-box">
+                                    <i class="bi bi-people"></i>
+                                </div>
+                                <h4 class="h5 fw-semibold mb-2">Quản lý lớp học</h4>
+                                <p class="text-secondary small mb-0">Tổ chức sinh viên theo lớp, theo dõi và phân công
+                                    bài
+                                    thi dễ dàng.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="feature-icon-box">
+                                    <i class="bi bi-bar-chart-line"></i>
+                                </div>
+                                <h4 class="h5 fw-semibold mb-2">Thống kê chi tiết</h4>
+                                <p class="text-secondary small mb-0">Phân tích kết quả thi với biểu đồ trực quan và báo
+                                    cáo
+                                    chi tiết.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-3">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="feature-icon-box">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <h4 class="h5 fw-semibold mb-2">Chấm điểm tự động</h4>
+                                <p class="text-secondary small mb-0">Kết quả và điểm số được tính toán ngay lập tức sau
+                                    khi
+                                    nộp bài.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-top bg-white py-4 px-3">
+        <div class="container text-center">
+            <div class="d-flex flex-column align-items-center justify-content-center mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <div class="logo-box" style="width: 32px; height: 32px; font-size: 1rem;">
+                        <i class="bi bi-mortarboard-fill"></i>
+                    </div>
+                    <span class="fw-bold" style="color: var(--text-color);">MCQ System</span>
+                </div>
+            </div>
+            <p class="text-secondary small mb-0">
+                Hệ thống thi trắc nghiệm Tiếng Anh trực tuyến
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

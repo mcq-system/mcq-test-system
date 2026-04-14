@@ -7,7 +7,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-var dropdragRouter = require('./routes/dropdrag');
+
 var authRouter = require('./routes/auth');
 var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
@@ -29,10 +29,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', authRouter);       // Login & Register pages
+app.use('/auth', authRouter);     
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/dropdrag', dropdragRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);

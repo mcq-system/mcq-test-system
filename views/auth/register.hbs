@@ -198,7 +198,7 @@
             <div class="card-footer bg-transparent border-top text-center py-3">
                 <p class="mb-0 small text-secondary">
                     Đã có tài khoản? 
-                    <a href="/login" class="text-primary text-decoration-none fw-medium">Đăng nhập</a>
+                    <a href="/auth/login" class="text-primary text-decoration-none fw-medium">Đăng nhập</a>
                 </p>
             </div>
         </div>
@@ -234,7 +234,7 @@
             const errorAlert = document.getElementById('errorAlert');
             const errorMessage = document.getElementById('errorMessage');
 
-            // Đổi màu text của select khi đã chọn option
+
             roleSelect.addEventListener('change', function() {
                 this.classList.remove('text-secondary');
             });
@@ -267,7 +267,7 @@
                 btnSpinner.classList.remove('d-none');
 
                 try {
-                    const response = await fetch('/register', {
+                    const response = await fetch('/auth/register', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -304,4 +304,4 @@
         });
     </script>
 </body>
-</html>
+</html>

@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
  */
 const protect = (roles = []) => {
   return (req, res, next) => {
-    // 1. Get token from cookies
+    // 1Get token from cookies
     const token = req.cookies.token;
 
     if (!token) {
@@ -15,13 +15,13 @@ const protect = (roles = []) => {
     }
 
     try {
-      // 2. Verify token
+      // Verify token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mcq_secret_key');
       
       // Attach user info to request
       req.user = decoded;
 
-      // 3. Check roles if any are specified
+      // Check roles if any are specified
       if (roles.length > 0) {
         const rolesArray = Array.isArray(roles) ? roles : [roles];
         if (!rolesArray.includes(decoded.role)) {
