@@ -19,4 +19,13 @@ router.post('/exam-sessions/answer', protect('student'), examSessionController.s
 router.post('/exam-sessions/submit', protect('student'), examSessionController.submitExam);
 router.get('/exam-sessions/:examSessionId/result', protect('student'), examSessionController.getResult);
 
+
+// Test thôi bạn ơi
+router.get('/test-exam', (req, res) => {
+  res.render('student/examSession');
+});
+router.get('/test-result', (req, res) => {
+  res.render('student/examAnswer');
+});
+
 module.exports = router;
