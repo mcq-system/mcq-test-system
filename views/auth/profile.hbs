@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile & API Testing - MCQ System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #0f172a;
+            --muted-color: #64748b;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: white;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo-box {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary-color);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem;
+        }
+
+        .avatar-placeholder {
+            width: 80px;
+            height: 80px;
+            background-color: #e5e7eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #9ca3af;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .api-result {
+            background-color: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.875rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar mb-4">
+        <div class="container d-flex justify-content-between align-items-center py-2">
+            <div class="d-flex align-items-center gap-2">
+                <div class="logo-box">
+                    <i class="bi bi-mortarboard-fill"></i>
+                </div>
+                <span class="fw-bold">MCQ System</span>
+            </div>
+            <button id="logoutBtnTop" class="btn btn-outline-danger btn-sm">
+                <i class="bi bi-box-arrow-right me-1"></i> Đăng xuất
+            </button>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="row">
+            <!-- User Info Section -->
+            <div class="col-lg-4">
+                <div class="card p-4 text-center">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div id="userAvatar" class="avatar-placeholder">?</div>
+                    </div>
+                    <h4 id="userName" class="fw-bold mb-1">---</h4>
+                    <p id="userEmail" class="text-secondary small mb-3">---</p>
+                    <div class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 mb-4"
+                        id="userRole">---</div>
+
+                    <button id="fetchMeBtn" class="btn btn-outline-primary w-100">
+                        <i class="bi bi-person-circle me-1"></i> Test /me API
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings / Change Password Section -->
+            <div class="col-lg-8">
+                <div class="card p-4">
+                    <h5 class="fw-bold mb-4">Đổi mật khẩu</h5>
+                    <form id="changePasswordForm">
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Mật khẩu hiện tại</label>
+                            <input type="password" class="form-control" id="currentPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-medium">Mật khẩu mới</label>
+                            <input type="password" class="form-control" id="newPassword" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label small fw-medium">Xác nhận mật khẩu mới</label>
+                            <input type="password" class="form-control" id="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary px-4">Lưu thay đổi</button>
+                    </form>
+                </div>
+
+                <!-- API Logs Section -->
+                <div class="card p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">API Log</h5>
+                        <button id="clearLog" class="btn btn-ghost btn-sm text-secondary">Xóa log</button>
+                    </div>
+                    <div id="logOutput" class="api-result">Chưa có hoạt động nào...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto" id="toastTitle">Thông báo</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body" id="toastBody"></div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const logOutput = document.getElementById('logOutput');
+            const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+
+            function showToast(title, message) {
+                document.getElementById('toastTitle').textContent = title;
+                document.getElementById('toastBody').textContent = message;
+                toast.show();
+            }
+
+            function appendLog(method, endpoint, status, data) {
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = `\n[${timestamp}] ${method} ${endpoint} (Status: ${status})\n${JSON.stringify(data, null, 2)}\n---`;
+                if (logOutput.textContent === 'Chưa có hoạt động nào...') {
+                    logOutput.textContent = logEntry;
+                } else {
+                    logOutput.textContent = logEntry + logOutput.textContent;
+                }
+            }
+
+            // 1. TEST /me API
+            async function fetchUser() {
+                try {
+                    const res = await fetch('/auth/me');
+                    const status = res.status;
+                    const result = await res.json();
+
+                    appendLog('GET', '/auth/me', status, result);
+
+                    if (result.success) {
+                        const user = result.data;
+                        document.getElementById('userName').textContent = `${user.first_name} ${user.last_name}`;
+                        document.getElementById('userEmail').textContent = user.email;
+                        document.getElementById('userRole').textContent = user.role.toUpperCase();
+                        document.getElementById('userAvatar').textContent = user.first_name[0];
+                    }
+                } catch (err) {
+                    appendLog('GET', '/me', 'FAILED', { error: err.message });
+                }
+            }
+
+            // Initial fetch
+            fetchUser();
+
+            document.getElementById('fetchMeBtn').addEventListener('click', fetchUser);
+
+            // 2. TEST /logout API
+            async function handleLogout() {
+                try {
+                    const res = await fetch('/auth/logout', { method: 'POST' });
+                    const status = res.status;
+                    const result = await res.json();
+
+                    appendLog('POST', '/auth/logout', status, result);
+
+                    if (result.success) {
+                        showToast('Thành công', 'Đã đăng xuất. Bạn sẽ được chuyển hướng...');
+                        setTimeout(() => window.location.href = '/auth/login', 1500);
+                    }
+                } catch (err) {
+                    appendLog('POST', '/auth/logout', 'FAILED', { error: err.message });
+                }
+            }
+
+            document.getElementById('logoutBtnTop').addEventListener('click', handleLogout);
+
+            // 3. TEST /change-password API
+            const changePasswordForm = document.getElementById('changePasswordForm');
+            changePasswordForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (newPassword !== confirmPassword) {
+                    return showToast('Lỗi', 'Mật khẩu xác nhận không khớp.');
+                }
+
+                try {
+                    const res = await fetch('/auth/change-password', {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ currentPassword, newPassword })
+                    });
+
+                    const status = res.status;
+                    const result = await res.json();
+
+                    appendLog('PATCH', '/auth/change-password', status, result);
+
+                    if (result.success) {
+                        showToast('Thành công', 'Mật khẩu đã được cập nhật.');
+                        changePasswordForm.reset();
+                    } else {
+                        showToast('Lỗi', result.message || 'Không thể đổi mật khẩu.');
+                    }
+                } catch (err) {
+                    appendLog('PATCH', '/change-password', 'FAILED', { error: err.message });
+                }
+            });
+
+            document.getElementById('clearLog').addEventListener('click', () => {
+                logOutput.textContent = 'Chưa có hoạt động nào...';
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -72,7 +72,6 @@ userSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
 });
 
-// ─── Instance Methods ─────────────────────────────────────────────────────────
 
 /**
  * Compares a plain-text password against the hashed one stored in the database.
