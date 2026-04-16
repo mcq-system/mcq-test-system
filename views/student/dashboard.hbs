@@ -1,11 +1,252 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard - MCQ System</title>
+  <!-- Boxicons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="../shared/global.css">
+  <style>
+    /* Specific styles for Student Dashboard */
+    .exam-card {
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      transition: all 0.2s;
+      margin-bottom: 1rem;
+    }
+    .exam-card:hover {
+      border-color: var(--primary);
+      box-shadow: var(--shadow-sm);
+    }
+    .exam-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .exam-title {
+      font-weight: 600;
+      color: var(--text-main);
+      font-size: 1.1rem;
+    }
+    .exam-details {
+      display: flex;
+      gap: 1.5rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+    }
+    .exam-details span {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class='bx bx-brain'></i>
+        <span>MCQ Test</span>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-label">Học tập</div>
+        <a href="#" class="menu-item active">
+          <i class='bx bx-grid-alt'></i>
+          <span>Tổng quan</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-book-open'></i>
+          <span>Kỳ thi của tôi</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-history'></i>
+          <span>Lịch sử làm bài</span>
+        </a>
+        <div class="menu-label">Cá nhân</div>
+        <a href="#" class="menu-item">
+          <i class='bx bx-bell'></i>
+          <span>Thông báo</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-user'></i>
+          <span>Hồ sơ</span>
+        </a>
+      </div>
+      <div class="sidebar-settings">
+        <a href="#" class="menu-item">
+          <i class='bx bx-log-out'></i>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class='bx bx-search'></i>
+          <input type="text" placeholder="Tìm kiếm bài thi, môn học...">
+        </div>
+        <div class="header-actions">
+          <button class="action-btn">
+            <i class='bx bx-bell'></i>
+            <span class="badge">3</span>
+          </button>
+          <div class="user-profile">
+            <div class="avatar">HS</div>
+            <div class="user-info">
+              <span class="user-name">Nguyễn Văn A</span>
+              <span class="user-role">Học sinh</span>
+            </div>
+            <i class='bx bx-chevron-down' style="color: var(--text-muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Chào mừng trở lại, Nguyễn Văn A!</h1>
+            <div class="breadcrumb">
+              Chăm chỉ học tập, kết quả tốt đẹp đang chờ đón bạn.
+            </div>
+          </div>
+          <button class="btn btn-primary">
+            <i class='bx bx-qr-scan'></i> Nhập mã thi
+          </button>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="card-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Kỳ thi sắp tới</div>
+              <div class="stat-value">2</div>
+            </div>
+            <div class="stat-icon icon-info">
+              <i class='bx bx-calendar-event'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Đã hoàn thành</div>
+              <div class="stat-value">15</div>
+            </div>
+            <div class="stat-icon icon-success">
+              <i class='bx bx-check-circle'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Điểm trung bình</div>
+              <div class="stat-value">8.5</div>
+            </div>
+            <div class="stat-icon icon-primary">
+              <i class='bx bx-trophy'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Cảnh báo</div>
+              <div class="stat-value">0</div>
+            </div>
+            <div class="stat-icon icon-warning">
+              <i class='bx bx-error-alt'></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Upcoming Exams -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Kỳ thi sắp tới</h2>
+              <a href="#" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Xem tất cả</a>
+            </div>
+            
+            <div class="exam-card">
+              <div class="exam-header">
+                <div class="exam-title">Kiểm tra giữa kỳ môn Toán học</div>
+                <span class="status status-upcoming">Sắp diễn ra</span>
+              </div>
+              <div class="exam-details">
+                <span><i class='bx bx-calendar'></i> 20/04/2026 - 08:00 AM</span>
+                <span><i class='bx bx-time'></i> 45 phút</span>
+                <span><i class='bx bx-layer'></i> 40 câu hỏi</span>
+              </div>
+              <button class="btn btn-primary" style="width: 100%; justify-content: center;">Đến phòng chờ</button>
+            </div>
+
+            <div class="exam-card">
+              <div class="exam-header">
+                <div class="exam-title">Bài tập trắc nghiệm Lịch sử lớp 12</div>
+                <span class="status status-upcoming">Sắp diễn ra</span>
+              </div>
+              <div class="exam-details">
+                <span><i class='bx bx-calendar'></i> 21/04/2026 - 13:30 PM</span>
+                <span><i class='bx bx-time'></i> 15 phút</span>
+                <span><i class='bx bx-layer'></i> 15 câu hỏi</span>
+              </div>
+              <button class="btn btn-primary" style="width: 100%; justify-content: center; background-color: var(--text-muted);">Chưa đến giờ</button>
+            </div>
+          </div>
+
+          <!-- Notice Board & Recent Results -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Recent Results -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2 class="panel-title">Kết quả gần đây</h2>
+              </div>
+              <div class="list-group">
+                <div class="list-item">
+                  <div class="item-icon icon-success">
+                    <span style="font-weight: bold; font-size: 1rem;">9.0</span>
+                  </div>
+                  <div class="item-content">
+                    <div class="item-title">Vật lý 12 - Chương 1</div>
+                    <div class="item-time">Hôm qua, 14:00</div>
+                  </div>
+                </div>
+                <div class="list-item">
+                  <div class="item-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">
+                    <span style="font-weight: bold; font-size: 1rem;">7.5</span>
+                  </div>
+                  <div class="item-content">
+                    <div class="item-title">Kiểm tra 15p Hóa học</div>
+                    <div class="item-time">12/04/2026</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2 class="panel-title">Thông báo hệ thống</h2>
+              </div>
+              <div class="list-group">
+                <div class="list-item">
+                  <div class="item-icon icon-primary"><i class='bx bx-bell'></i></div>
+                  <div class="item-content">
+                    <div class="item-title">Nhắc nhở nộp lệ phí thi</div>
+                    <div class="item-desc">Hạn chót vào ngày 25/04/2026</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
 </html>

@@ -1,11 +1,235 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard - MCQ System</title>
+  <!-- Boxicons -->
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="../shared/global.css">
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <i class='bx bx-brain'></i>
+        <span>MCQ Test</span>
+      </div>
+      <div class="sidebar-menu">
+        <div class="menu-label">Giảng dạy</div>
+        <a href="#" class="menu-item active">
+          <i class='bx bx-grid-alt'></i>
+          <span>Tổng quan</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-folder-open'></i>
+          <span>Quản lý đề thi</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-data'></i>
+          <span>Ngân hàng câu hỏi</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-group'></i>
+          <span>Danh sách lớp học</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-bar-chart-alt-2'></i>
+          <span>Thống kê kết quả</span>
+        </a>
+        <div class="menu-label">Cá nhân</div>
+        <a href="#" class="menu-item">
+          <i class='bx bx-bell'></i>
+          <span>Thông báo</span>
+        </a>
+        <a href="#" class="menu-item">
+          <i class='bx bx-user'></i>
+          <span>Hồ sơ</span>
+        </a>
+      </div>
+      <div class="sidebar-settings">
+        <a href="#" class="menu-item">
+          <i class='bx bx-log-out'></i>
+          <span>Đăng xuất</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <!-- Top Header -->
+      <header class="top-header">
+        <div class="search-bar">
+          <i class='bx bx-search'></i>
+          <input type="text" placeholder="Tìm kiếm đề thi, học sinh...">
+        </div>
+        <div class="header-actions">
+          <button class="action-btn">
+            <i class='bx bx-envelope'></i>
+          </button>
+          <button class="action-btn">
+            <i class='bx bx-bell'></i>
+            <span class="badge">5</span>
+          </button>
+          <div class="user-profile">
+            <div class="avatar" style="background-color: var(--success);">GV</div>
+            <div class="user-info">
+              <span class="user-name">Trần Thị B</span>
+              <span class="user-role">Giáo viên</span>
+            </div>
+            <i class='bx bx-chevron-down' style="color: var(--text-muted);"></i>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="content">
+        <div class="page-header">
+          <div>
+            <h1 class="page-title">Dashboard Giáo viên</h1>
+            <div class="breadcrumb">
+              Quản lý các đề thi và theo dõi tiến độ của học sinh.
+            </div>
+          </div>
+          <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-primary" style="background-color: var(--surface); color: var(--text-main); border: 1px solid var(--border-color);">
+              <i class='bx bx-plus'></i> Tạo câu hỏi mới
+            </button>
+            <button class="btn btn-primary">
+              <i class='bx bx-layer-plus'></i> Tạo đề thi
+            </button>
+          </div>
+        </div>
+
+        <!-- Stat Cards -->
+        <div class="card-grid">
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Tổng số học sinh</div>
+              <div class="stat-value">124</div>
+            </div>
+            <div class="stat-icon icon-info">
+              <i class='bx bx-group'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Đề thi Đang mở</div>
+              <div class="stat-value">3</div>
+            </div>
+            <div class="stat-icon icon-success">
+              <i class='bx bx-folder-open'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Tổng câu hỏi</div>
+              <div class="stat-value">450</div>
+            </div>
+            <div class="stat-icon icon-primary">
+              <i class='bx bx-data'></i>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-info">
+              <div class="stat-label">Chờ chấm điểm</div>
+              <div class="stat-value">12</div>
+            </div>
+            <div class="stat-icon icon-warning">
+              <i class='bx bx-highlight'></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <!-- Recent Exams Overview -->
+          <div class="panel">
+            <div class="panel-header">
+              <h2 class="panel-title">Tiến độ thi gần đây</h2>
+              <a href="#" style="font-size: 0.875rem; color: var(--primary); font-weight: 500;">Quản lý</a>
+            </div>
+            
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tên đề thi</th>
+                    <th>Lớp</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Đã nộp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Hàm số và Đồ thị - Toán 12</td>
+                    <td>12A1, 12A2</td>
+                    <td>20/04/2026</td>
+                    <td><span class="status status-active">Đang diễn ra</span></td>
+                    <td><strong>45/80</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Tích phân cơ bản</td>
+                    <td>12A3</td>
+                    <td>18/04/2026</td>
+                    <td><span class="status status-ended">Đã kết thúc</span></td>
+                    <td><strong>39/40</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Khảo sát hàm số (Nâng cao)</td>
+                    <td>Lớp Bồi Dưỡng</td>
+                    <td>25/04/2026</td>
+                    <td><span class="status status-upcoming">Sắp mở</span></td>
+                    <td><strong>0/15</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Tasks -->
+          <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+            <!-- Actions -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2 class="panel-title">Phê duyệt yêu cầu</h2>
+              </div>
+              <div class="list-group">
+                <div class="list-item">
+                  <div class="item-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);"><i class='bx bx-user-x'></i></div>
+                  <div class="item-content">
+                    <div class="item-title">Lê Văn C xin thi lại</div>
+                    <div class="item-time">Lý do: Lỗi mạng khi nộp bài</div>
+                    <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem;">
+                      <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--success); color: white;">Duyệt</button>
+                      <button class="btn" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; background: var(--danger); color: white;">Từ chối</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notice -->
+            <div class="panel">
+              <div class="panel-header">
+                <h2 class="panel-title">Hoạt động lớp học</h2>
+              </div>
+              <div class="list-group">
+                <div class="list-item">
+                  <div class="item-icon icon-info"><i class='bx bx-up-arrow-circle'></i></div>
+                  <div class="item-content">
+                    <div class="item-title">Lớp 12A1 tăng điểm TB</div>
+                    <div class="item-desc">Tăng 0.5 điểm so với thi thử tháng trước.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+</body>
 </html>
