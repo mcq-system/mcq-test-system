@@ -12,7 +12,7 @@ router.get('/notifications', async (req, res) => {
 
         const users = await User.find({}, 'email first_name last_name').lean();
 
-        res.render('admin/manager-notifications', {title: 'Quản lý thông báo', notifications, users
+        res.render('admin/manager-notifications', {title: 'Quản lý thông báo',layout: 'layout-admin', notifications, users
         });
     } catch (err) {
         res.status(500).send(err.message);
@@ -52,10 +52,7 @@ router.get('/manager-user', async (req, res) => {
         const teachers = users.filter(u => u.role === 'teacher');
         const students = users.filter(u => u.role === 'student');
 
-        res.render('admin/manager-user', {
-            title: 'Quản lý người dùng',
-            teachers,
-            students,
+        res.render('admin/manager-user', {title: 'Quản lý người dùng',layout: 'layout-admin' , teachers, students,
             teacherCount: teachers.length,
             studentCount: students.length
         });

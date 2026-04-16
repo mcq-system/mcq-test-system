@@ -60,7 +60,7 @@
     });
 
     // 2. Xử lý Xóa thông báo
-    document.querySelectorAll('.btn-delete-noti').forEach(btn => {
+    document.querySelectorAll('.btn-delete-notifications.hbs').forEach(btn => {
         btn.addEventListener('click', async () => {
             if (confirm('Bạn có chắc muốn xóa thông báo này?')) {
                 const id = btn.getAttribute('data-id');

@@ -10,6 +10,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var dropdragRouter = require('./routes/dropdrag');
 var adminRouter = require('./routes/admin');
+var teacherRouter = require('./routes/teacher');
 
 const connectDB = require('./config/db');
 
@@ -48,6 +49,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/dropdrag',dropdragRouter);
 app.use('/admin', adminRouter);
+app.use('/teacher', teacherRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
