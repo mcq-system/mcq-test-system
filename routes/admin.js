@@ -22,16 +22,20 @@ router.get('/notifications', async (req, res) => {
 router.post('/notifications', async (req, res) => {
     try {
         const { recipient, title, message, type } = req.body;
+        const adminId = "000000000000000000000003";
         const newNoti = new Notification({
-            recipient,
-            title,
-            message,
-            type
+            recipient: recipient,
+            sender: adminId,
+            senderRole: 'admin',
+            title: title,
+            message: message,
+            type: type
         });
         await newNoti.save();
         res.redirect('/admin/notifications');
     } catch (err) {
-        res.status(500).send(err.message);
+        console.error(err);
+        res.status(500).send("Lỗi validation: " + err.message);
     }
 });
 

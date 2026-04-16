@@ -1,1 +1,93 @@
-<h1>teacher</h1>
+<div class="teacher-noti-container" style="padding: 20px;">
+
+    <section class="card" style="margin-bottom: 30px; border-left: 5px solid #28a745;">
+        <h3><i class="fas fa-paper-plane"></i> Gửi thông báo cho lớp học / Sinh viên</h3>
+        <form action="/teacher/notifications/send" method="POST" style="margin-top: 15px;">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Chọn sinh viên nhận</label>
+                    <select name="recipient" required class="select-custom">
+                        <option value="">-- Chọn sinh viên --</option>
+                        {{#each students}}
+                            <option value="{{this._id}}">{{this.last_name}} {{this.first_name}} ({{this.email}})</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Chủ đề</label>
+                    <select name="type" class="select-custom">
+                        <option value="exam">Nhắc nhở thi 📄</option>
+                        <option value="result">Báo điểm bài thi 🎓</option>
+                        <option value="system">Thông báo lớp học ⚠️</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Tiêu đề</label>
+                    <input type="text" name="title" placeholder="Ví dụ: Thay đổi lịch thi cuối kỳ..." required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Nội dung thông báo</label>
+                    <textarea name="message" rows="3" placeholder="Nhập nội dung chi tiết gửi đến sinh viên..." required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-save" style="background: #28a745;">🚀 Gửi thông báo</button>
+        </form>
+    </section>
+
+    <div class="tab-header">
+        <div class="tab-item active" onclick="switchTab(event, 'inbox')">Thông báo từ Admin ({{incoming.length}})</div>
+        <div class="tab-item" onclick="switchTab(event, 'sent')">Lịch sử đã gửi</div>
+    </div>
+
+    <section class="table-card">
+        <div id="inbox" class="tab-content">
+            {{#each incoming}}
+                <div class="noti-item {{#unless isRead}}unread{{/unless}}">
+                    <div class="noti-icon icon-yellow">⚠️</div>
+                    <div class="noti-content">
+                        <div class="noti-title">
+                            {{this.title}}
+                            <span class="sender-tag admin-tag">Từ: Ban Quản Trị</span>
+                        </div>
+                        <div class="noti-text">{{this.message}}</div>
+                        <div class="noti-time">{{this.created_at}}</div>
+                    </div>
+                </div>
+            {{else}}
+                <p style="padding:20px; text-align:center; color:#888;">Chưa có thông báo nào từ Admin.</p>
+            {{/each}}
+        </div>
+
+        <div id="sent" class="tab-content" style="display:none;">
+            {{#each outgoing}}
+                <div class="noti-item" style="border-left: 3px solid #28a745;">
+                    <div class="noti-icon icon-blue">📄</div>
+                    <div class="noti-content">
+                        <div class="noti-title">
+                            {{this.title}}
+                            <span class="sender-tag student-tag">Gửi tới: {{this.recipient.last_name}} {{this.recipient.first_name}}</span>
+                        </div>
+                        <div class="noti-text">{{this.message}}</div>
+                        <div class="noti-time">Ngày gửi: {{this.created_at}}</div>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+    </section>
+</div>
+
+<style>
+    .sender-tag { font-size: 11px; padding: 2px 8px; border-radius: 4px; margin-left: 10px; font-weight: normal; }
+    .admin-tag { background: #343a40; color: white; }
+    .student-tag { background: #e7f1ff; color: #007bff; border: 1px solid #007bff; }
+    .select-custom { padding: 10px; border-radius: 8px; border: 1px solid #ddd; width: 100%; }
+</style>
+
+<script>
+    function switchTab(evt, tabName) {
+        document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+        document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        document.getElementById(tabName).style.display = 'block';
+        evt.currentTarget.classList.add('active');
+    }
+</script>

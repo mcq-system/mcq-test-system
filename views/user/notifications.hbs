@@ -25,6 +25,11 @@
                     <div class="noti-title">
                         {{#unless isRead}}<span class="dot-unread"></span>{{/unless}}
                         {{this.title}}
+                        {{#if (eq senderRole 'admin')}}
+                            <span class="sender-tag admin-tag">Gửi bởi: Ban Quản Trị</span>
+                        {{else}}
+                            <span class="sender-tag teacher-tag">Gửi bởi: GV. {{this.sender.last_name}} {{this.sender.first_name}}</span>
+                        {{/if}}
                     </div>
                     <div class="noti-text">{{this.message}}</div>
                     <div class="noti-time">{{this.created_at}}</div>
@@ -43,13 +48,11 @@
 
 
 <script>
-    // 1. Xử lý Đánh dấu đã đọc 1 thông báo
     document.querySelectorAll('.btn-mark-read').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const id = btn.getAttribute('data-id');
             const response = await fetch(`/users/notifications/read/${id}`, { method: 'PATCH' });
             if (response.ok) {
-                // Cập nhật UI: Bỏ màu nền unread, bỏ chấm xanh, ẩn chính nút này
                 const item = document.getElementById(`noti-${id}`);
                 item.classList.remove('unread');
                 item.querySelector('.dot-unread')?.remove();
@@ -59,7 +62,6 @@
         });
     });
 
-    // 2. Xử lý Xóa thông báo
     document.querySelectorAll('.btn-delete-notifications.hbs').forEach(btn => {
         btn.addEventListener('click', async () => {
             if (confirm('Bạn có chắc muốn xóa thông báo này?')) {
@@ -77,7 +79,6 @@
         });
     });
 
-    // 3. Đánh dấu tất cả đã đọc
     document.getElementById('btn-read-all')?.addEventListener('click', async () => {
         const response = await fetch('/users/notifications/read-all', { method: 'PATCH' });
         if (response.ok) {
