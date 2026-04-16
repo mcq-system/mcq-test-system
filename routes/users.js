@@ -3,6 +3,12 @@ var router = express.Router();
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 
+//=============================Dashboard==========================================================
+router.get('/dashboard', function(req, res, next) {
+  res.render('user/dashboard', {title: 'Dashboard', layout: 'layout'
+  });
+});
+
 //=============================Profile==========================================================
 router.get('/profile', async (req, res, next) => {
   try {

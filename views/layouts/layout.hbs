@@ -1,10 +1,68 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>{{title}}</title>
+    <!-- Thêm dấu / ở đầu href để đường dẫn luôn đúng dù bạn đang ở route nào -->
     <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="logo-box"><i class="fas fa-book-open"></i></div>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
+                <div style="font-size: 12px; color: #888;">Sinh viên</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">TỔNG QUAN</div>
+            <a href="/users/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+
+            <div class="nav-section">HỌC TẬP</div>
+            <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> Lớp học của tôi</a>
+            <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> Kỳ thi sắp tới</a>
+            <a href="#" class="nav-item"><i class="fas fa-history"></i> Lịch sử làm bài</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar-small">P</div>
+                <div class="user-info-mini">
+                    <div style="font-weight: 600; font-size: 14px;">Phạm Thị D</div>
+                    <div style="font-size: 11px; color: #888;">phamthid@sv.edu.vn</div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="/users/profile"><i class="fas fa-cog"></i> Cài đặt</a>
+                <a href="/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-wrapper">
+        <header class="main-header">
+            <h2 style="margin: 0;">{{title}}</h2>
+            <div class="header-tools">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Tìm kiếm...">
+                </div>
+                <div class="noti-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="badge">3</span>
+                </div>
+            </div>
+        </header>
+
+        <section class="content-body">
+            {{{body}}}
+        </section>
+    </main>
+</div>
+</body>
 </html>
