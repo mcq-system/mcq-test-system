@@ -1,0 +1,94 @@
+<div class="noti-card">
+    <div class="noti-header">
+        <div style="display: flex; align-items: center;">
+            <h2 style="margin: 0;">Thông báo</h2>
+            <span class="unread-count" id="unread-count">{{unreadCount}} chưa đọc</span>
+        </div>
+        <button id="btn-read-all" class="btn-save" style="padding: 8px 15px; font-size: 14px;">✓ Đánh dấu tất cả đã đọc</button>
+    </div>
+
+    <div class="noti-list">
+        {{#each notifications}}
+            <div class="noti-item {{#unless isRead}}unread{{/unless}}" id="noti-{{this._id}}">
+                <div class="noti-icon
+                {{#if (eq type 'exam')}}icon-blue{{/if}}
+                    {{#if (eq type 'result')}}icon-green{{/if}}
+                    {{#if (eq type 'reminder')}}icon-blue{{/if}}
+                    {{#if (eq type 'system')}}icon-yellow{{/if}}">
+                    {{#if (eq type 'exam')}}📄{{/if}}
+                    {{#if (eq type 'result')}}🎓{{/if}}
+                    {{#if (eq type 'reminder')}}🕒{{/if}}
+                    {{#if (eq type 'system')}}⚠️{{/if}}
+                </div>
+
+                <div class="noti-content">
+                    <div class="noti-title">
+                        {{#unless isRead}}<span class="dot-unread"></span>{{/unless}}
+                        {{this.title}}
+                        {{#if (eq senderRole 'admin')}}
+                            <span class="sender-tag admin-tag">Gửi bởi: Ban Quản Trị</span>
+                        {{else}}
+                            <span class="sender-tag teacher-tag">Gửi bởi: GV. {{this.sender.last_name}} {{this.sender.first_name}}</span>
+                        {{/if}}
+                    </div>
+                    <div class="noti-text">{{this.message}}</div>
+                    <div class="noti-time">{{this.created_at}}</div>
+                </div>
+
+                <div class="noti-actions">
+                    {{#unless isRead}}
+                        <button class="btn-action btn-mark-read" data-id="{{this._id}}" title="Đánh dấu đã đọc">✓</button>
+                    {{/unless}}
+                    <button class="btn-action btn-delete-noti" data-id="{{this._id}}" title="Xóa">🗑️</button>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+
+<script>
+    document.querySelectorAll('.btn-mark-read').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const id = btn.getAttribute('data-id');
+            const response = await fetch(`/users/notifications/read/${id}`, { method: 'PATCH' });
+            if (response.ok) {
+                const item = document.getElementById(`noti-${id}`);
+                item.classList.remove('unread');
+                item.querySelector('.dot-unread')?.remove();
+                btn.remove();
+                updateUnreadCount(-1);
+            }
+        });
+    });
+
+    document.querySelectorAll('.btn-delete-notifications.hbs').forEach(btn => {
+        btn.addEventListener('click', async () => {
+            if (confirm('Bạn có chắc muốn xóa thông báo này?')) {
+                const id = btn.getAttribute('data-id');
+                const response = await fetch(`/users/notifications/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                    const item = document.getElementById(`noti-${id}`);
+                    item.style.animation = 'fadeOut 0.3s forwards';
+                    setTimeout(() => {
+                        if (item.classList.contains('unread')) updateUnreadCount(-1);
+                        item.remove();
+                    }, 300);
+                }
+            }
+        });
+    });
+
+    document.getElementById('btn-read-all')?.addEventListener('click', async () => {
+        const response = await fetch('/users/notifications/read-all', { method: 'PATCH' });
+        if (response.ok) {
+            location.reload();
+        }
+    });
+
+    function updateUnreadCount(change) {
+        const countEl = document.getElementById('unread-count');
+        let current = parseInt(countEl.innerText) || 0;
+        countEl.innerText = (current + change) + " chưa đọc";
+    }
+</script>

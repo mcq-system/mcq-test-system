@@ -1,0 +1,90 @@
+<div class="admin-container" style="display: block; padding: 30px;">
+    <section class="card" style="margin-bottom: 30px; padding: 25px;">
+        <h3>📣 Gửi thông báo mới</h3>
+        <form action="/admin/notifications" method="POST" style="margin-top: 20px;">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Người nhận (User Email)</label>
+                    <select name="recipient" required style="padding: 10px; border-radius: 8px;">
+                        <option value="">-- Chọn người nhận --</option>
+                        {{#each users}}
+                            <option value="{{this._id}}">{{this.email}} ({{this.last_name}} {{this.first_name}})</option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Loại thông báo</label>
+                    <select name="type" style="padding: 10px; border-radius: 8px;">
+                        <option value="system">Hệ thống ⚠️</option>
+                        <option value="exam">Bài thi 📄</option>
+                        <option value="result">Kết quả 🎓</option>
+                        <option value="reminder">Nhắc lịch 🕒</option>
+                    </select>
+                </div>
+                <div class="form-group full-width">
+                    <label>Tiêu đề</label>
+                    <input type="text" name="title" placeholder="Nhập tiêu đề ngắn gọn..." required>
+                </div>
+                <div class="form-group full-width">
+                    <label>Nội dung</label>
+                    <textarea name="message" rows="3" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;" placeholder="Nhập nội dung chi tiết..." required></textarea>
+                </div>
+            </div>
+            <button type="submit" class="btn-save" style="margin-top: 15px;">🚀 Gửi thông báo ngay</button>
+        </form>
+    </section>
+
+    <!-- BẢNG DANH SÁCH ĐÃ GỬI -->
+    <section class="table-card">
+        <h3>Lịch sử thông báo đã gửi</h3>
+        <table class="data-table">
+            <thead>
+            <tr>
+                <th>Người nhận</th>
+                <th>Tiêu đề & Nội dung</th>
+                <th>Loại</th>
+                <th>Trạng thái</th>
+                <th>Ngày gửi</th>
+                <th>Thao tác</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each notifications}}
+                <tr id="row-{{this._id}}">
+                    <td>
+                        <strong>{{this.recipient.last_name}} {{this.recipient.first_name}}</strong><br>
+                        <small style="color: gray;">{{this.recipient.email}}</small>
+                    </td>
+                    <td>
+                        <div style="font-weight: 600;">{{this.title}}</div>
+                        <div style="font-size: 13px; color: #666;">{{this.message}}</div>
+                    </td>
+                    <td><span class="status-pill icon-blue">{{this.type}}</span></td>
+                    <td>
+                        {{#if this.isRead}}
+                            <span style="color: green;">✔️ Đã đọc</span>
+                        {{else}}
+                            <span style="color: orange;">⏳ Chưa đọc</span>
+                        {{/if}}
+                    </td>
+                    <td>{{this.created_at}}</td>
+                    <td>
+                        <button onclick="deleteNoti('{{this._id}}')" style="background:none; border:none; cursor:pointer; color:red;">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </section>
+</div>
+
+<script>
+    async function deleteNoti(id) {
+        if (confirm('Bạn có chắc muốn xóa lịch sử thông báo này?')) {
+            const res = await fetch(`/admin/notifications/${id}`, { method: 'DELETE' });
+            if (res.ok) {
+                document.getElementById(`row-${id}`).remove();
+            }
+        }
+    }
+</script>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar admin-theme">
+        <div class="sidebar-brand">
+            <div class="logo-box" style="background: #343a40;"><i class="fas fa-user-shield"></i></div>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
+                <div style="font-size: 12px; color: #888;">Quản trị viên</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">TỔNG QUAN</div>
+            <a href="/admin/dashboard" class="nav-item active"><i class="fas fa-chart-line"></i> Dashboard</a>
+
+            <div class="nav-section">QUẢN LÝ</div>
+            <a href="/admin/manager-user" class="nav-item"><i class="fas fa-users"></i> Người dùng</a>
+            <a href="/admin/topics" class="nav-item"><i class="fas fa-tags"></i> Danh mục Topic</a>
+            <a href="/admin/notifications" class="nav-item"><i class="fas fa-bullhorn"></i> Thông báo</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar-small" style="background: #343a40;">A</div>
+                <div class="user-info-mini">
+                    <div style="font-weight: 600;">English MCQ</div>
+                    <div style="font-size: 11px;">admin@center.edu.vn</div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="/logout" style="color: #dc3545; width: 100%; text-align: center;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="main-header">
+            <h2>{{title}}</h2>
+            <div class="header-tools">
+                <div class="noti-bell"><i class="fas fa-bell"></i><span class="badge">5</span></div>
+            </div>
+        </header>
+        <section class="content-body">{{{body}}}</section>
+    </main>
+</div>
+</body>
+</html>
