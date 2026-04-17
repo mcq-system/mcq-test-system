@@ -1,0 +1,124 @@
+{{! views/questions/index.hbs }}
+
+<div class="topbar">
+  <div class="topbar-left">
+    <span class="page-title">Câu hỏi</span>
+    <form method="GET" action="/" class="search-form">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.5">
+          <circle cx="7" cy="7" r="4.5"/>
+          <path d="M10.5 10.5L13 13"/>
+        </svg>
+        <input
+          type="text"
+          name="search"
+          placeholder="Tìm câu hỏi..."
+          value="{{filters.search}}"
+          autocomplete="off"
+        />
+      </div>
+    </form>
+  </div>
+  <a href="/questions/new" class="btn btn-primary">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2">
+      <path d="M8 3v10M3 8h10"/>
+    </svg>
+    Thêm câu hỏi
+  </a>
+</div>
+
+<div class="content">
+  {{! Stats }}
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num">{{stats.total}}</div>
+      <div class="stat-label">Tổng câu hỏi</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{stats.reading}}</div>
+      <div class="stat-label">Reading</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{stats.listening}}</div>
+      <div class="stat-label">Listening</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">{{stats.grammarVocab}}</div>
+      <div class="stat-label">Grammar / Vocab</div>
+    </div>
+  </div>
+
+  {{! Filters }}
+  <form method="GET" action="/" class="filters" id="filterForm">
+    {{#if filters.search}}
+      <input type="hidden" name="search" value="{{filters.search}}"/>
+    {{/if}}
+
+    <select class="filter-select" name="type" onchange="this.form.submit()">
+      <option value="">Tất cả loại</option>
+      {{#each types}}
+        <option value="{{this}}" {{#if (eq this ../filters.type)}}selected{{/if}}>
+          {{this}}
+        </option>
+      {{/each}}
+    </select>
+
+    <select class="filter-select" name="level" onchange="this.form.submit()">
+      <option value="">Tất cả cấp độ</option>
+      {{#each levels}}
+        <option value="{{this}}" {{#if (eq this ../filters.level)}}selected{{/if}}>
+          {{this}}
+        </option>
+      {{/each}}
+    </select>
+
+    <select class="filter-select" name="topic" onchange="this.form.submit()">
+      <option value="">Chủ đề</option>
+      {{#each topics}}
+        <option value="{{this}}" {{#if (eq this ../filters.topic)}}selected{{/if}}>
+          {{this}}
+        </option>
+      {{/each}}
+    </select>
+
+    <button type="button" class="btn btn-outline">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M2 4h12M4 8h8M6 12h4"/>
+      </svg>
+      Bộ lọc nâng cao
+    </button>
+  </form>
+
+  {{! Question list }}
+  <div class="q-list">
+    {{#if questions.length}}
+      {{#each questions}}
+        {{> question-card}}
+      {{/each}}
+    {{else}}
+      <div class="empty-state">
+        <svg width="40" height="40" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1">
+          <circle cx="7" cy="7" r="4.5"/>
+          <path d="M10.5 10.5L13 13"/>
+        </svg>
+        <p>Không tìm thấy câu hỏi nào phù hợp.</p>
+        <a href="/" class="btn btn-outline" style="margin-top:8px;">Xoá bộ lọc</a>
+      </div>
+    {{/if}}
+  </div>
+
+  {{! Pagination }}
+  <div class="pagination">
+    <span>{{paginationInfo}}</span>
+    <div class="page-btns">
+      <button class="page-btn">‹</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">›</button>
+    </div>
+  </div>
+</div>
+
+{{! Drawer: Thêm câu hỏi (rendered server-side, toggled via JS) }}
+{{> drawer-form}}
