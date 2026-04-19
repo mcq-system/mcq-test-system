@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 var express = require('express');
 var router = express.Router();
 const Notification = require('../models/Notification');
@@ -6,6 +6,7 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const {protect} = require('../middleware/auth');
 
+// Dashboard
 router.get('/dashboard', protect('admin'), (req, res) => {
     res.render('admin/dashboard', {
         user: req.user,
@@ -18,9 +19,7 @@ router.get('/notifications', async (req, res) => {
     try {
         const notifications = await Notification.find()
             .populate('recipient', 'email first_name last_name').sort({created_at: -1}).lean();
-
         const users = await User.find({}, 'email first_name last_name').lean();
-
         res.render('admin/manager-notifications', {
             title: 'Quản lý thông báo',
             layout: 'layout-admin',
@@ -43,128 +42,73 @@ router.post('/notifications', async (req, res) => {
             title: title,
             message: message,
             type: type
-        // Giữ toàn bộ nội dung từ han-be (remote)
-        var express = require('express');
-        var router = express.Router();
-        const Notification = require('../models/Notification');
-        const User = require('../models/User');
-        const bcrypt = require('bcryptjs');
-        const {protect} = require('../middleware/auth');
-
-        router.get('/dashboard', protect('admin'), (req, res) => {
-            res.render('admin/dashboard', {
-                user: req.user,
-                title: 'Admin Dashboard'
-            });
         });
-
-        //=======================Thông Báo=============================================================
-        router.get('/notifications', async (req, res) => {
-            try {
-                const notifications = await Notification.find()
-                    .populate('recipient', 'email first_name last_name').sort({created_at: -1}).lean();
-
-                const users = await User.find({}, 'email first_name last_name').lean();
-
-                res.render('admin/manager-notifications', {
-                    title: 'Quản lý thông báo',
-                    layout: 'layout-admin',
-                    notifications,
-                    users
-                });
-            } catch (err) {
-                res.status(500).send(err.message);
-            }
-        });
-
-        router.post('/notifications', async (req, res) => {
-            try {
-                const { recipient, title, message, type } = req.body;
-                const adminId = "000000000000000000000003";
-                const newNoti = new Notification({
-                    recipient: recipient,
-                    sender: adminId,
-                    senderRole: 'admin',
-                    title: title,
-                    message: message,
-                    type: type
-                });
-                await newNoti.save();
-                res.redirect('/admin/notifications');
-            } catch (err) {
-                console.error(err);
-                res.status(500).send("Lỗi validation: " + err.message);
-            }
-        });
-
-        router.delete('/notifications/:id', async (req, res) => {
-            try {
-                await Notification.findByIdAndDelete(req.params.id);
-                res.sendStatus(200);
-            } catch (err) {
-                res.status(500).send(err.message);
-            }
-        });
-
-        //===========================Quản lý người dùng========================================
-        router.get('/manager-user', async (req, res) => {
-            try {
-                const users = await User.find().lean();
-
-                const teachers = users.filter(u => u.role === 'teacher');
-                const students = users.filter(u => u.role === 'student');
-
-                res.render('admin/manager-user', {
-                    title: 'Quản lý người dùng',
-                    layout: 'layout-admin',
-                    teachers,
-                    students,
-                    teacherCount: teachers.length,
-                    studentCount: students.length
-                });
-            } catch (err) {
-                res.status(500).send(err.message);
-            }
-        });
-
-        router.post('/manager-user', async (req, res) => {
-            try {
-                const {first_name, last_name, email, password, role, student_id, department} = req.body;
-
-                const hashedPassword = await bcrypt.hash(password, 10);
-
-                const newUser = new User({
-                    first_name,
-                    last_name,
-                    email,
-                    password: hashedPassword,
-                    role,
-                    student_id,
-                    department
-                });
-
-                await newUser.save();
-                res.redirect('/admin/manager-user');
-            } catch (err) {
-                res.status(500).send("Lỗi khi tạo tài khoản: " + err.message);
-            }
-        });
-
-        router.delete('/manager-user/:id', async (req, res) => {
-            try {
-                await User.findByIdAndDelete(req.params.id);
-                res.sendStatus(200);
-            } catch (err) {
-                res.status(500).send(err.message);
-            }
-        });
-
-        module.exports = router;
-    // Render file dashboard.hbs trong thư mục views/admin
-    res.render('admin/dashboard', {
-        title: 'Bảng điều khiển Admin'
-    });
+        await newNoti.save();
+        res.redirect('/admin/notifications');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi validation: " + err.message);
+    }
 });
+
+router.delete('/notifications/:id', async (req, res) => {
+    try {
+        await Notification.findByIdAndDelete(req.params.id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+//===========================Quản lý người dùng========================================
+router.get('/manager-user', async (req, res) => {
+    try {
+        const users = await User.find().lean();
+        const teachers = users.filter(u => u.role === 'teacher');
+        const students = users.filter(u => u.role === 'student');
+        res.render('admin/manager-user', {
+            title: 'Quản lý người dùng',
+            layout: 'layout-admin',
+            teachers,
+            students,
+            teacherCount: teachers.length,
+            studentCount: students.length
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+router.post('/manager-user', async (req, res) => {
+    try {
+        const {first_name, last_name, email, password, role, student_id, department} = req.body;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newUser = new User({
+            first_name,
+            last_name,
+            email,
+            password: hashedPassword,
+            role,
+            student_id,
+            department
+        });
+        await newUser.save();
+        res.redirect('/admin/manager-user');
+    } catch (err) {
+        res.status(500).send("Lỗi khi tạo tài khoản: " + err.message);
+    }
+});
+
+router.delete('/manager-user/:id', async (req, res) => {
+    try {
+        await User.findByIdAndDelete(req.params.id);
+        res.sendStatus(200);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
+// Các route bổ sung cho admin
 router.get('/calendar-teacher', function(req, res) {
     res.render('admin/calendar-teacher', { title: 'Lịch dạy giảng viên' });
 });
@@ -172,20 +116,23 @@ router.get('/calendar-teacher', function(req, res) {
 router.get('/calendar-student', function(req, res) {
     res.render('admin/calendar-student', { title: 'Lịch học sinh viên' });
 });
+
 router.get('/dashboard-admin', function(req, res) {
     res.render('admin/dashboard-admin', {
         title: 'Bảng điều khiển Admin hệ thống'
     });
 });
+
 router.get('/topic-list', function(req, res) {
     res.render('admin/topic-list', {
         title: 'Danh Sách Chủ Đề'
     });
 });
+
 router.get('/question-list', function(req, res) {
     res.render('admin/topic-list', {
         title: 'Danh Sách Câu Hỏi'
     });
 });
+
 module.exports = router;
->>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e

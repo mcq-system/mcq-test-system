@@ -46,5 +46,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
->>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e
->>>>>>> han-be
