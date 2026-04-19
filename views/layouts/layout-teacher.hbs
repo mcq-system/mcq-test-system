@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar teacher-theme">
+        <div class="sidebar-brand">
+            <div class="logo-box" style="background: #28a745;"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
+                <div style="font-size: 12px; color: #888;">Giảng viên</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">TỔNG QUAN</div>
+            <a href="/teacher/dashboard" class="nav-item active"><i class="fas fa-calendar-check"></i> Lịch dạy</a>
+
+            <div class="nav-section">QUẢN LÝ LỚP HỌC</div>
+            <a href="/teacher/my-classes" class="nav-item"><i class="fas fa-users-class"></i> Lớp học của tôi</a>
+            <a href="/teacher/create-class" class="nav-item"><i class="fas fa-plus-circle"></i> Tạo lớp mới</a>
+
+            <div class="nav-section">NGÂN HÀNG ĐỀ THI</div>
+            <a href="/teacher/questions" class="nav-item"><i class="fas fa-database"></i> Câu hỏi</a>
+            <a href="/teacher/create-exam" class="nav-item"><i class="fas fa-file-signature"></i> Tạo đề thi</a>
+            <a href="/teacher/exams" class="nav-item"><i class="fas fa-list-ol"></i> Danh sách đề thi</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card">
+                <div class="avatar-small" style="background: #28a745;">GV</div>
+                <div class="user-info-mini">
+                    <div style="font-weight: 600;">Nguyễn Văn A</div>
+                    <div style="font-size: 11px;">gv.ana@edu.vn</div>
+                </div>
+            </div>
+            <div class="footer-links">
+                <a href="/logout" style="color: #dc3545; width: 100%; text-align: center;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="main-header">
+            <h2>{{title}}</h2>
+            <div class="header-tools">
+                <div class="noti-bell"><i class="fas fa-bell"></i><span class="badge">2</span></div>
+            </div>
+        </header>
+        <section class="main-content">{{{body}}}</section>
+    </main>
+</div>
+</body>
+</html>

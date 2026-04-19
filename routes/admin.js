@@ -20,14 +20,40 @@ router.get('/notifications', async (req, res) => {
 
         const users = await User.find({}, 'email first_name last_name').lean();
 
+<<<<<<< HEAD
         res.render('admin/manager-notifications', {
             title: 'Quản lý thông báo', notifications, users
+=======
+        res.render('admin/manager-notifications', {title: 'Quản lý thông báo',layout: 'layout-admin', notifications, users
+>>>>>>> 96a76ed5a86cd50526c54f4d78727f44290fa5a4
         });
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
 
+<<<<<<< HEAD
+=======
+router.post('/notifications', async (req, res) => {
+    try {
+        const { recipient, title, message, type } = req.body;
+        const adminId = "000000000000000000000003";
+        const newNoti = new Notification({
+            recipient: recipient,
+            sender: adminId,
+            senderRole: 'admin',
+            title: title,
+            message: message,
+            type: type
+        });
+        await newNoti.save();
+        res.redirect('/admin/notifications');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Lỗi validation: " + err.message);
+    }
+});
+>>>>>>> 96a76ed5a86cd50526c54f4d78727f44290fa5a4
 
 
     router.post('/notifications', async (req, res) =>
@@ -65,6 +91,7 @@ router.get('/notifications', async (req, res) => {
             const teachers = users.filter(u => u.role === 'teacher');
             const students = users.filter(u => u.role === 'student');
 
+<<<<<<< HEAD
             res.render('admin/manager-user', {
                 title: 'Quản lý người dùng',
                 teachers,
@@ -76,6 +103,16 @@ router.get('/notifications', async (req, res) => {
             res.status(500).send(err.message);
         }
     });
+=======
+        res.render('admin/manager-user', {title: 'Quản lý người dùng',layout: 'layout-admin' , teachers, students,
+            teacherCount: teachers.length,
+            studentCount: students.length
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+>>>>>>> 96a76ed5a86cd50526c54f4d78727f44290fa5a4
 
     router.post('/manager-user', async (req, res) => {
         try {

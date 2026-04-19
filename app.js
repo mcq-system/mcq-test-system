@@ -13,6 +13,7 @@ var authRouter = require('./routes/auth');
 var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
 var adminRouter = require('./routes/admin');
+var teacherRouter = require('./routes/teacher');
 
 const connectDB = require('./config/db');
 
@@ -52,7 +53,12 @@ app.use('/users', usersRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
+<<<<<<< HEAD
 
+=======
+app.use('/teacher', teacherRouter);
+// catch 404 and forward to error handler
+>>>>>>> 96a76ed5a86cd50526c54f4d78727f44290fa5a4
 app.use(function(req, res, next) {
   next(createError(404));
 });

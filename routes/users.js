@@ -4,6 +4,12 @@ var router = express.Router();
 const Notification = require('../models/Notification');
 const User = require('../models/User');
 
+//=============================Dashboard==========================================================
+router.get('/dashboard', function(req, res, next) {
+  res.render('user/dashboard', {title: 'Dashboard', layout: 'layout'
+  });
+});
+
 //=============================Profile==========================================================
 router.get('/profile', async (req, res, next) => {
   try {
@@ -61,7 +67,9 @@ router.get('/notifications', async function(req, res, next) {
   try {
     const userId = "000000000000000000000001"; // ID mẫu của bạn
 
-    const notifications = await Notification.find({ recipient: userId }).sort({ created_at: -1 }).lean();
+    const notifications = await Notification.find({ recipient: userId })
+        .populate('sender', 'first_name last_name')
+        .sort({ created_at: -1 }).lean();
 
     const unreadCount = notifications.filter(n => !n.isRead).length;
 
