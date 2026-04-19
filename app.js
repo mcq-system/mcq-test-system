@@ -1,6 +1,7 @@
 require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
+const { engine } = require('express-handlebars');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
@@ -19,6 +20,23 @@ connectDB();
 
 var app = express();
 
+app.engine(
+    'hbs',
+    engine({
+        extname: '.hbs',
+        defaultLayout: 'layout',
+        layoutsDir: path.join(__dirname, 'views', 'layouts'),
+        partialsDir: path.join(__dirname, 'views', 'partials'),
+        helpers: {
+            eq: function (a, b) {
+                return a === b;
+            },
+            slice: function (str, start, end) {
+                return str ? str.slice(start, end) : "";
+            }
+        }
+    })
+);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');

@@ -35,10 +35,15 @@ const userSchema = new mongoose.Schema(
       minlength: [6, 'Password must be at least 6 characters'],
       select: false, // Never return password in queries by default
     },
+
+    student_id: { type: String },
+    class_name: { type: String },
+    department: { type: String },
+    address: { type: String },
+    dob: { type: Date },
+
     role: {
       type: String,
-      enum: ['admin', 'teacher', 'student'],
-      default: 'student',
     },
     status: {
       type: String,
