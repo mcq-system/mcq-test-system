@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Notification = require('../models/Notification');
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const {protect} = require('../middleware/auth');
 
 router.get('/dashboard', protect('admin'), (req, res) => {
