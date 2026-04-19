@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-<<<<<<< HEAD
 const { protect } = require('../middleware/auth');
+const Notification = require('../models/Notification');
+const User = require('../models/User');
 
 router.get('/dashboard', protect('teacher'), (req, res) => {
   res.render('teacher/dashboard', {
@@ -9,11 +10,6 @@ router.get('/dashboard', protect('teacher'), (req, res) => {
     title: 'Teacher Dashboard'
   });
 });
-
-module.exports = router;
-=======
-const Notification = require('../models/Notification');
-const User = require('../models/User');
 
 //=======================Thông Báo=============================================================
 router.get('/notifications', async (req, res) => {
@@ -59,4 +55,3 @@ router.post('/notifications/send', async (req, res) => {
 });
 
 module.exports = router;
->>>>>>> 96a76ed5a86cd50526c54f4d78727f44290fa5a4
