@@ -23,7 +23,6 @@ exports.postLogin = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Vui lòng nhập đầy đủ email và mật khẩu.' });
     }
 
-    // Find user and include the password field (hidden by default)
     const user = await User.findOne({ email }).select('+password');
 
     if (!user) {
