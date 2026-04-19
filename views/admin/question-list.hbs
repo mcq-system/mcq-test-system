@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold m-0">Ngân hàng câu hỏi Tiếng Anh</h4>
+        <p class="text-muted small">Quản lý nội dung câu hỏi cho các kỳ thi</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm">
+            <i class="fas fa-file-import me-1"></i> Nhập từ Excel
+        </button>
+        <button class="btn btn-primary btn-sm">
+            <i class="fas fa-plus me-1"></i> Thêm câu hỏi
+        </button>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-3">
+        <div class="row g-2">
+            <div class="col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0"><i class="fas fa-search text-muted"></i></span>
+                    <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm câu hỏi...">
+                </div>
+            </div>
+            <div class="col-md-7 d-flex gap-2 justify-content-end">
+                <select class="form-select border-light w-auto">
+                    <option selected>Tất cả loại</option>
+                    <option>Reading</option>
+                    <option>Listening</option>
+                </select>
+                <select class="form-select border-light w-auto">
+                    <option selected>Tất cả Topic</option>
+                    <option>TOEIC</option>
+                    <option>IELTS</option>
+                </select>
+                <select class="form-select border-light w-auto">
+                    <option selected>Độ khó</option>
+                    <option>Dễ</option>
+                    <option>Trung bình</option>
+                    <option>Khó</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="bg-light shadow-none">
+                <tr>
+                    <th class="ps-4" style="width: 60px;">ID</th>
+                    <th>Nội dung câu hỏi</th>
+                    <th>Loại</th>
+                    <th>Topic</th>
+                    <th>Độ khó</th>
+                    <th class="text-end pe-4">Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td class="ps-4 text-muted small">#1</td>
+                    <td class="fw-medium text-truncate" style="max-width: 350px;">According to the passage, what is the main purpose of the new policy?</td>
+                    <td><span class="badge badge-soft-primary"><i class="fas fa-book-open me-1"></i> Reading</span></td>
+                    <td><span class="small">TOEIC</span></td>
+                    <td><span class="badge rounded-pill bg-warning-light text-warning px-3">Trung bình</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-icon text-primary"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-icon text-danger"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="ps-4 text-muted small">#2</td>
+                    <td class="fw-medium text-truncate" style="max-width: 350px;">What does the speaker suggest about urban planning?</td>
+                    <td><span class="badge badge-soft-info"><i class="fas fa-headphones me-1"></i> Listening</span></td>
+                    <td><span class="small">IELTS</span></td>
+                    <td><span class="badge rounded-pill bg-danger-light text-danger px-3">Khó</span></td>
+                    <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-icon text-primary"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-sm btn-icon text-danger"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
