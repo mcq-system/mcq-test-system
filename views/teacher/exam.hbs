@@ -1,0 +1,88 @@
+{{#> layout-teacher}}
+<div class="main-content">
+  <div class="top-bar">
+    <h2>Danh sách đề thi</h2>
+    <a href="/teacher/exams/create" class="btn btn-primary">+ Tạo đề thi mới</a>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon blue">📄</div>
+      <div class="stat-info"><h4>{{stats.total}}</h4><p>Tổng số đề</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon green">📢</div>
+      <div class="stat-info"><h4>{{stats.published}}</h4><p>Đã xuất bản</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon yellow">📝</div>
+      <div class="stat-info"><h4>{{stats.draft}}</h4><p>Nháp</p></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon blue">👥</div>
+      <div class="stat-info"><h4>{{stats.attempts}}</h4><p>Tổng lượt thi</p></div>
+    </div>
+  </div>
+
+  <div class="card table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Tên đề thi</th>
+          <th>Lớp học</th>
+          <th>Thời gian</th>
+          <th>Số câu</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each exams}}
+        <tr>
+          <td>
+            <div style="font-weight: 500;">{{this.exam_name}}</div>
+            <div style="font-size: 12px; color: var(--gray-400);">{{this.topic}} • {{this.duration}} phút</div>
+          </td>
+          <td>{{#if this.class_id}}{{this.class_id.class_name}}{{else}}-{{/if}}</td>
+          <td>{{this.duration}} phút</td>
+          <td>{{this.questions.length}} câu</td>
+          <td>
+            {{#if (eq this.status 'published')}}
+              <span class="badge badge-success">Đã xuất bản</span>
+            {{else}}
+              <span class="badge badge-warning">Nháp</span>
+            {{/if}}
+          </td>
+          <td>
+            <button class="btn-icon" onclick="deleteExam('{{this._id}}')">🗑️</button>
+          </td>
+        </tr>
+        {{else}}
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray-400);">
+            Chưa có đề thi nào. <a href="/teacher/exams/create" style="color: var(--primary);">Tạo đề thi đầu tiên</a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function deleteExam(id) {
+  if (confirm('Bạn có chắc muốn xóa đề thi này?')) {
+    try {
+      const res = await fetch(`/teacher/exams/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('Xóa thất bại!');
+      }
+    } catch (err) {
+      alert('Lỗi: ' + err.message);
+    }
+  }
+}
+</script>
+{{/layout-teacher}}

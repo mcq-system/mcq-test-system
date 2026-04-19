@@ -1,0 +1,26 @@
+{{#> layout-teacher}}
+<div class="main-content">
+  <div class="top-bar">
+    <h2>Quản lý lớp học</h2>
+    <a href="/teacher/classes/create" class="btn btn-primary">+ Tạo lớp</a>
+  </div>
+  <div class="card table-container">
+    <table>
+      <thead><tr><th>Mã lớp</th><th>Tên lớp</th><th>Topic</th><th>Đề thi</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+      <tbody>
+        {{#each classes}}
+        <tr>
+          <td><strong>{{class_code}}</strong></td>
+          <td>{{class_name}}</td>
+          <td>{{topic}}</td>
+          <td>{{exam_count}}</td>
+          <td><span class="badge badge-{{#if (eq status 'active')}}success{{else}}warning{{/if}}">{{status}}</span></td>
+          <td><button class="btn-icon danger" onclick="del('{{_id}}')">🗑️</button></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>async function del(id){if(confirm('Xóa?')){await fetch(`/teacher/classes/${id}`,{method:'DELETE'});location.reload();}}</script>
+{{/layout-teacher}}

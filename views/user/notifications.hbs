@@ -25,6 +25,14 @@
                     <div class="noti-title">
                         {{#unless isRead}}<span class="dot-unread"></span>{{/unless}}
                         {{this.title}}
+<<<<<<< HEAD
+=======
+                        {{#if (eq senderRole 'admin')}}
+                            <span class="sender-tag admin-tag">Gửi bởi: Ban Quản Trị</span>
+                        {{else}}
+                            <span class="sender-tag teacher-tag">Gửi bởi: GV. {{this.sender.last_name}} {{this.sender.first_name}}</span>
+                        {{/if}}
+>>>>>>> 1b5ea3f4e07e24826392b11fa7e8980b55bb038b
                     </div>
                     <div class="noti-text">{{this.message}}</div>
                     <div class="noti-time">{{this.created_at}}</div>
@@ -32,36 +40,33 @@
 
                 <div class="noti-actions">
                     {{#unless isRead}}
-                        <button class="btn-action btn-mark-read" data-id="{{this._id}}" title="Đánh dấu đã đọc">✓</button>
-                    {{/unless}}
-                    <button class="btn-action btn-delete-noti" data-id="{{this._id}}" title="Xóa">🗑️</button>
-                </div>
-            </div>
-        {{/each}}
-    </div>
-</div>
+                                            {{#if (eq senderRole 'admin')}}
+                                                <span class="sender-tag admin-tag">Gửi bởi: Ban Quản Trị</span>
+                                            {{else}}
+                                                <span class="sender-tag teacher-tag">Gửi bởi: GV. {{this.sender.last_name}} {{this.sender.first_name}}</span>
+                                            {{/if}}
 
 
 <script>
+<<<<<<< HEAD
     // 1. Xử lý Đánh dấu đã đọc 1 thông báo
+=======
+>>>>>>> 1b5ea3f4e07e24826392b11fa7e8980b55bb038b
     document.querySelectorAll('.btn-mark-read').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const id = btn.getAttribute('data-id');
             const response = await fetch(`/users/notifications/read/${id}`, { method: 'PATCH' });
             if (response.ok) {
+<<<<<<< HEAD
                 // Cập nhật UI: Bỏ màu nền unread, bỏ chấm xanh, ẩn chính nút này
+=======
+>>>>>>> 1b5ea3f4e07e24826392b11fa7e8980b55bb038b
                 const item = document.getElementById(`noti-${id}`);
-                item.classList.remove('unread');
-                item.querySelector('.dot-unread')?.remove();
-                btn.remove();
-                updateUnreadCount(-1);
-            }
         });
     });
 
+<<<<<<< HEAD
     // 2. Xử lý Xóa thông báo
-    document.querySelectorAll('.btn-delete-noti').forEach(btn => {
-        btn.addEventListener('click', async () => {
             if (confirm('Bạn có chắc muốn xóa thông báo này?')) {
                 const id = btn.getAttribute('data-id');
                 const response = await fetch(`/users/notifications/${id}`, { method: 'DELETE' });
@@ -71,13 +76,11 @@
                     setTimeout(() => {
                         if (item.classList.contains('unread')) updateUnreadCount(-1);
                         item.remove();
-                    }, 300);
-                }
-            }
-        });
     });
-
+<<<<<<< HEAD
     // 3. Đánh dấu tất cả đã đọc
+=======
+>>>>>>> 1b5ea3f4e07e24826392b11fa7e8980b55bb038b
     document.getElementById('btn-read-all')?.addEventListener('click', async () => {
         const response = await fetch('/users/notifications/read-all', { method: 'PATCH' });
         if (response.ok) {
@@ -90,4 +93,3 @@
         let current = parseInt(countEl.innerText) || 0;
         countEl.innerText = (current + change) + " chưa đọc";
     }
-</script>

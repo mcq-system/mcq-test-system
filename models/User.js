@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+<<<<<<< HEAD
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 
@@ -35,6 +36,20 @@ const userSchema = new mongoose.Schema(
       minlength: [6, 'Password must be at least 6 characters'],
       select: false, // Never return password in queries by default
     },
+=======
+
+const UserSchema = new mongoose.Schema({
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    phone: { type: String },
+    password: { type: String, required: true },
+>>>>>>> 1b5ea3f4e07e24826392b11fa7e8980b55bb038b
 
     student_id: { type: String },
     class_name: { type: String },
@@ -43,6 +58,7 @@ const userSchema = new mongoose.Schema(
     dob: { type: Date },
 
     role: {
+<<<<<<< HEAD
       type: String,
     },
     status: {
@@ -69,55 +85,30 @@ userSchema.virtual('full_name').get(function () {
 });
 
 // ─── Pre-save Hook ────────────────────────────────────────────────────────────
-// Hash password before saving to the database
-userSchema.pre('save', async function () {
-  // Only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) return;
+const mongoose = require('mongoose');
 
-  this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
+const UserSchema = new mongoose.Schema({
+    first_name: { type: String, required: true },
+    last_name: { type: String, required: true },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true
+    },
+    phone: { type: String },
+    password: { type: String, required: true },
+    student_id: { type: String },
+    class_name: { type: String },
+    department: { type: String },
+    address: { type: String },
+    dob: { type: Date },
+    role: { type: String },
+    status: { type: String, enum: ['active', 'inactive', 'banned'], default: 'active' },
+    created_at: { type: Date, default: Date.now },
+    resetPasswordToken: String,
+    resetPasswordExpire: Date
 });
 
-// ─── Instance Methods ─────────────────────────────────────────────────────────
-
-/**
- * Compares a plain-text password against the hashed one stored in the database.
- * @param {string} candidatePassword - The plain-text password to compare.
- * @returns {Promise<boolean>} True if the passwords match, false otherwise.
- */
-userSchema.methods.comparePassword = async function (candidatePassword) {
-  return bcrypt.compare(candidatePassword, this.password);
-};
-
-/**
- * Returns a public-facing representation of the user (without sensitive fields).
- * @returns {Object} User object without password.
- */
-userSchema.methods.toPublicJSON = function () {
-  const user = this.toObject({ virtuals: true });
-  delete user.password;
+module.exports = mongoose.model('User', UserSchema);
   return user;
-};
-
-/**
- * Generate and hash password token
- * @returns {string} Plain token to send to user
- */
-userSchema.methods.getResetPasswordToken = function () {
-  // Generate token
-  const resetToken = crypto.randomBytes(20).toString('hex');
-
-  // Hash token and set to resetPasswordToken field
-  this.resetPasswordToken = crypto
-    .createHash('sha256')
-    .update(resetToken)
-    .digest('hex');
-
-  // Set expire
-  this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
-
-  return resetToken;
-};
-
-const User = mongoose.model('User', userSchema);
-
-module.exports = User;

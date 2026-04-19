@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{title}}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+<div class="app-container">
+    <aside class="sidebar teacher-theme">
+        <div class="sidebar-brand">
+            <div class="logo-box" style="background: #007bff;"><i class="fas fa-book"></i></div>
+            <div>
+                <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
+                <div style="font-size: 12px; color: #888;">Giảng viên</div>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+            <div class="nav-section">TỔNG QUAN</div>
+            <a href="/teacher/dashboard" class="nav-item"><i class="far fa-calendar-alt"></i> Lịch dạy</a>
+
+            <div class="nav-section">QUẢN LÝ LỚP HỌC</div>
+            <a href="/teacher/my-classes" class="nav-item"><i class="fas fa-graduation-cap"></i> Lớp học của tôi</a>
+            <a href="/teacher/create-class" class="nav-item active"><i class="far fa-folder-open"></i> Tạo lớp mới</a>
+
+            <div class="nav-section">NGÂN HÀNG ĐỀ THI</div>
+            <a href="/teacher/questions" class="nav-item"><i class="fas fa-book-open"></i> Câu hỏi</a>
+            <a href="/teacher/create-exam" class="nav-item"><i class="fas fa-pen-fancy"></i> Tạo đề thi</a>
+            <a href="/teacher/exams" class="nav-item"><i class="far fa-file-alt"></i> Danh sách đề thi</a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="user-card" style="background: #e9ecef; border-radius: 12px; padding: 10px; margin-bottom: 10px;">
+                <div class="avatar-small" style="background: #007bff;">N</div>
+                <div class="user-info-mini">
+                    <div style="font-weight: 600;">Nguyễn Văn A</div>
+                    <div style="font-size: 11px; color: #666;">nguyenvana@edu.vn</div>
+                </div>
+            </div>
+            <div class="footer-links" style="display: flex; justify-content: space-between; padding: 0 5px;">
+                <a href="/settings" style="color: #444; text-decoration: none; font-size: 14px;"><i class="fas fa-cog"></i> Cài đặt</a>
+                <a href="/logout" style="color: #dc3545; text-decoration: none; font-size: 14px;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-wrapper">
+        <header class="main-header" style="display: flex; align-items: center; justify-content: space-between; padding: 0 30px;">
+            <div class="header-left">
+                <h2 style="font-size: 1.2rem; margin: 0;">{{title}}</h2>
+            </div>
+            <div class="header-right" style="display: flex; align-items: center; gap: 20px;">
+                <div class="search-bar" style="position: relative;">
+                    <i class="fas fa-search" style="position: absolute; left: 10px; top: 10px; color: #ccc;"></i>
+                    <input type="text" placeholder="Tìm kiếm..." style="padding: 6px 15px 6px 35px; border-radius: 20px; border: 1px solid #eee; background: #f9f9f9; width: 200px;">
+                </div>
+                <div class="noti-bell" style="position: relative;">
+                    <i class="far fa-bell" style="font-size: 1.2rem; color: #666;"></i>
+                    <span class="badge" style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; padding: 2px 5px; font-size: 10px;">3</span>
+                </div>
+            </div>
+        </header>
+        <section class="main-content">
+            {{{body}}}
+        </section>
+    </main>
+</div>
+</body>
+</html>
