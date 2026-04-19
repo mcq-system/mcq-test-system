@@ -1,102 +1,5 @@
-:root {
-  --primary: oklch(0.45 0.15 250);
-  --accent: oklch(0.55 0.18 250);
-  --background: oklch(0.98 0.005 250);
-  --foreground: oklch(0.2 0.02 250);
-  --border: oklch(0.9 0.01 250);
-  --input: oklch(0.92 0.01 250);
-  
-  --surface: #ffffff;
-  --text-muted: oklch(0.5 0.02 250);
-  --radius: 12px;
-  --transition: all 0.2s ease-in-out;
-
-  --primary-color: #0056b3;
-  --white: #fff;
-  --border-radius: 12px;
-  --shadow: 0 4px 12px rgba(0,0,0,0.1);
-  --text-sub: #65676b;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-}
-
 a {
-  color: var(--primary);
-  text-decoration: none;
-}
-
-/* ==================== Profile ==================== */
-.container-profile {
-  display: flex;
-  gap: 25px;
-  padding: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
-  animation: fadeInUp 0.8s ease-out;
-}
-
-.card {
-  background: var(--surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 25px;
-}
-
-.profile-sidebar {
-  flex: 1;
-  text-align: center;
-}
-
-.avatar-wrapper {
-  position: relative;
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 20px;
-}
-
-.avatar-circle {
-  width: 100%;
-  height: 100%;
-  background: var(--primary-color);
-  color: white;
-  font-size: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-weight: bold;
-}
-
-.btn-edit-avatar {
-  position: absolute;
-  bottom: 5px;
-  right: 5px;
-  background: #e4e6eb;
-  border: none;
-  border-radius: 50%;
-  padding: 8px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-edit-avatar:hover { background: #d8dadf; }
-
-.info-list {
-  text-align: left;
-  margin-top: 20px;
-  border-top: 1px solid #ddd;
-  padding-top: 15px;
+/* Giữ toàn bộ nội dung từ han-be (remote) */
 }
 
 .info-item {
@@ -888,3 +791,112 @@ tr:hover td {
   from { opacity: 1; transform: translateX(0); }
   to { opacity: 0; transform: translateX(50px); }
 }
+=======
+<<<<<<< HEAD
+/* body {
+=======
+body {
+>>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+  max-width: 250px;
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+
+  color: #00B7FF;
+}
+#sidebar-wrapper {
+  min-width: 250px;
+  max-width: 250px;
+  min-height: 100vh;
+}
+
+.active-menu {
+  background-color: #e8f0fe !important;
+  color: #0d6efd !important;
+  border-radius: 8px;
+}
+
+.search-bar {
+  width: 300px;
+}
+
+.bg-light {
+  background-color: #f8f9fa !important;
+}
+.bg-info-light { background-color: #e1f5fe !important; }
+.rounded-circle {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.timeline .fa-circle {
+  font-size: 10px;
+}
+/* Style cho Calendar */
+.calendar-container {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+}
+
+.calendar-table th {
+  font-weight: 600;
+  color: #6c757d;
+  text-align: center;
+  border: none;
+  padding: 15px 0;
+}
+
+.calendar-table td {
+  height: 100px;
+  vertical-align: top;
+  border: 1px solid #f1f3f5;
+  padding: 5px;
+  width: 14%;
+}
+
+.time-col {
+  color: #adb5bd;
+  font-size: 0.85rem;
+  text-align: center;
+  border: none !important;
+}
+
+.event-card {
+  border-radius: 8px;
+  padding: 10px;
+  color: white;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+  cursor: pointer;
+}
+
+.bg-toeic { background-color: #0081C9; }
+.bg-grammar { background-color: #865DFF; }
+.bg-ielts { background-color: #54B435; }
+.bg-vocabulary { background-color: #FFB100; }
+.bg-listening { background-color: #E94560; }
+
+/* Topic List Styles */
+.topic-card {
+  transition: all 0.3s ease;
+}
+
+.topic-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 .5rem 1.5rem rgba(0,0,0,.08)!important;
+}
+.bg-soft-primary { background-color: #e7f1ff; }
+.bg-soft-success { background-color: #e1f7ed; }
+.bg-soft-info { background-color: #e1f5fe; }
+.bg-soft-warning { background-color: #fff8e1; }
+.bg-soft-danger { background-color: #ffebee; }
+>>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e
+>>>>>>> han-be
