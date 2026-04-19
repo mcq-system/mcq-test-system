@@ -2,26 +2,28 @@ const mongoose = require("mongoose");
 
 const studentAnswerSchema = new mongoose.Schema(
   {
-    examSession: {
+    exam_session_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ExamSession",
       required: true,
     },
-    question: {
+    question_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Question",
       required: true,
     },
-    optionSelected: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "QuestionOption",
+    option_content: {
+      type: String,
+      required: true,
+      trim: true,
     },
   },
   {
     timestamps: false,
+    collection: "student_answers",
   },
 );
 
-studentAnswerSchema.index({ examSession: 1, question: 1 }, { unique: true });
+studentAnswerSchema.index({ exam_session_id: 1, question_id: 1 }, { unique: true });
 
 module.exports = mongoose.model("StudentAnswer", studentAnswerSchema);
