@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kết quả thi</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --line: #d9e1ea;
+      --text: #1f2a37;
+      --muted: #6b7280;
+      --primary: #0b5cab;
+      --primary-soft: #eaf2ff;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --warning: #d97706;
+      --info: #2563eb;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .topbar {
+      height: 52px;
+      background: rgba(255,255,255,.85);
+      border-bottom: 1px solid #e6edf5;
+      backdrop-filter: blur(6px);
+    }
+
+    .page-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+      color: #111827;
+    }
+
+    .search-box {
+      width: 220px;
+      max-width: 100%;
+      background: #f7fbff;
+      border: 1px solid #d7e3f0;
+      border-radius: 8px;
+      padding: 7px 12px 7px 34px;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #7b8794;
+      font-size: 14px;
+    }
+
+    .notif {
+      position: relative;
+      color: #475467;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -8px;
+      background: #dc2626;
+      color: #fff;
+      border-radius: 999px;
+      min-width: 18px;
+      height: 18px;
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid #fff;
+    }
+
+    .page-wrap {
+      padding: 18px 12px 28px;
+    }
+
+    .main-card,
+    .detail-card,
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(16,24,40,.04), 0 8px 24px rgba(16,24,40,.03);
+    }
+
+    .main-card {
+      padding: 18px 20px;
+    }
+
+    .score-ring {
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: conic-gradient(var(--primary) {{scorePercent}}%, #e9eef5 0);
+      position: relative;
+      display: grid;
+      place-items: center;
+      margin: 0 auto;
+    }
+
+    .score-ring::before {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: inset 0 0 0 1px #edf2f7;
+    }
+
+    .score-ring .score-text {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      line-height: 1;
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .score-ring .score-num {
+      font-size: 30px;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .score-ring .score-den {
+      font-size: 14px;
+      font-weight: 500;
+      color: #64748b;
+    }
+
+    .exam-title {
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0 0 8px;
+      color: #111827;
+    }
+
+    .meta-line {
+      color: #5b6472;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 14px;
+      font-weight: 600;
+      border: 1px solid transparent;
+    }
+
+    .pill-rank {
+      background: #dcecff;
+      color: #0b5cab;
+    }
+
+    .pill-top {
+      background: #f8fafc;
+      color: #334155;
+      border-color: #d9e1ea;
+      font-size: 13px;
+      padding: 5px 10px;
+    }
+
+    .stat-card {
+      height: 140px;
+      padding: 18px 12px;
+      text-align: center;
+    }
+
+    .stat-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+
+    .icon-success {
+      color: var(--success);
+      background: #ecfdf3;
+    }
+
+    .icon-danger {
+      color: var(--danger);
+      background: #fff1f2;
+    }
+
+    .icon-warning {
+      color: var(--warning);
+      background: #fff7ed;
+    }
+
+    .icon-info {
+      color: var(--info);
+      background: #eff6ff;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #667085;
+    }
+
+    .detail-card {
+      padding: 16px 18px 18px;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+
+    .section-subtitle {
+      font-size: 14px;
+      color: #637083;
+      margin-bottom: 16px;
+    }
+
+    .bar-row {
+      margin-bottom: 14px;
+    }
+
+    .bar-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .bar-track {
+      width: 100%;
+      height: 10px;
+      background: #edf2f7;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .fill-success { background: var(--success); }
+    .fill-danger { background: #e11d48; }
+    .fill-warning { background: #d97706; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 28px;
+      font-size: 14px;
+      color: #334155;
+      margin-top: 14px;
+    }
+
+    .info-grid b {
+      color: #111827;
+      font-weight: 700;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-result {
+      min-width: 160px;
+      border-radius: 8px;
+      height: 38px;
+      font-weight: 600;
+    }
+
+    .btn-home {
+      background: #fff;
+      border: 1px solid #d0d7e2;
+      color: #1f2937;
+    }
+
+    .btn-home:hover {
+      background: #f8fafc;
+      border-color: #c8d2df;
+      color: #111827;
+    }
+
+    .btn-download {
+      background: #fff;
+      border: 1px solid #d0d7e2;
+      color: #1f2937;
+    }
+
+    .btn-download:hover {
+      background: #f8fafc;
+      border-color: #c8d2df;
+      color: #111827;
+    }
+
+    .btn-view {
+      background: var(--primary);
+      border: 1px solid var(--primary);
+      color: #fff;
+    }
+
+    .btn-view:hover {
+      background: #094a8c;
+      border-color: #094a8c;
+      color: #fff;
+    }
+
+    @media (max-width: 991.98px) {
+      .exam-title { font-size: 18px; }
+      .score-ring { margin-bottom: 16px; }
+      .search-box { width: 160px; }
+      .stat-card { height: auto; min-height: 124px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .btn-result { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar px-3 d-flex align-items-center justify-content-between">
+    <h1 class="page-title">Kết quả thi</h1>
+
+    <div class="d-flex align-items-center gap-3">
+      <div class="search-wrap">
+        <i class="bi bi-search"></i>
+        <input class="search-box" type="text" placeholder="Tìm kiếm...">
+      </div>
+      <div class="notif">
+        <i class="bi bi-bell"></i>
+        <span class="notif-badge">2</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-wrap">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12 col-xl-6">
+
+          <div class="main-card mb-3">
+            <div class="row align-items-center g-3">
+              <div class="col-12 col-md-auto text-center">
+                <div class="score-ring position-relative">
+                 
+                  <div class="score-text pt-3">
+                    <span class="score-num">{{score}}</span>
+                    <span class="score-den">/10</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col">
+                <h2 class="exam-title mb-2">{{examTitle}}</h2>
+                <div class="meta-line mb-2">
+                  Hoàn thành lúc: {{finishTime}}
+                </div>
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                  <span class="pill pill-rank"><i class="bi bi-bar-chart-fill me-1"></i>Xếp hạng: <span>{{rank}}</span></span>
+                  <span class="pill pill-top">
+                    <i class="bi bi-trophy"></i>
+                    Top {{topRank}}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon icon-success">
+                  <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-value text-success">{{correct}}</div>
+                <div class="stat-label">Câu đúng</div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon icon-danger">
+                  <i class="bi bi-x-circle-fill"></i>
+                </div>
+                <div class="stat-value text-danger">{{wrong}}</div>
+                <div class="stat-label">Câu sai</div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon icon-warning">
+                  <i class="bi bi-dash-circle-fill"></i>
+                </div>
+                <div class="stat-value text-warning">{{skipped}}</div>
+                <div class="stat-label">Bỏ qua</div>
+              </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+              <div class="stat-card">
+                <div class="stat-icon icon-info">
+                  <i class="bi bi-clock-history"></i>
+                </div>
+                <div class="stat-value text-primary">{{timeUsed}}</div>
+                <div class="stat-label">Thời gian</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-card">
+            <div class="section-title">
+            
+              Phân tích chi tiết
+            </div>
+            <div class="section-subtitle">Tổng hợp kết quả làm bài của bạn</div>
+
+            <div class="bar-row">
+              <div class="bar-head">
+                <span><i class="bi bi-check-circle-fill text-success me-1"></i>Câu trả lời đúng</span>
+                <span>{{correct}} ({{correctPercent}}%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill fill-success" style="width: {{correctPercent}}%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-head">
+                <span><i class="bi bi-x-circle-fill text-danger me-1"></i>Câu trả lời sai</span>
+                <span>{{wrong}} ({{wrongPercent}}%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill fill-danger" style="width: {{wrongPercent}}%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-head">
+                <span><i class="bi bi-dash-circle-fill text-warning me-1"></i>Câu bỏ qua</span>
+                <span>{{skipped}} ({{skippedPercent}}%)</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill fill-warning" style="width: {{skippedPercent}}%;"></div>
+              </div>
+            </div>
+
+            <hr class="my-4" style="border-color:#edf2f7; opacity:1;">
+
+            <div class="info-grid">
+              <div><i class="bi bi-list-ol me-1"></i>Tổng số câu hỏi: <b>{{totalQuestions}}</b></div>
+              <div><i class="bi bi-hourglass-split me-1"></i>Thời gian cho phép: <b>{{timeAllowed}}</b></div>
+              <div><i class="bi bi-clock me-1"></i>Thời gian sử dụng: <b>{{timeUsed}}</b></div>
+              <div><i class="bi bi-bar-chart me-1"></i>Xếp hạng: <b>{{rank}}/{{totalRank}}</b></div>
+            </div>
+          </div>
+
+          <div class="action-row justify-content-between">
+            <a href="/" class="btn btn-result btn-home">
+              <i class="bi bi-house-door me-1"></i> Về trang chủ
+            </a>
+            <a href="/download-result" class="btn btn-result btn-download">
+              <i class="bi bi-download me-1"></i> Tải kết quả
+            </a>
+            <a href="/view-answers" class="btn btn-result btn-view">
+              <i class="bi bi-card-list me-1"></i> Xem đáp án
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
