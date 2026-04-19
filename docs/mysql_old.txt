@@ -1,0 +1,221 @@
+DROP DATABASE IF EXISTS mcq_test_system;
+CREATE DATABASE mcq_test_system CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE mcq_test_system;
+
+-- =========================
+-- 1) USERS
+-- =========================
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    phone TEXT,
+    password TEXT NOT NULL, -- lưu hash
+    role ENUM('admin', 'teacher', 'student') NOT NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_users_email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =========================
+-- 2) CLASSES
+-- =========================
+CREATE TABLE classes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ten TEXT NOT NULL,
+    teacher_id INT NULL,
+    description TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_classes_teacher
+        FOREIGN KEY (teacher_id) REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_classes_teacher_id ON classes(teacher_id);
+
+-- =========================
+-- 3) CLASS MEMBERS
+-- =========================
+CREATE TABLE class_members (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NOT NULL,
+    student_id INT NOT NULL,
+    description TEXT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_class_members_class_student (class_id, student_id),
+    CONSTRAINT fk_class_members_class
+        FOREIGN KEY (class_id) REFERENCES classes(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_class_members_student
+        FOREIGN KEY (student_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_class_members_class_id ON class_members(class_id);
+CREATE INDEX idx_class_members_student_id ON class_members(student_id);
+
+-- =========================
+-- 4) SCHEDULES
+-- =========================
+CREATE TABLE schedules (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NOT NULL,
+    day_of_week TINYINT NOT NULL, -- 1=Mon ... 7=Sun
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    CONSTRAINT fk_schedules_class
+        FOREIGN KEY (class_id) REFERENCES classes(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_schedules_class_id ON schedules(class_id);
+
+-- =========================
+-- 5) QUESTION TOPICS
+-- =========================
+CREATE TABLE question_topics (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =========================
+-- 6) QUESTIONS
+-- =========================
+CREATE TABLE questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    topic_id INT NULL,
+    created_by INT NULL,
+    content TEXT NOT NULL,
+    level ENUM('easy', 'medium', 'hard') NOT NULL,
+    status ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_questions_topic
+        FOREIGN KEY (topic_id) REFERENCES question_topics(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_questions_created_by
+        FOREIGN KEY (created_by) REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_questions_topic_id ON questions(topic_id);
+CREATE INDEX idx_questions_created_by ON questions(created_by);
+
+-- =========================
+-- 7) QUESTION OPTIONS
+-- =========================
+CREATE TABLE question_options (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    question_id INT NOT NULL,
+    content TEXT NOT NULL,
+    is_correct TINYINT(1) NOT NULL DEFAULT 0,
+    CONSTRAINT fk_question_options_question
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_question_options_question_id ON question_options(question_id);
+
+-- =========================
+-- 8) EXAMS
+-- =========================
+CREATE TABLE exams (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    class_id INT NULL,
+    created_by INT NULL,
+    title TEXT NOT NULL,
+    duration_minutes INT NOT NULL,
+    start_time DATETIME NULL,
+    end_time DATETIME NULL,
+    status ENUM('DRAFT', 'PUBLISHED', 'CLOSED') NOT NULL DEFAULT 'DRAFT',
+    CONSTRAINT fk_exams_class
+        FOREIGN KEY (class_id) REFERENCES classes(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_exams_created_by
+        FOREIGN KEY (created_by) REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_exams_class_id ON exams(class_id);
+CREATE INDEX idx_exams_created_by ON exams(created_by);
+
+-- =========================
+-- 9) EXAM QUESTIONS
+-- =========================
+CREATE TABLE exam_questions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    exam_id INT NOT NULL,
+    question_id INT NOT NULL,
+    UNIQUE KEY uk_exam_questions_exam_question (exam_id, question_id),
+    CONSTRAINT fk_exam_questions_exam
+        FOREIGN KEY (exam_id) REFERENCES exams(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_exam_questions_question
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_exam_questions_exam_id ON exam_questions(exam_id);
+CREATE INDEX idx_exam_questions_question_id ON exam_questions(question_id);
+
+-- =========================
+-- 10) EXAM SESSIONS
+-- =========================
+CREATE TABLE exam_sessions (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    exam_id INT NOT NULL,
+    student_id INT NOT NULL,
+    started_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    submitted_at DATETIME NULL,
+    status ENUM('DOING', 'SUBMITTED', 'EXPIRED') NOT NULL DEFAULT 'DOING',
+    UNIQUE KEY uk_exam_sessions_exam_student (exam_id, student_id),
+    CONSTRAINT fk_exam_sessions_exam
+        FOREIGN KEY (exam_id) REFERENCES exams(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_exam_sessions_student
+        FOREIGN KEY (student_id) REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_exam_sessions_exam_id ON exam_sessions(exam_id);
+CREATE INDEX idx_exam_sessions_student_id ON exam_sessions(student_id);
+
+-- =========================
+-- 11) STUDENT ANSWERS
+-- =========================
+CREATE TABLE student_answers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    exam_session_id INT NOT NULL,
+    question_id INT NOT NULL,
+    option_selected_id INT NULL,
+    CONSTRAINT fk_student_answers_exam_session
+        FOREIGN KEY (exam_session_id) REFERENCES exam_sessions(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_student_answers_question
+        FOREIGN KEY (question_id) REFERENCES questions(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_student_answers_selected_option
+        FOREIGN KEY (option_selected_id) REFERENCES question_options(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE INDEX idx_student_answers_exam_session_id ON student_answers(exam_session_id);
+CREATE INDEX idx_student_answers_question_id ON student_answers(question_id);
+CREATE INDEX idx_student_answers_option_selected_id ON student_answers(option_selected_id);
