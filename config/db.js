@@ -6,10 +6,10 @@ const mongoose = require('mongoose');
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect('mongodb://127.0.0.1:27017/mcq-test-system-tram-be');
-    console.log(`✅ Kết nối MongoDB thành công: ${conn.connection.host}`);
+    console.log(`Connect to MongoDB: ${conn.connection.host}`);
     console.log(`Sử dụng database: ${conn.connection.name}`);
   } catch (error) {
-    console.error(`❌ Lỗi rồi: ${error.message}`);
+    console.error(`Error: ${error.message}`);
     process.exit(1);
   }
 };
