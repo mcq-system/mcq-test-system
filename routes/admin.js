@@ -3,8 +3,19 @@ var express = require('express');
 var router = express.Router();
 const Notification = require('../models/Notification');
 const User = require('../models/User');
+
 const bcrypt = require('bcryptjs');
-const {protect} = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
+
+
+// Dashboard
+router.get('/dashboard', protect('admin'), (req, res) => {
+    res.render('admin/dashboard', {
+        user: req.user,
+        title: 'Admin Dashboard'
+    });
+});
+
 
 // Dashboard
 router.get('/dashboard', protect('admin'), (req, res) => {
@@ -26,10 +37,12 @@ router.get('/notifications', async (req, res) => {
             notifications,
             users
         });
+
     } catch (err) {
         res.status(500).send(err.message);
     }
 });
+
 
 router.post('/notifications', async (req, res) => {
     try {

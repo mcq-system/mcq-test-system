@@ -1,27 +1,27 @@
 #!/usr/bin/env node
+const path = require("path");
+require("dotenv").config({ path: path.join(__dirname, "../.env") });
 
-const path = require('path');
-require('dotenv').config({ path: path.join(__dirname, '../.env') });
+var app = require("../app");
+var debug = require("debug")("mcq-test-system:server");
+var http = require("http");
 
-var app = require('../app');
-var debug = require('debug')('mcq-test-system:server');
-var http = require('http');
-
-const connectDB = require('../config/db');
+const connectDB = require("../config/db");
 connectDB();
 
-var port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+var port = normalizePort(process.env.PORT || "3000");
+app.set("port", port);
 
 var server = http.createServer(app);
 
 server.listen(port, () => {
   console.log(`---`);
-  console.log(`🚀 Server đang chạy tại: http://localhost:${port}`);
+  console.log(`Thiên thần đang bay tại: http://localhost:${port}`);
+  console.log(`Thien than dang bay tai: http://localhost:${port}`);
   console.log(`---`);
 });
-server.on('error', onError);
-server.on('listening', onListening);
+server.on("error", onError);
+server.on("listening", onListening);
 
 function normalizePort(val) {
   var port = parseInt(val, 10);
@@ -35,19 +35,19 @@ function normalizePort(val) {
 }
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
+  if (error.syscall !== "listen") {
     throw error;
   }
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+
+  var bind = typeof port === "string" ? "Pipe " + port : "Port " + port;
+
   switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
+    case "EACCES":
+      console.error(bind + " requires elevated privileges");
       process.exit(1);
       break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
+    case "EADDRINUSE":
+      console.error(bind + " is already in use");
       process.exit(1);
       break;
     default:
@@ -57,30 +57,6 @@ function onError(error) {
 
 function onListening() {
   var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+  var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
+  debug("Listening on " + bind);
 }
-      throw error;
-  }
-}
-
-/**
- * Event listener for HTTP server "listening" event.
- */
-
-function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-<<<<<<< HEAD
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
-=======
-      ? 'pipe ' + addr
-      : 'port ' + addr.port;
-  debug('Listening on ' + bind);
-}
->>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e

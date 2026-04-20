@@ -1,4 +1,4 @@
-// Giữ toàn bộ nội dung từ han-be (remote)
+// ...existing code...
 var express = require('express');
 var router = express.Router();
 const Notification = require('../models/Notification');
@@ -54,8 +54,8 @@ router.get('/notifications', async function(req, res, next) {
   try {
     const userId = "000000000000000000000001"; // ID mẫu của bạn
     const notifications = await Notification.find({ recipient: userId })
-        .populate('sender', 'first_name last_name')
-        .sort({ created_at: -1 }).lean();
+      .populate('sender', 'first_name last_name')
+      .sort({ created_at: -1 }).lean();
     const unreadCount = notifications.filter(n => !n.isRead).length;
     res.render('user/notifications', {
       title: 'Thông báo - English MCQ',
@@ -95,41 +95,9 @@ router.delete('/notifications/:id', async (req, res) => {
   }
 });
 
-module.exports = router;
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-router.delete('/notifications/:id', async (req, res) => {
-  try {
-    await Notification.findByIdAndDelete(req.params.id);
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
-
-module.exports = router;
-=======
-
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
 module.exports = router;
-=======
-var express = require('express');
-var router = express.Router();
-
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
-});
-
-module.exports = router;
->>>>>>> d9f99efa55465185aebb3b76f110bb2f8d8d3f9e
->>>>>>> han-be

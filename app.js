@@ -1,14 +1,14 @@
-// Giữ toàn bộ nội dung từ han-be (remote)
-var path = require('path'); // Chỉ khai báo path 1 lần duy nhất ở đây
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const { engine } = require('express-handlebars');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var adminRouter = require('./routes/admin'); // Import router admin
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
 
-var app = express();
+const app = express();
 
 // CẤU HÌNH HANDLEBARS (HBS)
 app.engine('hbs', engine({
@@ -29,7 +29,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ĐỊNH TUYẾN (ROUTES)
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/admin', adminRouter); // Route admin phải nằm TRƯỚC error handler
+app.use('/admin', adminRouter);
 
 // BẮT LỖI 404 (Nếu không khớp route nào ở trên)
 app.use(function(req, res, next) {
@@ -42,7 +42,7 @@ app.use(function(err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   res.status(err.status || 500);
-  res.render('error', { layout: false }); // Không dùng layout admin cho trang lỗi
+  res.render('error', { layout: false });
 });
 
 module.exports = app;
