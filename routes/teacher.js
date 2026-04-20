@@ -5,7 +5,8 @@ const { protect } = require('../middleware/auth');
 router.get('/dashboard', protect('teacher'), (req, res) => {
   res.render('teacher/dashboard', {
     user: req.user,
-    title: 'Teacher Dashboard'
+    title: 'Teacher Dashboard',
+    layout: 'layout-teacher',
   });
 });
 

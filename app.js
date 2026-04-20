@@ -1,17 +1,16 @@
 require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
+const { engine } = require('express-handlebars');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
-var authRouter = require('./routes/auth');
 var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
 var adminRouter = require('./routes/admin');
+var authRouter = require('./routes/auth');
 
 const connectDB = require('./config/db');
 
@@ -19,6 +18,23 @@ connectDB();
 
 var app = express();
 
+app.engine(
+    'hbs',
+    engine({
+      extname: '.hbs',
+      defaultLayout: false,
+      layoutsDir: path.join(__dirname, 'views', 'layouts'),
+      partialsDir: path.join(__dirname, 'views', 'partials'),
+      helpers: {
+        eq: function (a, b) {
+          return a === b;
+        },
+        slice: function (str, start, end) {
+          return str ? str.slice(start, end) : "";
+        }
+      }
+    })
+);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -29,12 +45,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/auth', authRouter);     
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
+app.use('/auth', authRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));
