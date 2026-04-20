@@ -1,0 +1,135 @@
+{{! views/partials/drawer-form.hbs }}
+<div class="drawer-overlay hidden" id="drawerOverlay">
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <span class="drawer-title">Thêm câu hỏi Tiếng Anh</span>
+      <button class="icon-btn" id="closeDrawerBtn" style="width:32px;height:32px;">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 3l10 10M13 3L3 13"/>
+        </svg>
+      </button>
+    </div>
+
+    <form action="/questions" method="POST">
+      <div class="drawer-body">
+
+        {{! Basic info }}
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Loại câu hỏi</label>
+            <select class="form-input" name="type" id="qTypeSelect">
+              <option value="reading">Reading</option>
+              <option value="listening">Audio Listening</option>
+              <option value="grammar">Grammar</option>
+              <option value="vocab">Vocabulary</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Cấp độ</label>
+            <select class="form-input" name="level">
+              <option>A1</option><option>A2</option>
+              <option selected>B1</option>
+              <option>B2</option><option>C1</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Chủ đề</label>
+            <select class="form-input" name="topic">
+              <option>Environment</option>
+              <option>Technology</option>
+              <option>Health</option>
+              <option>Culture</option>
+            </select>
+          </div>
+        </div>
+
+        {{! Reading section }}
+        <div id="readingSection">
+          <div class="section-block">
+            <div class="section-block-title">Bài đọc (Passage)</div>
+            <textarea class="passage-area" name="passage" rows="5"
+              placeholder="Nhập nội dung đoạn văn Reading tại đây...">Climate change refers to long-term shifts in temperatures and weather patterns.</textarea>
+          </div>
+        </div>
+
+        {{! Listening section }}
+        <div id="listeningSection" class="hidden">
+          <div class="section-block">
+            <div class="section-block-title">File âm thanh</div>
+            <div class="audio-box">
+              <button type="button" class="audio-play-btn">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="white"><polygon points="4,2 14,8 4,14"/></svg>
+              </button>
+              <div class="audio-wave" id="audioWave"></div>
+              <span class="audio-time">0:00 / 0:00</span>
+            </div>
+            <div style="margin-top:8px;">
+              <label class="btn btn-outline" style="width:100%; justify-content:center; border-style:dashed; cursor:pointer;">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M8 2v8M5 8l3 3 3-3"/>
+                  <rect x="2" y="11" width="12" height="3" rx="1.5"/>
+                </svg>
+                Tải lên file MP3 / WAV
+                <input type="file" name="audio" accept=".mp3,.wav" style="display:none;"/>
+              </label>
+            </div>
+            <div class="form-group" style="margin-top:10px;">
+              <label class="form-label">Transcript (tùy chọn)</label>
+              <textarea class="passage-area" name="transcript" rows="3"
+                placeholder="Nhập nội dung lời thoại âm thanh..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        {{! Question text }}
+        <div class="form-group">
+          <label class="form-label">Câu hỏi</label>
+          <textarea class="passage-area" name="questionText" rows="2"
+            placeholder="Nhập câu hỏi...">What is the main cause of climate change according to the passage?</textarea>
+        </div>
+
+        {{! Answer options }}
+        <div class="section-block">
+          <div class="section-block-title">Các đáp án</div>
+          <div class="answer-options">
+            <div class="answer-opt">
+              <div class="answer-letter answer-correct" data-letter="A">A</div>
+              <input class="form-input" name="option_a" value="Human activities since the 1800s"/>
+            </div>
+            <div class="answer-opt">
+              <div class="answer-letter" data-letter="B">B</div>
+              <input class="form-input" name="option_b" value="Natural shifts in temperature"/>
+            </div>
+            <div class="answer-opt">
+              <div class="answer-letter" data-letter="C">C</div>
+              <input class="form-input" name="option_c" value="Industrial revolution only"/>
+            </div>
+            <div class="answer-opt">
+              <div class="answer-letter" data-letter="D">D</div>
+              <input class="form-input" name="option_d" value="Solar activity changes"/>
+            </div>
+          </div>
+          <input type="hidden" name="correctAnswer" id="correctAnswerInput" value="A"/>
+          <div style="margin-top:8px; font-size:12px; color:var(--muted);">
+            Đáp án đúng: <strong id="correctAnswerLabel" style="color:var(--success);">A</strong>
+            — click vào ký tự để chọn
+          </div>
+        </div>
+
+        {{! Explanation }}
+        <div class="form-group">
+          <label class="form-label">Giải thích đáp án (tùy chọn)</label>
+          <textarea class="passage-area" name="explanation" rows="2"
+            placeholder="Giải thích tại sao đáp án này đúng..."></textarea>
+        </div>
+
+      </div>{{! end drawer-body }}
+
+      <div class="drawer-footer">
+        <button type="button" class="btn btn-outline" id="cancelDrawerBtn">Hủy</button>
+        <button type="submit" name="_action" value="draft" class="btn btn-outline">Lưu nháp</button>
+        <button type="submit" name="_action" value="save" class="btn btn-primary">Lưu câu hỏi</button>
+      </div>
+    </form>
+  </div>
+</div>

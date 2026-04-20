@@ -1,0 +1,29 @@
+<div class="sidebar">
+  <div class="sidebar-title">Ngân hàng câu hỏi</div>
+
+  <a href="/" class="nav-item {{#if (eq activeNav 'questions')}}active{{/if}}">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <rect x="2" y="3" width="12" height="2" rx="1"/>
+      <rect x="2" y="7" width="8" height="2" rx="1"/>
+      <rect x="2" y="11" width="10" height="2" rx="1"/>
+    </svg>
+    Danh sách câu hỏi
+  </a>
+
+  <a href="/trash" class="nav-item {{#if (eq activeNav 'trash')}}active{{/if}}">
+    <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M3 4h10M6 4V3h4v1M5 4l1 9h4l1-9"/>
+    </svg>
+    Thùng rác
+  </a>
+
+  <div style="margin-top:auto; padding-top:16px; border-top:1px solid var(--border);">
+    <a href="/changelog" class="nav-item {{#if (eq activeNav 'changelog')}}active{{/if}}">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="8" cy="8" r="5.5"/>
+        <path d="M8 5.5v3l1.5 1.5"/>
+      </svg>
+      Nhật ký thay đổi
+    </a>
+  </div>
+</div>
