@@ -18,7 +18,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section">TỔNG QUAN</div>
             <a href="/teacher/dashboard" class="nav-item active"><i class="fas fa-calendar-check"></i> Lịch dạy</a>
-            <a href="#" class="nav-item"><i class="fas fa-bell"></i> Thông báo</a>
+            <a href="/teacher/notifications" class="nav-item"><i class="fas fa-bell"></i> Thông báo</a>
 
 
             <div class="nav-section">QUẢN LÝ LỚP HỌC</div>
@@ -32,13 +32,17 @@
         </nav>
 
         <div class="sidebar-footer">
-            <div class="user-card">
-                <div class="avatar-small" style="background: #28a745;">GV</div>
+            <a href="/teacher/profile" class="user-card" style="text-decoration: none; color: inherit;">
+                <div class="avatar-small">{{slice user.last_name 0 1}}</div>
                 <div class="user-info-mini">
-                    <div style="font-weight: 600;">Nguyễn Văn A</div>
-                    <div style="font-size: 11px;">gv.ana@edu.vn</div>
+                    <div style="font-weight: 600; font-size: 14px;">
+                        {{user.last_name}} {{user.first_name}}
+                    </div>
+                    <div style="font-size: 11px; color: #888;">
+                        {{user.email}}
+                    </div>
                 </div>
-            </div>
+            </a>
             <div class="footer-links">
                 <a href="/logout" style="color: #dc3545; width: 100%; text-align: center;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
             </div>

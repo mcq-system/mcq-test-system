@@ -5,19 +5,21 @@ const Notification = require('../models/Notification');
 const User = require('../models/User');
 
 //============================= Dashboard ==========================================================
-router.get('/dashboard', protect('student'), (req, res) => {
-  res.render('student/dashboard', {
-    user: req.user,
-    title: 'Student Dashboard',
-    layout: 'layout-student',
-  });
+router.get('/dashboard', protect('student'), async (req, res) => {
+    const userId = req.user._id;
+    const user = await User.findById(userId).lean();
+    res.render('student/dashboard', {
+        user,
+        title: 'Student Dashboard',
+        layout: 'layout-student',
+    });
 });
 
 //============================= Profile ===========================================================
 router.get('/profile', protect('student'), async (req, res, next) => {
   try {
-const userId = req.user?._id; 
-if (!userId) return res.redirect('/login');
+      const userId = req.user?._id;
+      if (!userId) return res.redirect('/login');
 
     const user = await User.findById(userId).lean();
     if (!user) return res.status(404).send("Người dùng không tồn tại");

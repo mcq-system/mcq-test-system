@@ -27,13 +27,17 @@
         </nav>
 
         <div class="sidebar-footer">
-            <div class="user-card">
-                <div class="avatar-small" style="background: #343a40;">A</div>
+            <a href="/admin/profile" class="user-card" style="text-decoration: none; color: inherit;">
+                <div class="avatar-small">{{slice user.last_name 0 1}}</div>
                 <div class="user-info-mini">
-                    <div style="font-weight: 600;">English MCQ</div>
-                    <div style="font-size: 11px;">admin@center.edu.vn</div>
+                    <div style="font-weight: 600; font-size: 14px;">
+                        {{user.last_name}} {{user.first_name}}
+                    </div>
+                    <div style="font-size: 11px; color: #888;">
+                        {{user.email}}
+                    </div>
                 </div>
-            </div>
+            </a>
             <div class="footer-links">
                 <a href="/logout" style="color: #dc3545; width: 100%; text-align: center;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
             </div>
@@ -43,8 +47,9 @@
     <main class="main-wrapper">
         <header class="main-header">
             <h2>{{title}}</h2>
-            <div class="header-tools">
-                <div class="noti-bell"><i class="fas fa-bell"></i><span class="badge">5</span></div>
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Tìm kiếm...">
             </div>
         </header>
         <section class="content-body">{{{body}}}</section>
