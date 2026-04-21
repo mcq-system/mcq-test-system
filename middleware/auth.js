@@ -1,41 +1,44 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 
 /**
- * Middleware to protect routes and verify user roles.
- * @param {string|string[]} roles - Single role or array of roles allowed to access the route.
+ * Middleware để bảo vệ route và kiểm tra quyền truy cập.
+ * @param {string|string[]} roles - Một role hoặc mảng role được phép truy cập.
  */
 const protect = (roles = []) => {
-  return (req, res, next) => {
-    // 1Get token from cookies
+  return async (req, res, next) => {
     const token = req.cookies.token;
 
     if (!token) {
-      // If no token, redirect to login
       return res.redirect('/login');
     }
 
     try {
-      // Verify token
+      // Xác thực token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || 'mcq_secret_key');
-      
-      // Attach user info to request
-      req.user = decoded;
 
-      // Check roles if any are specified
-      if (roles.length > 0) {
-        const rolesArray = Array.isArray(roles) ? roles : [roles];
-        if (!rolesArray.includes(decoded.role)) {
-          return res.status(403).render('error', { 
-            message: 'Bạn không có quyền truy cập vào trang này.',
-            error: { status: 403 }
-          });
-        }
+      // Tìm user trong DB
+      const user = await User.findById(decoded.id);
+      if (!user) {
+        res.clearCookie('token');
+        return res.redirect('/login');
+      }
+
+      // Gán user vào req
+      req.user = user;
+
+      // Kiểm tra role nếu có yêu cầu
+      const rolesArray = Array.isArray(roles) ? roles : [roles];
+      if (rolesArray.length > 0 && !rolesArray.includes(user.role)) {
+        return res.status(403).render('error', {
+          message: 'Bạn không có quyền truy cập vào trang này.',
+          error: { status: 403 }
+        });
       }
 
       next();
     } catch (err) {
       console.error('Auth Middleware Error:', err.message);
-      // If token is invalid or expired, clear cookie and redirect
       res.clearCookie('token');
       return res.redirect('/login');
     }
