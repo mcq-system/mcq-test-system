@@ -20,6 +20,7 @@ router.get('/notifications', protect('teacher'), async (req, res) => {
   try {
     const teacherId = req.user?._id;
     if (!teacherId) return res.redirect('/login');
+    const user = await User.findById(teacherId).lean();
 
     const incoming = await Notification.find({ recipient: teacherId })
         .populate('sender', 'first_name last_name')
@@ -31,14 +32,14 @@ router.get('/notifications', protect('teacher'), async (req, res) => {
         .sort({ created_at: -1 })
         .lean();
 
-    const teachers = await User.find({ role: 'teacher' }, 'first_name last_name email').lean();
-
+    const students = await User.find({ role: 'student' }, 'first_name last_name email').lean();
     res.render('teacher/notifications', {
       title: 'Thông báo & Liên lạc',
       layout: 'layout-teacher',
       incoming,
       outgoing,
-      teachers,
+      user,
+      students,
     });
   } catch (err) {
     res.status(500).send(err.message);

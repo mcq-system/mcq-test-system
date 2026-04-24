@@ -27,7 +27,7 @@ router.get('/notifications', protect('admin'), async (req, res) => {
         .populate('sender', 'first_name last_name')
         .sort({ created_at: -1 })
         .lean();
-
+    const user = await User.findById(req.user._id).lean();
     const users = await User.find({ status: 'active' }, 'email first_name last_name').lean();
 
     res.render('admin/notifications', {
@@ -35,6 +35,7 @@ router.get('/notifications', protect('admin'), async (req, res) => {
       layout: 'layout-admin',
       notifications,
       users,
+      user,
     });
   } catch (err) {
     res.status(500).send(err.message);
@@ -75,7 +76,7 @@ router.delete('/notifications/:id', protect('admin'), async (req, res) => {
 router.get('/manager-user', protect('admin'), async (req, res) => {
   try {
     const users = await User.find().sort({ created_at: -1 }).lean();
-
+    const user = await User.findById(req.user._id).lean();
     const teachers = users.filter(u => u.role === 'teacher');
     const students = users.filter(u => u.role === 'student');
 
@@ -84,6 +85,7 @@ router.get('/manager-user', protect('admin'), async (req, res) => {
       layout: 'layout-admin',
       teachers,
       students,
+      user,
       teacherCount: teachers.length,
       studentCount: students.length,
     });

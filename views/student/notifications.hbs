@@ -62,18 +62,28 @@
         });
     });
 
-    document.querySelectorAll('.btn-delete-notifications.hbs').forEach(btn => {
+    document.querySelectorAll('.btn-delete-noti').forEach(btn => {
         btn.addEventListener('click', async () => {
             if (confirm('Bạn có chắc muốn xóa thông báo này?')) {
                 const id = btn.getAttribute('data-id');
-                const response = await fetch(`/student/notifications/${id}`, { method: 'DELETE' });
+                const response = await fetch(`/student/notifications/${id}`, {
+                    method: 'DELETE'
+                });
+
                 if (response.ok) {
                     const item = document.getElementById(`noti-${id}`);
-                    item.style.animation = 'fadeOut 0.3s forwards';
-                    setTimeout(() => {
-                        if (item.classList.contains('unread')) updateUnreadCount(-1);
-                        item.remove();
-                    }, 300);
+                    if (item) {
+                        item.style.animation = 'fadeOut 0.3s forwards';
+
+                        setTimeout(() => {
+                            if (item.classList.contains('unread')) {
+                                updateUnreadCount(-1);
+                            }
+                            item.remove();
+                        }, 300);
+                    }
+                } else {
+                    alert("Không thể xóa thông báo lúc này!");
                 }
             }
         });

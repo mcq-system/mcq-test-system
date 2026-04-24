@@ -67,7 +67,8 @@ if (!userId) return res.redirect('/login');
 //============================= Notifications =====================================================
 router.get('/notifications', protect('student'), async (req, res, next) => {
   try {
-const userId = req.user?._id; 
+const userId = req.user?._id;
+const user = await User.findById(userId).lean();
 if (!userId) return res.redirect('/login');
 
     const notifications = await Notification.find({ recipient: userId })
@@ -81,6 +82,7 @@ if (!userId) return res.redirect('/login');
       title: 'Thông báo - English MCQ',
       notifications,
       unreadCount,
+        user,
       layout: 'layout-student',
     });
   } catch (err) {
