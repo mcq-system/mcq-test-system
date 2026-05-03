@@ -13,11 +13,15 @@ router.get('/dashboard', protect('admin'), async (req, res, next) => {
       user,
       title: 'Admin Dashboard',
       layout: 'layout-admin',
+      // TODO: thay bằng query thực khi có model lớp học
+      stats: { activeClasses: 0, examsDone: 0, avgScore: 0 },
+      courses: [],
     });
   } catch (err) {
     next(err);
   }
 });
+
 
 //======================= Notifications (Quản lý thông báo) =====================================
 router.get('/notifications', protect('admin'), async (req, res) => {
