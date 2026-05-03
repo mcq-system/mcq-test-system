@@ -1,11 +1,194 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
-  </body>
-</html>
+{{!-- views/teacher/dashboard.hbs — Lịch dạy theo tuần --}}
+
+<div class="schedule-header d-flex justify-content-between align-items-start mb-4">
+  <div>
+    <h4 class="fw-bold mb-1">Lịch dạy theo tuần</h4>
+    <p class="text-muted small mb-0" id="week-label">Đang tải...</p>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <div class="btn-group btn-group-sm">
+      <button class="btn btn-outline-secondary" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+      <button class="btn btn-outline-secondary" id="btn-today">Tuần này</button>
+      <button class="btn btn-outline-secondary" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <a href="/teacher/classes/create" class="btn btn-primary btn-sm ms-2">
+      <i class="fas fa-plus me-1"></i> Tạo lớp mới
+    </a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-bordered calendar-table mb-0" id="schedule-table">
+        <thead class="bg-light">
+          <tr id="calendar-head">
+            <th style="width:110px;" class="text-muted small fw-normal py-3 ps-3">Ca học</th>
+            <!-- JS sẽ render các cột ngày -->
+          </tr>
+        </thead>
+        <tbody id="calendar-body">
+          <!-- JS sẽ render các hàng ca học -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="text-muted small">Lớp đang dạy</div>
+      <div class="fw-bold fs-3 mt-1">{{stats.classCount}}</div>
+      <div class="text-muted small">Học kỳ này</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="text-muted small">Tổng sinh viên</div>
+      <div class="fw-bold fs-3 mt-1">{{stats.studentCount}}</div>
+      <div class="text-muted small">Đang học</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card border-0 shadow-sm p-3">
+      <div class="text-muted small">Bài thi tuần này</div>
+      <div class="fw-bold fs-3 mt-1">{{stats.examCount}}</div>
+      <div class="text-success small"><i class="fas fa-clock me-1"></i>Sắp diễn ra</div>
+    </div>
+  </div>
+</div>
+
+<style>
+.calendar-table th, .calendar-table td {
+  min-width: 110px;
+  vertical-align: top;
+  border-color: #e9ecef !important;
+}
+.calendar-table th:first-child, .calendar-table td:first-child {
+  min-width: 110px;
+  background: #f8f9fa;
+  font-size: 12px;
+  color: #6c757d;
+  vertical-align: middle;
+}
+.day-col .day-name { font-size: 13px; color: #6c757d; }
+.day-col .day-num  { font-size: 18px; font-weight: 700; color: #212529; }
+.day-col.today .day-num { color: #0d6efd; }
+.cal-event {
+  border-radius: 8px;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  margin: 2px 0;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.cal-event .ev-room { font-size: 10px; font-weight: 400; opacity: .85; }
+.cal-event-toeic   { background: #4361ee; }
+.cal-event-grammar { background: #7209b7; }
+.cal-event-ielts   { background: #2d9e4f; }
+.cal-event-vocab   { background: #e9a319; }
+.cal-event-listen  { background: #e63946; }
+.cal-event-default { background: #457b9d; }
+.time-slot-cell { height: 70px; padding: 4px 6px !important; }
+</style>
+
+<script>
+(function() {
+  // ===== Mock schedule data (thay bằng API khi có backend) =====
+  const SCHEDULE = [
+    { name: 'TOEIC Preparation A1', room: 'P.102', color: 'toeic',   days: [1,3,5], slot: '07:00 - 09:00' },
+    { name: 'Grammar Advanced',     room: 'P.403', color: 'grammar', days: [2,4],   slot: '09:00 - 11:00' },
+    { name: 'IELTS Writing',        room: 'P.201', color: 'ielts',   days: [1,4],   slot: '13:00 - 15:00' },
+    { name: 'Vocabulary Building',  room: 'P.301', color: 'vocab',   days: [2,5],   slot: '15:00 - 17:00' },
+    { name: 'Listening Practice',   room: 'P.101', color: 'listen',  days: [3],     slot: '18:00 - 20:00' },
+  ];
+
+  const TIME_SLOTS = [
+    '07:00 - 09:00',
+    '09:00 - 11:00',
+    '13:00 - 15:00',
+    '15:00 - 17:00',
+    '18:00 - 20:00',
+  ];
+
+  const DAY_NAMES = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+  const MONTHS_VI = ['Tháng 1','Tháng 2','Tháng 3','Tháng 4','Tháng 5','Tháng 6','Tháng 7','Tháng 8','Tháng 9','Tháng 10','Tháng 11','Tháng 12'];
+
+  let weekOffset = 0;
+
+  function getWeekDates(offset) {
+    const now = new Date();
+    const day = now.getDay(); // 0=CN
+    // Thứ 2 của tuần hiện tại
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+    const dates = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      dates.push(d);
+    }
+    return dates;
+  }
+
+  function isSameDay(d1, d2) {
+    return d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
+  }
+
+  function render() {
+    const dates = getWeekDates(weekOffset);
+    const today = new Date();
+
+    // Week label
+    const mon = dates[0], sun = dates[6];
+    document.getElementById('week-label').textContent =
+      MONTHS_VI[mon.getMonth()] + ' Năm ' + mon.getFullYear();
+
+    // Header
+    const head = document.getElementById('calendar-head');
+    head.innerHTML = '<th class="ps-3 text-muted small fw-normal py-3" style="width:110px;">Ca học</th>';
+    dates.forEach((d, i) => {
+      // i=0 -> Thứ 2, i=6 -> CN
+      const dayLabel = DAY_NAMES[i === 6 ? 0 : i + 1];
+      const isToday = isSameDay(d, today);
+      head.innerHTML += `<th class="text-center py-3 day-col${isToday ? ' today' : ''}">
+        <div class="day-name">${dayLabel}</div>
+        <div class="day-num">${d.getDate()}</div>
+      </th>`;
+    });
+
+    // Body
+    const body = document.getElementById('calendar-body');
+    body.innerHTML = '';
+    TIME_SLOTS.forEach(slot => {
+      let row = `<tr><td class="ps-3 py-3 time-slot-cell">${slot}</td>`;
+      dates.forEach((d, i) => {
+        // i=0 -> Mon(1), i=1->Tue(2),...,i=5->Sat(6), i=6->Sun(0)
+        const jsDay = i === 6 ? 0 : i + 1;
+        const events = SCHEDULE.filter(e => e.slot === slot && e.days.includes(jsDay));
+        let cell = '<td class="time-slot-cell p-1">';
+        events.forEach(ev => {
+          cell += `<div class="cal-event cal-event-${ev.color}">
+            ${ev.name}<br>
+            <span class="ev-room">${ev.room}</span>
+          </div>`;
+        });
+        cell += '</td>';
+        row += cell;
+      });
+      row += '</tr>';
+      body.innerHTML += row;
+    });
+  }
+
+  document.getElementById('btn-prev').addEventListener('click', () => { weekOffset--; render(); });
+  document.getElementById('btn-next').addEventListener('click', () => { weekOffset++; render(); });
+  document.getElementById('btn-today').addEventListener('click', () => { weekOffset = 0; render(); });
+
+  render();
+})();
+</script>

@@ -6,14 +6,21 @@ const User = require('../models/User');
 
 //======================= Dashboard ============================================================
 router.get('/dashboard', protect('teacher'), async (req, res) => {
-  const teacherId = req.user?._id;
-  const user = await User.findById(teacherId).lean();
-  res.render('teacher/dashboard', {
-    user,
-    title: 'Teacher Dashboard',
-    layout: 'layout-teacher',
-  });
+  try {
+    const teacherId = req.user?._id;
+    const user = await User.findById(teacherId).lean();
+    res.render('teacher/dashboard', {
+      user,
+      title: 'Teacher Dashboard',
+      layout: 'layout-teacher',
+      // TODO: thay bằng query thực khi có model Class/Exam
+      stats: { classCount: 5, studentCount: 128, examCount: 3 },
+    });
+  } catch (err) {
+    next(err);
+  }
 });
+
 
 //======================= Notifications ========================================================
 router.get('/notifications', protect('teacher'), async (req, res) => {
@@ -116,6 +123,48 @@ router.post('/update-profile', protect('teacher'), async (req, res, next) => {
   } catch (err) {
     next(err);
   }
+});
+
+//======================= Placeholder routes (từ sidebar links) ===================================
+// TODO: Implement đầy đủ khi có model Class/Exam/Question
+router.get('/classes', protect('teacher'), async (req, res) => {
+  const user = await User.findById(req.user._id).lean();
+  res.render('teacher/dashboard', {
+    user, title: 'Lớp học của tôi', layout: 'layout-teacher',
+    stats: { classCount: 0, studentCount: 0, examCount: 0 },
+  });
+});
+
+router.get('/classes/create', protect('teacher'), async (req, res) => {
+  const user = await User.findById(req.user._id).lean();
+  res.render('teacher/dashboard', {
+    user, title: 'Tạo lớp mới', layout: 'layout-teacher',
+    stats: { classCount: 0, studentCount: 0, examCount: 0 },
+  });
+});
+
+router.get('/questions', protect('teacher'), async (req, res) => {
+  const user = await User.findById(req.user._id).lean();
+  res.render('teacher/dashboard', {
+    user, title: 'Câu hỏi', layout: 'layout-teacher',
+    stats: { classCount: 0, studentCount: 0, examCount: 0 },
+  });
+});
+
+router.get('/exams', protect('teacher'), async (req, res) => {
+  const user = await User.findById(req.user._id).lean();
+  res.render('teacher/dashboard', {
+    user, title: 'Danh sách đề thi', layout: 'layout-teacher',
+    stats: { classCount: 0, studentCount: 0, examCount: 0 },
+  });
+});
+
+router.get('/exams/create', protect('teacher'), async (req, res) => {
+  const user = await User.findById(req.user._id).lean();
+  res.render('teacher/dashboard', {
+    user, title: 'Tạo đề thi', layout: 'layout-teacher',
+    stats: { classCount: 0, studentCount: 0, examCount: 0 },
+  });
 });
 
 module.exports = router;
