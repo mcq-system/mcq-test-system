@@ -1,19 +1,21 @@
 {{!-- views/teacher/dashboard.hbs — Lịch dạy theo tuần --}}
 
-<div class="schedule-header d-flex justify-content-between align-items-start mb-4">
-  <div>
-    <h4 class="fw-bold mb-1">Lịch dạy theo tuần</h4>
-    <p class="text-muted small mb-0" id="week-label">Đang tải...</p>
-  </div>
-  <div class="d-flex align-items-center gap-2">
-    <div class="btn-group btn-group-sm">
-      <button class="btn btn-outline-secondary" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
-      <button class="btn btn-outline-secondary" id="btn-today">Tuần này</button>
-      <button class="btn btn-outline-secondary" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+<div class="card border-0 shadow-sm mb-3 px-4 py-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <div>
+      <h6 class="fw-bold mb-0">Lịch dạy theo tuần</h6>
+      <small class="text-muted" id="week-label">...</small>
     </div>
-    <a href="/teacher/classes/create" class="btn btn-primary btn-sm ms-2">
-      <i class="fas fa-plus me-1"></i> Tạo lớp mới
-    </a>
+    <div class="d-flex align-items-center gap-2">
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="btn btn-outline-secondary" id="btn-today">Tuần này</button>
+        <button class="btn btn-outline-secondary" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+      </div>
+      <a href="/teacher/classes/create" class="btn btn-primary btn-sm">
+        <i class="fas fa-plus me-1"></i> Tạo lớp mới
+      </a>
+    </div>
   </div>
 </div>
 
@@ -35,30 +37,37 @@
   </div>
 </div>
 
-<!-- Stats row -->
-<div class="row g-3">
-  <div class="col-md-4">
-    <div class="card border-0 shadow-sm p-3">
-      <div class="text-muted small">Lớp đang dạy</div>
-      <div class="fw-bold fs-3 mt-1">{{stats.classCount}}</div>
-      <div class="text-muted small">Học kỳ này</div>
+<!-- Stats row: 3 card nằm trên 1 hàng -->
+<div class="row g-0 mt-3">
+  <div class="col-4">
+    <div class="card border-0 shadow-sm rounded-0 rounded-start h-100 px-4 py-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="text-muted small">Lớp đang dạy</div>
+        <span class="badge bg-light text-secondary border">Học kỳ này</span>
+      </div>
+      <div class="fw-bold mt-2" style="font-size:2rem;line-height:1">{{stats.classCount}}</div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card border-0 shadow-sm p-3">
-      <div class="text-muted small">Tổng sinh viên</div>
-      <div class="fw-bold fs-3 mt-1">{{stats.studentCount}}</div>
-      <div class="text-muted small">Đang học</div>
+  <div class="col-4">
+    <div class="card border-0 shadow-sm rounded-0 border-start h-100 px-4 py-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="text-muted small">Tổng sinh viên</div>
+        <span class="badge bg-light text-secondary border">Đang học</span>
+      </div>
+      <div class="fw-bold mt-2" style="font-size:2rem;line-height:1">{{stats.studentCount}}</div>
     </div>
   </div>
-  <div class="col-md-4">
-    <div class="card border-0 shadow-sm p-3">
-      <div class="text-muted small">Bài thi tuần này</div>
-      <div class="fw-bold fs-3 mt-1">{{stats.examCount}}</div>
-      <div class="text-success small"><i class="fas fa-clock me-1"></i>Sắp diễn ra</div>
+  <div class="col-4">
+    <div class="card border-0 shadow-sm rounded-0 rounded-end border-start h-100 px-4 py-3">
+      <div class="d-flex justify-content-between align-items-start">
+        <div class="text-muted small">Bài thi tuần này</div>
+        <span class="badge bg-primary">Sắp diễn ra</span>
+      </div>
+      <div class="fw-bold mt-2" style="font-size:2rem;line-height:1">{{stats.examCount}}</div>
     </div>
   </div>
 </div>
+
 
 <style>
 .calendar-table th, .calendar-table td {
