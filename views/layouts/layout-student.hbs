@@ -1,68 +1,71 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
-<div class="app-container">
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-        <div class="sidebar-brand">
-            <div class="logo-box"><i class="fas fa-book-open"></i></div>
-            <div>
-                <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
-                <div style="font-size: 12px; color: #888;">Sinh viên</div>
-            </div>
-        </div>
-
-        <nav class="sidebar-nav">
-            <div class="nav-section">TỔNG QUAN</div>
-            <a href="/student/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
-
-            <div class="nav-section">HỌC TẬP</div>
-            <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> Lớp học của tôi</a>
-            <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> Kỳ thi sắp tới</a>
-            <a href="#" class="nav-item"><i class="fas fa-history"></i> Lịch sử làm bài</a>
-            <a href="/student/notifications" class="nav-item"><i class="fas fa-bell"></i> Thông báo</a>
-        </nav>
-
-        <div class="sidebar-footer">
-            <a href="/student/profile" class="user-card" style="text-decoration: none; color: inherit;">
-                <div class="avatar-small">{{slice user.last_name 0 1}}</div>
-                <div class="user-info-mini">
-                    <div style="font-weight: 600; font-size: 14px;">
-                        {{user.last_name}} {{user.first_name}}
-                    </div>
-                    <div style="font-size: 11px; color: #888;">
-                        {{user.email}}
-                    </div>
-                </div>
-            </a>
-            <div class="footer-links">
-                <a href="/student/profile"><i class="fas fa-cog"></i> Cài đặt</a>
-                <a href="/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
-            </div>
-        </div>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-wrapper">
-        <header class="main-header">
-            <h2 style="margin: 0;">{{title}}</h2>
-            <div class="header-tools">
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" placeholder="Tìm kiếm...">
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <div class="logo-box"><i class="fas fa-book-open"></i></div>
+                <div>
+                    <div style="font-weight: bold; font-size: 16px;">English MCQ</div>
+                    <div style="font-size: 12px; color: #888;">Sinh viên</div>
                 </div>
             </div>
-        </header>
 
-        <section class="main-content">
-            {{{body}}}
-        </section>
-    </main>
-</div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">TỔNG QUAN</div>
+                <a href="/student/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+
+                <div class="nav-section">HỌC TẬP</div>
+                <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> Lớp học của tôi</a>
+                <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> Kỳ thi sắp tới</a>
+                <a href="#" class="nav-item"><i class="fas fa-history"></i> Lịch sử làm bài</a>
+                <a href="/student/notifications" class="nav-item"><i class="fas fa-bell"></i> Thông báo</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <a href="/student/profile" class="user-card" style="text-decoration: none; color: inherit;">
+                    <div class="avatar-small">{{slice user.last_name 0 1}}</div>
+                    <div class="user-info-mini">
+                        <div style="font-weight: 600; font-size: 14px;">
+                            {{user.last_name}} {{user.first_name}}
+                        </div>
+                        <div style="font-size: 11px; color: #888;">
+                            {{user.email}}
+                        </div>
+                    </div>
+                </a>
+                <div class="footer-links">
+                    <a href="/student/profile"><i class="fas fa-cog"></i> Cài đặt</a>
+                    <a href="/auth/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-wrapper">
+            <header class="main-header">
+                <h2 style="margin: 0;">{{title}}</h2>
+                <div class="header-tools">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm...">
+                    </div>
+                </div>
+            </header>
+
+            <section class="main-content">
+                {{{body}}}
+            </section>
+        </main>
+    </div>
 </body>
+
 </html>

@@ -3,7 +3,6 @@ const User = require('../models/User');
 
 /**
  * Middleware để bảo vệ route và kiểm tra quyền truy cập.
- * @param {string|string[]} roles - Một role hoặc mảng role được phép truy cập.
  */
 const protect = (roles = []) => {
   return async (req, res, next) => {

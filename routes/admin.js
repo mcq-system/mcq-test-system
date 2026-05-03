@@ -3,7 +3,7 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 //======================= Dashboard ============================================================
 router.get('/dashboard', protect('admin'), async (req, res, next) => {
