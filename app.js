@@ -11,6 +11,8 @@ var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
 var adminRouter = require('./routes/admin');
 var authRouter = require('./routes/auth');
+var questionsRouter = require('./routes/questions');
+var dropdragRouter = require('./routes/dropdrag');
 
 const connectDB = require('./config/db');
 
@@ -50,6 +52,8 @@ app.use('/auth', authRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
+app.use('/questions', questionsRouter);
+app.use('/dropdrag', dropdragRouter);
 
 
 app.use(function(req, res, next) {

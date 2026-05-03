@@ -188,4 +188,90 @@ router.post('/update-profile', protect('admin'), async (req, res, next) => {
   }
 });
 
+
+//======================= Calendar (Từ han-be) ===================================================
+router.get('/calendar-teacher', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/calendar-teacher', {
+      title: 'Lịch dạy giảng viên',
+      layout: 'layout-admin',
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/calendar-student', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/calendar-student', {
+      title: 'Lịch học sinh viên',
+      layout: 'layout-admin',
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+//======================= Dashboard Admin Chi Tiết (Từ han-be) ====================================
+router.get('/dashboard-admin', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/dashboard-admin', {
+      title: 'Bảng điều khiển Admin hệ thống',
+      layout: 'layout-admin',
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+//======================= Ngân hàng câu hỏi (Từ han-be) ==========================================
+router.get('/topic-list', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/topic-list', {
+      title: 'Danh Sách Chủ Đề',
+      layout: 'layout-admin',
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/question-list', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/question-list', {
+      title: 'Ngân hàng câu hỏi',
+      layout: 'layout-admin',
+      user,
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/dashboard-student-stats', protect('admin'), async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('admin/dashboard-student-stats', {
+      title: 'Thống kê lớp học',
+      layout: 'layout-admin',
+      user,
+      // TODO: thay mock data bằng query thực khi có model phù hợp
+      stats: { activeClasses: 3, examsDone: 12, avgScore: 7.8 },
+      courses: [],
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
 module.exports = router;
+
