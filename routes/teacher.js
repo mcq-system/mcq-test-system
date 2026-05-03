@@ -144,27 +144,32 @@ router.get('/classes/create', protect('teacher'), async (req, res) => {
 });
 
 router.get('/questions', protect('teacher'), async (req, res) => {
-  const user = await User.findById(req.user._id).lean();
-  res.render('teacher/dashboard', {
-    user, title: 'Câu hỏi', layout: 'layout-teacher',
-    stats: { classCount: 0, studentCount: 0, examCount: 0 },
-  });
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('teacher/questions', {
+      user, title: 'Câu hỏi', layout: 'layout-teacher',
+    });
+  } catch (err) { next(err); }
 });
 
 router.get('/exams', protect('teacher'), async (req, res) => {
-  const user = await User.findById(req.user._id).lean();
-  res.render('teacher/dashboard', {
-    user, title: 'Danh sách đề thi', layout: 'layout-teacher',
-    stats: { classCount: 0, studentCount: 0, examCount: 0 },
-  });
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('teacher/dashboard', {
+      user, title: 'Danh sách đề thi', layout: 'layout-teacher',
+      stats: { classCount: 0, studentCount: 0, examCount: 0 },
+    });
+  } catch (err) { next(err); }
 });
 
 router.get('/exams/create', protect('teacher'), async (req, res) => {
-  const user = await User.findById(req.user._id).lean();
-  res.render('teacher/dashboard', {
-    user, title: 'Tạo đề thi', layout: 'layout-teacher',
-    stats: { classCount: 0, studentCount: 0, examCount: 0 },
-  });
+  try {
+    const user = await User.findById(req.user._id).lean();
+    res.render('teacher/create-exam', {
+      user, title: 'Tạo đề thi', layout: 'layout-teacher',
+    });
+  } catch (err) { next(err); }
 });
+
 
 module.exports = router;

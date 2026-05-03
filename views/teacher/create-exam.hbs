@@ -1,0 +1,252 @@
+{{!-- views/teacher/create-exam.hbs — Tạo đề thi --}}
+
+<!-- Header -->
+<div class="d-flex align-items-center gap-3 mb-4">
+  <a href="/teacher/exams" class="btn btn-link text-muted p-0 text-decoration-none">
+    <i class="fas fa-arrow-left me-1"></i> Quay lại danh sách
+  </a>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-6">
+    <label class="form-label small fw-semibold">Tên đề thi</label>
+    <input type="text" class="form-control" id="exam-name" placeholder="VD: TOEIC Practice Test 1">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small fw-semibold">Thời gian (phút)</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="fas fa-clock text-muted"></i></span>
+      <input type="number" class="form-control" id="exam-duration" value="60">
+    </div>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small fw-semibold">Topic</label>
+    <select class="form-select" id="exam-topic">
+      <option value="">Chọn topic</option>
+      <option>TOEIC</option><option>IELTS</option><option>Grammar</option><option>Vocabulary</option>
+    </select>
+  </div>
+</div>
+
+<!-- Split panel -->
+<div class="row g-3">
+  <!-- LEFT: Question bank -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white border-bottom py-3">
+        <h6 class="fw-bold mb-1">Ngân hàng câu hỏi</h6>
+        <small class="text-muted">Kéo thả hoặc click để thêm vào đề thi</small>
+      </div>
+      <div class="card-body pt-2 pb-2">
+        <div class="d-flex gap-2 mb-2">
+          <input type="text" class="form-control form-control-sm" id="bank-search" placeholder="Tìm kiếm câu hỏi...">
+        </div>
+        <div class="d-flex gap-2 mb-3">
+          <select class="form-select form-select-sm" id="bank-type">
+            <option value="">Tất cả loại</option>
+            <option>Reading</option><option>Listening</option><option>Grammar</option><option>Vocabulary</option>
+          </select>
+          <select class="form-select form-select-sm" id="bank-level">
+            <option value="">Tất cả</option>
+            <option>Dễ</option><option>Trung bình</option><option>Khó</option>
+          </select>
+        </div>
+        <div id="bank-list" style="max-height:480px;overflow-y:auto;"></div>
+        <div class="text-muted small mt-2" id="bank-count"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: Current exam -->
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+        <div>
+          <h6 class="fw-bold mb-0">Đề thi hiện tại</h6>
+          <small class="text-muted" id="exam-info">0 câu hỏi | 60 phút</small>
+        </div>
+        <div class="d-flex gap-2">
+          <button class="btn btn-outline-danger btn-sm" id="btn-clear">
+            <i class="fas fa-trash-alt me-1"></i>Xóa tất cả
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-save-exam">
+            <i class="fas fa-save me-1"></i>Lưu đề thi
+          </button>
+        </div>
+      </div>
+      <div class="card-body" id="exam-drop-zone" style="min-height:480px;overflow-y:auto;">
+        <div id="exam-empty" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted py-5">
+          <i class="fas fa-file-alt fa-3x mb-3 opacity-25"></i>
+          <p class="mb-0">Kéo thả câu hỏi vào đây</p>
+          <small>hoặc click nút + để thêm</small>
+        </div>
+        <div id="exam-list"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function () {
+  // ===== Mock data =====
+  const ALL_QUESTIONS = [
+    { id: 1, text: 'According to the passage, what is the main purpose of the new policy?', type: 'Reading',    topic: 'TOEIC',      level: 'Trung bình' },
+    { id: 2, text: 'What does the speaker suggest about urban planning?',                   type: 'Listening',  topic: 'IELTS',      level: 'Khó' },
+    { id: 3, text: 'Choose the correct form: She _____ to the office every day.',          type: 'Grammar',    topic: 'Grammar',    level: 'Dễ' },
+    { id: 4, text: "What is the synonym of 'abundant'?",                                   type: 'Vocabulary', topic: 'Vocabulary', level: 'Trung bình' },
+    { id: 5, text: "Identify the error: 'The team have decided to postpone their meeting'", type: 'Grammar',   topic: 'Grammar',    level: 'Khó' },
+    { id: 6, text: 'What is the main topic of the article?',                               type: 'Reading',    topic: 'TOEIC',      level: 'Dễ' },
+    { id: 7, text: "Choose the word that best completes: 'The project was _____ success'", type: 'Vocabulary', topic: 'Vocabulary', level: 'Trung bình' },
+    { id: 8, text: 'According to the recording, what time does the train depart?',         type: 'Listening',  topic: 'IELTS',      level: 'Trung bình' },
+    { id: 9, text: 'Select the word that best describes someone who works at night.',       type: 'Vocabulary', topic: 'Vocabulary', level: 'Dễ' },
+    { id: 10, text: 'The author implies that the economy will recover by next year.',       type: 'Reading',    topic: 'TOEIC',      level: 'Khó' },
+  ];
+
+  const TYPE_COLORS = {
+    'Reading':    { bg: '#e8f4fd', color: '#1a73e8' },
+    'Listening':  { bg: '#fce8f3', color: '#d63384' },
+    'Grammar':    { bg: '#e8f5e9', color: '#2e7d32' },
+    'Vocabulary': { bg: '#fff3e0', color: '#e65100' },
+  };
+  const LEVEL_COLORS = {
+    'Dễ':         { bg: '#e8f5e9', color: '#2e7d32' },
+    'Trung bình': { bg: '#fff8e1', color: '#f57f17' },
+    'Khó':        { bg: '#fce4ec', color: '#c62828' },
+  };
+
+  let examQuestions = []; // IDs in exam
+
+  // ---- Helpers ----
+  function typeBadge(type) {
+    const c = TYPE_COLORS[type] || { bg:'#eee', color:'#555' };
+    return `<span class="badge rounded-pill px-2 py-1 me-1" style="background:${c.bg};color:${c.color};font-size:10px;">${type}</span>`;
+  }
+  function levelBadge(level) {
+    const c = LEVEL_COLORS[level] || { bg:'#eee', color:'#555' };
+    return `<span class="badge px-2 py-1" style="background:${c.bg};color:${c.color};font-size:10px;">${level}</span>`;
+  }
+  function inExam(id) { return examQuestions.includes(id); }
+
+  // ---- Render bank ----
+  function getBankFiltered() {
+    const s = document.getElementById('bank-search').value.toLowerCase();
+    const t = document.getElementById('bank-type').value;
+    const lv = document.getElementById('bank-level').value;
+    return ALL_QUESTIONS.filter(q =>
+      (!s  || q.text.toLowerCase().includes(s)) &&
+      (!t  || q.type === t) &&
+      (!lv || q.level === lv)
+    );
+  }
+
+  function renderBank() {
+    const list = document.getElementById('bank-list');
+    const data = getBankFiltered();
+    document.getElementById('bank-count').textContent = data.length + ' câu hỏi có sẵn';
+
+    list.innerHTML = data.map(q => {
+      const added = inExam(q.id);
+      return `<div class="q-bank-item d-flex align-items-start gap-2 p-2 mb-2 border rounded" style="background:${added?'#f0f7ff':'#fff'};cursor:${added?'default':'pointer'};"
+        ${added ? '' : `onclick="addToExam(${q.id})"`} draggable="${!added}" ondragstart="dragStart(event,${q.id})">
+        <div class="flex-grow-1">
+          <div class="small">${typeBadge(q.type)}${levelBadge(q.level)}</div>
+          <div class="small mt-1 text-truncate" style="max-width:340px;" title="${q.text}">${q.text}</div>
+        </div>
+        ${added
+          ? '<span class="badge bg-success-subtle text-success border-0 align-self-start mt-1" style="font-size:10px;">Đã thêm</span>'
+          : '<button class="btn btn-link p-0 text-primary flex-shrink-0 mt-1" style="font-size:18px;line-height:1;" title="Thêm vào đề">+</button>'
+        }
+      </div>`;
+    }).join('') || '<div class="text-muted small text-center py-3">Không tìm thấy câu hỏi</div>';
+  }
+
+  // ---- Render exam ----
+  function updateExamInfo() {
+    const dur = document.getElementById('exam-duration').value || 60;
+    document.getElementById('exam-info').textContent = `${examQuestions.length} câu hỏi | ${dur} phút`;
+  }
+
+  function renderExam() {
+    const empty = document.getElementById('exam-empty');
+    const examList = document.getElementById('exam-list');
+    updateExamInfo();
+
+    if (!examQuestions.length) {
+      empty.style.display = 'flex';
+      examList.innerHTML = '';
+      return;
+    }
+    empty.style.display = 'none';
+
+    examList.innerHTML = examQuestions.map((id, idx) => {
+      const q = ALL_QUESTIONS.find(q => q.id === id);
+      return `<div class="d-flex align-items-start gap-2 p-2 mb-2 border rounded bg-white">
+        <i class="fas fa-grip-vertical text-muted mt-1 flex-shrink-0" style="cursor:grab;"></i>
+        <div class="flex-grow-1">
+          <div class="small">${typeBadge(q.type)}${levelBadge(q.level)}</div>
+          <div class="small mt-1 text-truncate" style="max-width:300px;" title="${q.text}">${q.text}</div>
+        </div>
+        <button class="btn btn-link p-0 text-danger flex-shrink-0 mt-1" onclick="removeFromExam(${q.id})" title="Xóa">
+          <i class="fas fa-times fa-sm"></i>
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  // ---- Actions ----
+  window.addToExam = function(id) {
+    if (!inExam(id)) {
+      examQuestions.push(id);
+      renderExam();
+      renderBank();
+    }
+  };
+
+  window.removeFromExam = function(id) {
+    examQuestions = examQuestions.filter(i => i !== id);
+    renderExam();
+    renderBank();
+  };
+
+  // Drag & drop
+  window.dragStart = function(e, id) { e.dataTransfer.setData('text/plain', id); };
+
+  const dropZone = document.getElementById('exam-drop-zone');
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.style.outline = '2px dashed #0d6efd'; });
+  dropZone.addEventListener('dragleave', () => { dropZone.style.outline = ''; });
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.style.outline = '';
+    const id = parseInt(e.dataTransfer.getData('text/plain'));
+    addToExam(id);
+  });
+
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    if (!examQuestions.length) return;
+    if (confirm('Xóa tất cả câu hỏi khỏi đề thi?')) {
+      examQuestions = [];
+      renderExam();
+      renderBank();
+    }
+  });
+
+  document.getElementById('btn-save-exam').addEventListener('click', () => {
+    const name = document.getElementById('exam-name').value.trim();
+    if (!name) { alert('Vui lòng nhập tên đề thi'); return; }
+    if (!examQuestions.length) { alert('Vui lòng thêm ít nhất 1 câu hỏi'); return; }
+    alert(`✅ Đã lưu đề thi "${name}" với ${examQuestions.length} câu hỏi!\n(TODO: POST đến API khi có backend)`);
+  });
+
+  document.getElementById('exam-duration').addEventListener('input', updateExamInfo);
+
+  ['bank-search','bank-type','bank-level'].forEach(id => {
+    document.getElementById(id).addEventListener('input', renderBank);
+    document.getElementById(id).addEventListener('change', renderBank);
+  });
+
+  // Init
+  renderBank();
+  renderExam();
+})();
+</script>

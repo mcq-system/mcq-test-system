@@ -1,0 +1,255 @@
+{{!-- views/teacher/questions.hbs — Ngân hàng câu hỏi --}}
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+  <div>
+    <h5 class="fw-bold mb-0">Ngân hàng câu hỏi Tiếng Anh</h5>
+    <small class="text-muted">Quản lý câu hỏi cho Reading, Listening, Grammar, Vocabulary</small>
+  </div>
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-file-excel me-1"></i> Nhập từ Excel
+    </button>
+    <button class="btn btn-primary btn-sm" id="btn-add-question">
+      <i class="fas fa-plus me-1"></i> Thêm câu hỏi
+    </button>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body py-2 px-3">
+    <div class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="input-group input-group-sm" style="max-width:260px;">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="fas fa-search text-muted"></i>
+        </span>
+        <input type="text" id="search-input" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm câu hỏi...">
+      </div>
+      <select class="form-select form-select-sm" id="filter-type" style="width:130px;">
+        <option value="">Tất cả</option>
+        <option value="Reading">Reading</option>
+        <option value="Listening">Listening</option>
+        <option value="Grammar">Grammar</option>
+        <option value="Vocabulary">Vocabulary</option>
+      </select>
+      <select class="form-select form-select-sm" id="filter-topic" style="width:140px;">
+        <option value="">Tất cả</option>
+        <option value="TOEIC">TOEIC</option>
+        <option value="IELTS">IELTS</option>
+        <option value="Grammar">Grammar</option>
+        <option value="Vocabulary">Vocabulary</option>
+      </select>
+      <select class="form-select form-select-sm" id="filter-level" style="width:140px;">
+        <option value="">Tất cả</option>
+        <option value="Dễ">Dễ</option>
+        <option value="Trung bình">Trung bình</option>
+        <option value="Khó">Khó</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div id="result-info" class="text-muted small mb-2"></div>
+
+<!-- Table -->
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <table class="table table-hover mb-0" id="questions-table">
+      <thead class="border-bottom">
+        <tr>
+          <th class="ps-4 py-3 text-muted fw-normal" style="width:60px;">ID <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal">Nội dung câu hỏi <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal" style="width:120px;">Loại <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal" style="width:110px;">Topic <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal" style="width:110px;">Độ khó <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal" style="width:120px;">Ngày tạo <i class="fas fa-sort fa-xs"></i></th>
+          <th class="py-3 text-muted fw-normal text-center" style="width:90px;">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="questions-body">
+        <!-- JS render -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal: Thêm câu hỏi -->
+<div class="modal fade" id="addQuestionModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 pb-0">
+        <h6 class="modal-title fw-bold">Thêm câu hỏi mới</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Loại câu hỏi</label>
+            <select class="form-select form-select-sm" id="new-type">
+              <option value="Reading">Reading</option>
+              <option value="Listening">Listening</option>
+              <option value="Grammar">Grammar</option>
+              <option value="Vocabulary">Vocabulary</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Topic</label>
+            <select class="form-select form-select-sm" id="new-topic">
+              <option>TOEIC</option><option>IELTS</option>
+              <option>Grammar</option><option>Vocabulary</option>
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label small fw-semibold">Độ khó</label>
+            <select class="form-select form-select-sm" id="new-level">
+              <option>Dễ</option><option>Trung bình</option><option>Khó</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold">Nội dung câu hỏi</label>
+            <textarea class="form-control form-control-sm" id="new-text" rows="3" placeholder="Nhập nội dung câu hỏi..."></textarea>
+          </div>
+          <div class="col-12">
+            <label class="form-label small fw-semibold">Đáp án (A, B, C, D)</label>
+            <div class="row g-2">
+              <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="A. ..." id="opt-a"></div>
+              <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="B. ..." id="opt-b"></div>
+              <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="C. ..." id="opt-c"></div>
+              <div class="col-6"><input type="text" class="form-control form-control-sm" placeholder="D. ..." id="opt-d"></div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label small fw-semibold">Đáp án đúng</label>
+            <select class="form-select form-select-sm" id="new-answer">
+              <option>A</option><option>B</option><option>C</option><option>D</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 pt-0">
+        <button class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Hủy</button>
+        <button class="btn btn-primary btn-sm" id="btn-save-question">Lưu câu hỏi</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+(function() {
+  // ===== Mock data =====
+  let questions = [
+    { id: '#1', text: 'According to the passage, what is the main purpose of the new policy?', type: 'Reading',    topic: 'TOEIC',      level: 'Trung bình', date: '2024-01-15' },
+    { id: '#2', text: 'What does the speaker suggest about urban planning?',                  type: 'Listening',  topic: 'IELTS',      level: 'Khó',        date: '2024-01-14' },
+    { id: '#3', text: 'Choose the correct form: She _____ to the office every day.',         type: 'Grammar',    topic: 'Grammar',    level: 'Dễ',         date: '2024-01-13' },
+    { id: '#4', text: "What is the synonym of 'abundant'?",                                  type: 'Vocabulary', topic: 'Vocabulary', level: 'Trung bình', date: '2024-01-12' },
+    { id: '#5', text: "Identify the error: 'The team have decided to postpone their meeting'", type: 'Grammar',  topic: 'Grammar',    level: 'Khó',        date: '2024-01-11' },
+    { id: '#6', text: 'What is the main topic of the article?',                              type: 'Reading',    topic: 'TOEIC',      level: 'Dễ',         date: '2024-01-10' },
+    { id: '#7', text: "Choose the word that best completes: 'The project was _____ success'", type: 'Vocabulary', topic: 'Vocabulary', level: 'Trung bình', date: '2024-01-09' },
+    { id: '#8', text: 'According to the recording, what time does the train depart?',        type: 'Listening',  topic: 'IELTS',      level: 'Trung bình', date: '2024-01-08' },
+  ];
+
+  const TYPE_COLORS = {
+    'Reading':    { bg: '#e8f4fd', color: '#1a73e8', icon: '📖' },
+    'Listening':  { bg: '#fce8f3', color: '#d63384', icon: '🎧' },
+    'Grammar':    { bg: '#e8f5e9', color: '#2e7d32', icon: 'Aa' },
+    'Vocabulary': { bg: '#fff3e0', color: '#e65100', icon: 'Vv' },
+  };
+  const LEVEL_COLORS = {
+    'Dễ':        { bg: '#e8f5e9', color: '#2e7d32' },
+    'Trung bình':{ bg: '#fff8e1', color: '#f57f17' },
+    'Khó':       { bg: '#fce4ec', color: '#c62828' },
+  };
+
+  function getNextId() {
+    return '#' + (questions.length + 1);
+  }
+
+  function render(data) {
+    const tbody = document.getElementById('questions-body');
+    document.getElementById('result-info').textContent =
+      `Hiển thị ${data.length} trong số ${questions.length} kết quả`;
+
+    if (!data.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-5">
+        <i class="fas fa-search fa-2x mb-2 d-block opacity-25"></i>Không tìm thấy câu hỏi nào
+      </td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = data.map(q => {
+      const tc = TYPE_COLORS[q.type] || { bg:'#f0f0f0', color:'#333', icon:'?' };
+      const lc = LEVEL_COLORS[q.level] || { bg:'#f0f0f0', color:'#333' };
+      return `<tr>
+        <td class="ps-4 text-muted small">${q.id}</td>
+        <td class="py-3" style="max-width:360px;">
+          <span class="text-truncate d-block" style="max-width:360px;" title="${q.text}">${q.text}</span>
+        </td>
+        <td>
+          <span class="badge rounded-pill px-2 py-1" style="background:${tc.bg};color:${tc.color};font-size:11px;">
+            ${tc.icon} ${q.type}
+          </span>
+        </td>
+        <td class="small">${q.topic}</td>
+        <td>
+          <span class="badge px-2 py-1" style="background:${lc.bg};color:${lc.color};font-size:11px;">${q.level}</span>
+        </td>
+        <td class="text-muted small">${q.date}</td>
+        <td class="text-center">
+          <button class="btn btn-link btn-sm p-0 me-1 text-secondary" title="Xem"><i class="fas fa-eye fa-sm"></i></button>
+          <button class="btn btn-link btn-sm p-0 me-1 text-secondary" title="Sửa"><i class="fas fa-pen fa-sm"></i></button>
+          <button class="btn btn-link btn-sm p-0 text-danger" title="Xóa" onclick="deleteQ('${q.id}')"><i class="fas fa-trash fa-sm"></i></button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function getFiltered() {
+    const s = document.getElementById('search-input').value.toLowerCase();
+    const t = document.getElementById('filter-type').value;
+    const tp = document.getElementById('filter-topic').value;
+    const lv = document.getElementById('filter-level').value;
+    return questions.filter(q =>
+      (!s  || q.text.toLowerCase().includes(s) || q.id.toLowerCase().includes(s)) &&
+      (!t  || q.type === t) &&
+      (!tp || q.topic === tp) &&
+      (!lv || q.level === lv)
+    );
+  }
+
+  window.deleteQ = function(id) {
+    if (confirm('Xóa câu hỏi ' + id + '?')) {
+      questions = questions.filter(q => q.id !== id);
+      render(getFiltered());
+    }
+  };
+
+  ['search-input','filter-type','filter-topic','filter-level'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => render(getFiltered()));
+    document.getElementById(id).addEventListener('change', () => render(getFiltered()));
+  });
+
+  // Add question modal
+  document.getElementById('btn-add-question').addEventListener('click', () => {
+    new bootstrap.Modal(document.getElementById('addQuestionModal')).show();
+  });
+
+  document.getElementById('btn-save-question').addEventListener('click', () => {
+    const text = document.getElementById('new-text').value.trim();
+    if (!text) { alert('Vui lòng nhập nội dung câu hỏi'); return; }
+    questions.unshift({
+      id: getNextId(),
+      text,
+      type:  document.getElementById('new-type').value,
+      topic: document.getElementById('new-topic').value,
+      level: document.getElementById('new-level').value,
+      date:  new Date().toISOString().split('T')[0],
+    });
+    bootstrap.Modal.getInstance(document.getElementById('addQuestionModal')).hide();
+    document.getElementById('new-text').value = '';
+    render(getFiltered());
+  });
+
+  render(questions);
+})();
+</script>
