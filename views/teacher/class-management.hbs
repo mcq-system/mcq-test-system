@@ -1,0 +1,80 @@
+<div class="main-content">
+    <div class="table-card bg-white shadow-sm rounded-3 p-4">
+        <div class="table-header-tools">
+            <div>
+                <h3 class="fw-bold mb-1" style="color: var(--text-main);">Quản lý lớp học</h3>
+                <p class="text-muted small">Danh sách các lớp học do bạn quản lý</p>
+            </div>
+            <a href="/teacher/create-class" class="btn-add" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background-color: #00bcd4;">
+                <i class="fas fa-plus"></i> Tạo lớp mới
+            </a>
+        </div>
+
+        <!-- Thanh tìm kiếm và bộ lọc bên trong card -->
+        <div class="row g-3 mb-4 mt-2 d-flex gap-3">
+            <div class="search-container" style="width: 350px;">
+                <i class="fas fa-search" style="position: absolute; left: 15px; top: 12px; color: #aaa;"></i>
+                <input type="text" placeholder="Tìm kiếm lớp học..." style="width: 100%; padding: 10px 15px 10px 40px; border-radius: 8px; border: 1px solid #ddd; background: #fff;">
+            </div>
+            <div style="width: 150px;">
+                <select class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <option selected>Tất cả</option>
+                    <option>Đang hoạt động</option>
+                    <option>Đã kết thúc</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Bảng dữ liệu -->
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mã lớp <i class="fas fa-sort small"></i></th>
+                        <th>Tên lớp học <i class="fas fa-sort small"></i></th>
+                        <th>Sinh viên <i class="fas fa-sort small"></i></th>
+                        <th>Số đề thi <i class="fas fa-sort small"></i></th>
+                        <th>Trạng thái <i class="fas fa-sort small"></i></th>
+                        <th>Thời gian <i class="fas fa-sort small"></i></th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each classes}}
+                    <tr>
+                        <td class="text-primary fw-bold" style="color: #007bff !important;">{{this.code}}</td>
+                        <td>
+                            <div class="fw-bold">{{this.name}}</div>
+                            <div class="text-muted small">{{this.subject}}</div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <i class="fas fa-users text-muted"></i> {{this.students}}
+                            </div>
+                        </td>
+                        <td>{{this.exams}} đề</td>
+                        <td>
+                            <span class="status-pill 
+                                {{#if (eq this.status 'Đang hoạt động')}}status-active{{/if}}
+                                {{#if (eq this.status 'Nháp')}}status-locked{{/if}}
+                                {{#if (eq this.status 'Đã kết thúc')}}status-locked{{/if}}">
+                                {{this.status}}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="small text-muted">
+                                <i class="far fa-calendar-alt me-1"></i> {{this.time}}
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn-action"><i class="far fa-eye"></i></button>
+                            <button class="btn-action"><i class="far fa-edit"></i></button>
+                            <button class="btn-action text-danger"><i class="far fa-trash-alt"></i></button>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
