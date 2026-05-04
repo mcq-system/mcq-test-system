@@ -99,11 +99,14 @@ exports.postRegister = async (req, res) => {
 };
 
 exports.postLogout = (req, res) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
+  res.clearCookie('token');
 
+  // GET: trực tiếp từ link <a> → redirect về trang login
+  if (req.method === 'GET') {
+    return res.redirect('/auth/login');
+  }
+
+  // POST: gọi từ fetch/AJAX → trả JSON để frontend xử lý
   return res.status(200).json({
     success: true,
     message: 'Đăng xuất thành công!',
