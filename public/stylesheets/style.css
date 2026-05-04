@@ -587,31 +587,3 @@ input:focus {
     color: var(--primary-color);
 }
 
-/* ─── Change-password message box ────────────────────────────────────────── */
-.cp-message {
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 20px;
-    animation: fadeIn 0.3s ease;
-}
-
-.cp-message.success {
-    background-color: #e6f4ea;
-    color: #1e7e34;
-    border: 1px solid #b7dfbe;
-}
-
-.cp-message.error {
-    background-color: #fdecea;
-    color: #c0392b;
-    border: 1px solid #f5c6cb;
-}
-
-/* Disable state for submit button */
-.btn-save:disabled {
-    opacity: 0.65;
-    cursor: not-allowed;
-    transform: none;
-}

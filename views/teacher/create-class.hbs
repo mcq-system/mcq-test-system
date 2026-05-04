@@ -1,0 +1,310 @@
+
+<title>Tạo lớp học</title>
+<style>
+  :root {
+    --primary-color: #0070f3;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --border-radius: 8px;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    padding: 24px;
+    color: var(--text-main);
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .required {
+    color: red;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--primary-color);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* Ngày trong tuần */
+  .days-selector {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .day-checkbox {
+    display: none;
+  }
+
+  .day-label {
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 0;
+    color: var(--text-main);
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .day-checkbox:checked + .day-label {
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--primary-color);
+    font-weight: 500;
+  }
+
+  .schedule-placeholder {
+    border: 1px dashed var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+    background-color: #fafafa;
+  }
+
+  /* Buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-outline {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+
+  .btn-outline:hover {
+    background: #f1f5f9;
+  }
+
+  .btn-primary {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #005bb5;
+  }
+
+  /* SVG Icons */
+  .icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+</style>
+</head>
+<body>
+
+
+
+<div class="container">
+  <!-- Section: Thông tin chung -->
+  <div class="card">
+    <div class="section-title">Thông tin chung</div>
+    <div class="section-subtitle">Nhập thông tin cơ bản của lớp học</div>
+
+    <div class="form-group">
+      <label>Tên lớp học <span class="required">*</span></label>
+      <input type="text" placeholder="VD: TOEIC Preparation A1">
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Chủ đề (Topic)</label>
+        <select>
+          <option value="">Chọn topic</option>
+          <option value="toeic">TOEIC</option>
+          <option value="ielts">IELTS</option>
+          <option value="giao-tiep">Giao tiếp</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Số lượng sinh viên tối đa</label>
+        <input type="number" value="30" min="1">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Ngày bắt đầu</label>
+        <input type="date">
+      </div>
+      <div class="form-group">
+        <label>Ngày kết thúc</label>
+        <input type="date">
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom: 0;">
+      <label>Mô tả lớp học</label>
+      <textarea placeholder="Mô tả ngắn về nội dung, mục tiêu của lớp học..."></textarea>
+    </div>
+  </div>
+
+  <!-- Section: Lịch dạy trong tuần -->
+  <div class="card">
+    <div class="section-title">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+      Lịch dạy trong tuần
+    </div>
+    <div class="section-subtitle">Chọn các ngày và thời gian dạy trong tuần</div>
+
+    <div class="form-group">
+      <label>Chọn ngày dạy</label>
+      <div class="days-selector" id="daysSelector">
+        <div class="day-item">
+          <input type="checkbox" id="day2" class="day-checkbox">
+          <label for="day2" class="day-label">Thứ 2</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day3" class="day-checkbox">
+          <label for="day3" class="day-label">Thứ 3</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day4" class="day-checkbox">
+          <label for="day4" class="day-label">Thứ 4</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day5" class="day-checkbox">
+          <label for="day5" class="day-label">Thứ 5</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day6" class="day-checkbox">
+          <label for="day6" class="day-label">Thứ 6</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day7" class="day-checkbox">
+          <label for="day7" class="day-label">Thứ 7</label>
+        </div>
+        <div class="day-item">
+          <input type="checkbox" id="day8" class="day-checkbox">
+          <label for="day8" class="day-label">Chủ nhật</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="schedule-placeholder" id="schedulePlaceholder">
+      Chọn ít nhất một ngày để cài đặt thời gian dạy
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="action-buttons">
+    <button class="btn btn-outline">Hủy</button>
+    <button class="btn btn-primary">
+      <svg class="icon" style="fill: white;" viewBox="0 0 24 24"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+      Tạo lớp học
+    </button>
+  </div>
+</div>
+
+<script>
+  // Script cơ bản để thay đổi text khi có ngày được chọn
+  const checkboxes = document.querySelectorAll('.day-checkbox');
+  const placeholder = document.getElementById('schedulePlaceholder');
+
+  checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+      const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+      if (anyChecked) {
+        placeholder.innerHTML = "<em>(Khu vực cấu hình thời gian cho các ngày đã chọn sẽ hiện tại đây)</em>";
+        placeholder.style.backgroundColor = "#fff";
+      } else {
+        placeholder.innerHTML = "Chọn ít nhất một ngày để cài đặt thời gian dạy";
+        placeholder.style.backgroundColor = "#fafafa";
+      }
+    });
+  });
+</script>
