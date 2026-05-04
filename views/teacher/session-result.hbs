@@ -1,0 +1,82 @@
+<style>
+    .result-hero { background: linear-gradient(135deg, #28a745, #1a7a31); border-radius: 16px; padding: 36px; color: #fff; margin-bottom: 24px; display: flex; align-items: center; gap: 30px; }
+    .score-circle { width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; border: 3px solid rgba(255,255,255,.5); flex-shrink: 0; }
+    .score-num { font-size: 2.4rem; font-weight: 700; }
+    .student-info h3 { margin: 0 0 6px; font-size: 22px; }
+    .student-info p { margin: 0; opacity: .85; font-size: 14px; }
+    .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: #fff; border-radius: 12px; padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+    .stat-value { font-size: 2rem; font-weight: 700; }
+    .stat-value.green { color: #28a745; }
+    .stat-value.red { color: #dc3545; }
+    .stat-value.blue { color: #4e73df; }
+    .stat-label { font-size: 13px; color: #888; margin-top: 4px; }
+    .question-result { background: #fff; border-radius: 12px; padding: 22px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0,0,0,.07); border-left: 4px solid #dee2e6; }
+    .question-result.correct { border-left-color: #28a745; }
+    .question-result.wrong { border-left-color: #dc3545; }
+    .q-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .q-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; }
+    .q-badge.correct { background: #28a745; }
+    .q-badge.wrong { background: #dc3545; }
+    .q-text { font-weight: 600; color: #333; font-size: 15px; }
+    .opt-list { display: flex; flex-direction: column; gap: 7px; }
+    .opt-item { padding: 10px 14px; border-radius: 8px; font-size: 14px; background: #f8f9fa; border: 1.5px solid #e9ecef; }
+    .opt-item.is-correct { background: #d4edda; border-color: #28a745; color: #155724; font-weight: 600; }
+    .opt-item.is-selected-wrong { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+    .back-btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; background: #28a745; color: #fff; border-radius: 10px; text-decoration: none; font-weight: 600; margin-bottom: 20px; }
+    .back-btn:hover { background: #218838; color: #fff; }
+</style>
+
+<a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i> Quay lại</a>
+
+<div class="result-hero">
+    <div class="score-circle">
+        <span class="score-num">{{score}}</span>
+    </div>
+    <div class="student-info">
+        <h3>{{session.student_id.last_name}} {{session.student_id.first_name}}</h3>
+        <p><i class="fas fa-envelope"></i> {{session.student_id.email}}</p>
+        <p style="margin-top:6px;"><i class="fas fa-book"></i> {{exam.title}}</p>
+    </div>
+</div>
+
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value blue">{{total}}</div>
+        <div class="stat-label">Tổng câu hỏi</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value green">{{correct}}</div>
+        <div class="stat-label">Câu đúng</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value red">{{wrong}}</div>
+        <div class="stat-label">Câu sai</div>
+    </div>
+</div>
+
+<h3 style="margin-bottom:16px;"><i class="fas fa-list-ul"></i> Chi tiết câu hỏi</h3>
+
+{{#each detail}}
+    <div class="question-result {{#if is_correct}}correct{{else}}wrong{{/if}}">
+        <div class="q-header">
+            <div class="q-badge {{#if is_correct}}correct{{else}}{{#if selected}}wrong{{else}}unanswered{{/if}}{{/if}}">
+                {{#if is_correct}}<i class="fas fa-check"></i>{{else}}<i class="fas fa-times"></i>{{/if}}
+            </div>
+            <div class="q-text">Câu {{index}}: {{question}}</div>
+        </div>
+        <div class="opt-list">
+            {{#each options}}
+                <div class="opt-item
+      {{#if is_correct}} is-correct{{/if}}
+                    {{#if is_selected}}{{#unless is_correct}} is-selected-wrong{{/unless}}{{/if}}
+    ">
+                    {{content}}
+                    {{#if is_correct}} ✓{{/if}}
+                    {{#if is_selected}}{{#unless is_correct}} ✗ (HS chọn){{/unless}}{{/if}}
+                    {{#if is_selected}}{{#if is_correct}} ✓ (HS chọn){{/if}}{{/if}}
+                </div>
+            {{/each}}
+        </div>
+    </div>
+{{/each}}

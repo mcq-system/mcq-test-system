@@ -1,0 +1,168 @@
+<style>
+    .exam-wrapper { display: flex; gap: 24px; align-items: flex-start; }
+    .exam-questions { flex: 1; }
+    .exam-sidebar-right { width: 260px; position: sticky; top: 20px; }
+    .timer-box { background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 16px; }
+    .timer-display { font-size: 2.4rem; font-weight: 700; color: #dc3545; letter-spacing: 2px; }
+    .timer-label { font-size: 13px; color: #666; margin-top: 4px; }
+    .timer-box.danger { background: #f8d7da; border-color: #dc3545; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.7} }
+    .question-nav { background: #fff; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+    .question-nav h4 { margin: 0 0 12px; font-size: 14px; color: #555; }
+    .nav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    .nav-btn { width: 36px; height: 36px; border-radius: 8px; border: 2px solid #dee2e6; background: #fff; font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; }
+    .nav-btn.answered { background: #28a745; border-color: #28a745; color: #fff; }
+    .nav-btn:hover { border-color: #4e73df; color: #4e73df; }
+    .question-card { background: #fff; border-radius: 12px; padding: 28px; box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 20px; }
+    .question-card .q-number { font-size: 13px; color: #888; margin-bottom: 8px; font-weight: 600; }
+    .question-card .q-content { font-size: 16px; font-weight: 600; color: #222; margin-bottom: 20px; line-height: 1.6; }
+    .option-list { display: flex; flex-direction: column; gap: 10px; }
+    .option-item { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-radius: 10px; border: 2px solid #e9ecef; cursor: pointer; transition: all .2s; }
+    .option-item:hover { border-color: #4e73df; background: #f0f4ff; }
+    .option-item.selected { border-color: #4e73df; background: #e8f0fe; }
+    .option-item input[type=radio] { width: 18px; height: 18px; accent-color: #4e73df; cursor: pointer; }
+    .option-label { font-size: 15px; color: #333; cursor: pointer; }
+    .submit-btn { width: 100%; padding: 14px; background: #dc3545; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 12px; transition: background .2s; }
+    .submit-btn:hover { background: #c82333; }
+    .progress-info { background: #fff; border-radius: 12px; padding: 14px 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 16px; font-size: 14px; }
+    .progress-bar-wrap { background: #e9ecef; border-radius: 6px; height: 8px; margin-top: 8px; }
+    .progress-bar-fill { height: 8px; background: #28a745; border-radius: 6px; transition: width .3s; }
+    .saving-indicator { text-align: center; font-size: 12px; color: #888; margin-top: 6px; min-height: 18px; }
+</style>
+
+<form id="exam-form" action="/student/exam-sessions/submit" method="POST">
+    <input type="hidden" name="exam_session_id" value="{{session._id}}">
+    <div class="exam-wrapper">
+        <!-- Questions -->
+        <div class="exam-questions">
+            {{#each questions}}
+                <div class="question-card" id="q-{{_id}}">
+                    <div class="q-number">Câu {{index}} / {{../totalQuestions}}</div>
+                    <div class="q-content">{{content}}</div>
+                    <div class="option-list">
+                        {{#each options}}
+                            <label class="option-item {{#if is_selected}}selected{{/if}}" id="label-{{../_id}}-{{@index}}">
+                                <input type="radio"
+                                       name="ans-{{../_id}}"
+                                       value="{{content}}"
+                                       data-question="{{../_id}}"
+                                       data-session="{{../../session._id}}"
+                                       {{#if is_selected}}checked{{/if}}
+                                >
+                                <span class="option-label">{{content}}</span>
+                            </label>
+                        {{/each}}
+                    </div>
+                </div>
+            {{/each}}
+
+            <button type="submit" class="submit-btn" onclick="return confirmSubmit()">
+                <i class="fas fa-paper-plane"></i> Nộp bài
+            </button>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="exam-sidebar-right">
+            <div class="timer-box" id="timer-box">
+                <div class="timer-display" id="timer">--:--</div>
+                <div class="timer-label">⏱ Thời gian còn lại</div>
+            </div>
+
+            <div class="progress-info">
+                <div style="display:flex;justify-content:space-between;">
+                    <span>Đã trả lời</span>
+                    <span id="answered-count">{{answeredCount}}</span>/<span>{{totalQuestions}}</span>
+                </div>
+                <div class="progress-bar-wrap">
+                    <div class="progress-bar-fill" id="progress-bar" style="width: {{#if totalQuestions}}{{percent answeredCount totalQuestions}}{{else}}0{{/if}}%"></div>
+                </div>
+            </div>
+
+            <div class="question-nav">
+                <h4>Câu hỏi</h4>
+                <div class="nav-grid">
+                    {{#each questions}}
+                        <button type="button" class="nav-btn {{#if selected_option}}answered{{/if}}" id="nav-{{_id}}" onclick="scrollToQuestion('{{_id}}')">{{index}}</button>
+                    {{/each}}
+                </div>
+            </div>
+
+            <div class="saving-indicator" id="saving-indicator"></div>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Timer
+    let remainingMs = {{remainingMs}};
+    const sessionId = '{{session._id}}';
+    const totalQ = {{totalQuestions}};
+    let answeredCount = {{answeredCount}};
+
+    function updateTimer() {
+        if (remainingMs <= 0) {
+            document.getElementById('timer').textContent = '00:00';
+            document.getElementById('exam-form').submit();
+            return;
+        }
+        const m = Math.floor(remainingMs / 60000);
+        const s = Math.floor((remainingMs % 60000) / 1000);
+        document.getElementById('timer').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        if (remainingMs <= 60000) document.getElementById('timer-box').classList.add('danger');
+        remainingMs -= 1000;
+    }
+    updateTimer();
+    setInterval(updateTimer, 1000);
+
+    // Save answer via AJAX
+    function scrollToQuestion(id) {
+        document.getElementById('q-' + id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function updateProgress() {
+        document.getElementById('answered-count').textContent = answeredCount;
+        const pct = totalQ > 0 ? Math.round(answeredCount / totalQ * 100) : 0;
+        document.getElementById('progress-bar').style.width = pct + '%';
+    }
+
+    document.querySelectorAll('input[type=radio]').forEach(radio => {
+        radio.addEventListener('change', async function() {
+            const questionId = this.dataset.question;
+            const sessionIdVal = this.dataset.session;
+            const content = this.value;
+
+            // Update UI
+            document.querySelectorAll(`input[data-question="${questionId}"]`).forEach(r => {
+                r.closest('.option-item').classList.toggle('selected', r === this);
+            });
+
+            // Update nav btn
+            const navBtn = document.getElementById('nav-' + questionId);
+            if (navBtn && !navBtn.classList.contains('answered')) {
+                navBtn.classList.add('answered');
+                answeredCount++;
+                updateProgress();
+            }
+
+            // Save to server
+            const indicator = document.getElementById('saving-indicator');
+            indicator.textContent = 'Đang lưu...';
+            try {
+                const resp = await fetch('/student/exam-sessions/answer', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ exam_session_id: sessionIdVal, question_id: questionId, option_content: content }),
+                });
+                if (resp.ok) indicator.textContent = '✓ Đã lưu';
+                else indicator.textContent = '⚠ Lỗi lưu đáp án';
+            } catch {
+                indicator.textContent = '⚠ Mất kết nối';
+            }
+            setTimeout(() => indicator.textContent = '', 2000);
+        });
+    });
+
+    function confirmSubmit() {
+        return confirm('Bạn có chắc muốn nộp bài không? Không thể sửa sau khi nộp!');
+    }
+</script>
