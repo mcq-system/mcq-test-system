@@ -8,7 +8,10 @@
   },
   "nodemonConfig": {
     "delay": 1500,
-    "ignore": ["node_modules/*", "public/*"],
+    "ignore": [
+      "node_modules/*",
+      "public/*"
+    ],
     "ext": "js,mjs,json,hbs"
   },
   "dependencies": {
@@ -17,14 +20,14 @@
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "dotenv": "^17.4.2",
-    "express": "~4.16.1",
+    "express": "^4.22.1",
     "express-handlebars": "^9.0.1",
-    "hbs": "~4.0.4",
+    "hbs": "^4.2.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.3",
     "method-override": "^3.0.0",
     "mongoose": "^9.4.1",
-    "morgan": "~1.9.1"
+    "morgan": "^1.10.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

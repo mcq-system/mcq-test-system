@@ -1,23 +1,21 @@
- <!-- Main Content -->
-<main class="main-content">
-    <section class="table-card">
-        <div class="table-header-tools">
-            <div>
-                <h3 style="margin: 0;">Danh sách người dùng</h3>
-                <p style="color: gray; font-size: 14px;">Quản lý tài khoản Giảng viên và Sinh viên</p>
-            </div>
-
-            <button class="btn-add" onclick="toggleModal('modal-add-user', true)">+ Cấp tài khoản</button>
-        </div>
-        <!-- Filter Tabs -->
-        <div class="tab-header" style="margin-bottom: 0;">
-            <div class="tab-item active" onclick="switchTab(event, 'teacher-table')">Giảng viên ({{teacherCount}})</div>
-            <div class="tab-item" onclick="switchTab(event, 'student-table')">Sinh viên ({{studentCount}})</div>
+<section class="table-card bg-white">
+    <div class="table-header-tools">
+        <div>
+            <h3 style="margin: 0;">Danh sách người dùng</h3>
+            <p style="color: gray; font-size: 14px;">Quản lý tài khoản Giảng viên và Sinh viên</p>
         </div>
 
-        <div id="teacher-table" class="tab-content">
-            <table class="data-table">
-                <thead>
+        <button class="btn-add" onclick="toggleModal('modal-add-user', true)">+ Cấp tài khoản</button>
+    </div>
+    <!-- Filter Tabs -->
+    <div class="tab-header" style="margin-bottom: 0;">
+        <div class="tab-item active" onclick="switchTab(event, 'teacher-table')">Giảng viên ({{teacherCount}})</div>
+        <div class="tab-item" onclick="switchTab(event, 'student-table')">Sinh viên ({{studentCount}})</div>
+    </div>
+
+    <div id="teacher-table" class="tab-content">
+        <table class="data-table">
+            <thead>
                 <tr>
                     <th>Thông tin</th>
                     <th>Khoa/Bộ môn</th>
@@ -25,39 +23,42 @@
                     <th>Ngày tạo</th>
                     <th>Thao tác</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 {{#each teachers}}
-                    <tr id="user-{{this._id}}">
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar-small">{{slice this.last_name 0 1}}</div>
-                                <div>
-                                    <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
-                                    <div style="font-size: 12px; color: gray;">{{this.email}}</div>
-                                </div>
+                <tr id="user-{{this._id}}">
+                    <td>
+                        <div class="user-info">
+                            <div class="avatar-small">{{slice this.last_name 0 1}}</div>
+                            <div>
+                                <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
+                                <div style="font-size: 12px; color: gray;">{{this.email}}</div>
                             </div>
-                        </td>
-                        <td>{{this.department}}</td>
-                        <td>
-                                <span class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
-                                    {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
-                                </span>
-                        </td>
-                        <td>{{this.created_at}}</td>
-                        <td>
-                            <button class="btn-action" onclick="changeStatus('{{this._id}}')" title="Khóa/Mở khóa">🔒</button>
-                            <button class="btn-action" onclick="deleteUser('{{this._id}}')" title="Xóa" style="color: red;">🗑️</button>
-                        </td>
-                    </tr>
+                        </div>
+                    </td>
+                    <td>{{this.department}}</td>
+                    <td>
+                        <span
+                            class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
+                            {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
+                        </span>
+                    </td>
+                    <td>{{this.created_at}}</td>
+                    <td>
+                        <button class="btn-action" onclick="changeStatus('{{this._id}}')"
+                            title="Khóa/Mở khóa">🔒</button>
+                        <button class="btn-action" onclick="deleteUser('{{this._id}}')" title="Xóa"
+                            style="color: red;">🗑️</button>
+                    </td>
+                </tr>
                 {{/each}}
-                </tbody>
-            </table>
-        </div>
+            </tbody>
+        </table>
+    </div>
 
-        <div id="student-table" class="tab-content" style="display: none;">
-            <table class="data-table">
-                <thead>
+    <div id="student-table" class="tab-content" style="display: none;">
+        <table class="data-table">
+            <thead>
                 <tr>
                     <th>Thông tin</th>
                     <th>Mã SV / Lớp</th>
@@ -65,41 +66,42 @@
                     <th>Ngày tạo</th>
                     <th>Thao tác</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 {{#each students}}
-                    <tr id="user-{{this._id}}">
-                        <td>
-                            <div class="user-info">
-                                <div class="avatar-small" style="background: #e3f2fd; color: #1976d2;">{{slice this.last_name 0 1}}</div>
-                                <div>
-                                    <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
-                                    <div style="font-size: 12px; color: gray;">{{this.email}}</div>
-                                </div>
+                <tr id="user-{{this._id}}">
+                    <td>
+                        <div class="user-info">
+                            <div class="avatar-small" style="background: #e3f2fd; color: #1976d2;">{{slice
+                                this.last_name 0 1}}</div>
+                            <div>
+                                <div style="font-weight: 600;">{{this.last_name}} {{this.first_name}}</div>
+                                <div style="font-size: 12px; color: gray;">{{this.email}}</div>
                             </div>
-                        </td>
-                        <td>{{this.student_id}} - {{this.class_name}}</td>
-                        <td>
-                                <span class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
-                                    {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
-                                </span>
-                        </td>
-                        <td>{{this.created_at}}</td>
-                        <td>
-                            <button class="btn-action" onclick="changeStatus('{{this._id}}')">🔒</button>
-                            <button class="btn-action" onclick="deleteUser('{{this._id}}')" style="color: red;">🗑️</button>
-                        </td>
-                    </tr>
+                        </div>
+                    </td>
+                    <td>{{this.student_id}} - {{this.class_name}}</td>
+                    <td>
+                        <span
+                            class="status-pill {{#if (eq this.status 'active')}}status-active{{else}}status-locked{{/if}}">
+                            {{#if (eq this.status 'active')}}Hoạt động{{else}}Đã khóa{{/if}}
+                        </span>
+                    </td>
+                    <td>{{this.created_at}}</td>
+                    <td>
+                        <button class="btn-action" onclick="changeStatus('{{this._id}}')">🔒</button>
+                        <button class="btn-action" onclick="deleteUser('{{this._id}}')" style="color: red;">🗑️</button>
+                    </td>
+                </tr>
                 {{/each}}
-                </tbody>
-            </table>
-        </div>
-    </section>
-</main>
-</div>
+            </tbody>
+        </table>
+    </div>
+</section>
 
 <!-- MODAL CẤP TÀI KHOẢN -->
-<div id="modal-add-user" class="modal" style="display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
+<div id="modal-add-user" class="modal"
+    style="display:none; position:fixed; z-index:999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.5);">
     <div class="card" style="width: 500px; margin: 50px auto; padding: 30px;">
         <h3>Cấp tài khoản mới</h3>
         <form action="/admin/manager-user" method="POST">
