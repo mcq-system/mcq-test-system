@@ -21,13 +21,12 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section">TỔNG QUAN</div>
-                <a href="/student/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="/student/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
 
                 <div class="nav-section">HỌC TẬP</div>
-                <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> Lớp học của tôi</a>
-                <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> Kỳ thi sắp tới</a>
-                <a href="#" class="nav-item"><i class="fas fa-history"></i> Lịch sử làm bài</a>
-                <a href="/student/notifications" class="nav-item"><i class="fas fa-bell"></i> Thông báo</a>
+                <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> <span>Lớp học của tôi</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> <span>Kỳ thi sắp tới</span></a>
+                <a href="#" class="nav-item"><i class="fas fa-history"></i> <span>Lịch sử làm bài</span></a>
             </nav>
 
             <div class="sidebar-footer">
@@ -43,8 +42,8 @@
                     </div>
                 </a>
                 <div class="footer-links">
-                    <a href="/student/profile"><i class="fas fa-cog"></i> Cài đặt</a>
-                    <a href="/auth/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+                    <a href="/student/profile"><i class="fas fa-cog"></i> <span>Cài đặt</span></a>
+                    <a href="/auth/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></a>
                 </div>
             </div>
         </aside>
@@ -52,12 +51,18 @@
         <!-- MAIN CONTENT -->
         <main class="main-wrapper">
             <header class="main-header">
-                <h2 style="margin: 0;">{{title}}</h2>
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="toggle-sidebar" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #555;">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <h2 style="margin: 0;">{{title}}</h2>
+                </div>
                 <div class="header-tools">
                     <div class="search-bar">
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Tìm kiếm...">
                     </div>
+                    <a href="/student/notifications" class="noti-bell" style="text-decoration: none;"><i class="fas fa-bell"></i></a>
                 </div>
             </header>
 
@@ -66,6 +71,7 @@
             </section>
         </main>
     </div>
+    <script src="/js/main.js"></script>
 </body>
 
 </html>

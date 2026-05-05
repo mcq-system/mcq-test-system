@@ -2,7 +2,7 @@
 
 <div class="topbar">
   <div class="topbar-left">
-    <span class="page-title">C├óu hß╗Åi</span>
+    <span class="page-title">Câu hỏi</span>
     <form method="GET" action="/" class="search-form">
       <div class="search-box">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.5">
@@ -12,7 +12,7 @@
         <input
           type="text"
           name="search"
-          placeholder="T├¼m c├óu hß╗Åi..."
+          placeholder="Tìm câu hỏi..."
           value="{{filters.search}}"
           autocomplete="off"
         />
@@ -23,7 +23,7 @@
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="2">
       <path d="M8 3v10M3 8h10"/>
     </svg>
-    Th├¬m c├óu hß╗Åi
+    Thêm câu hỏi
   </a>
 </div>
 
@@ -32,7 +32,7 @@
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-num">{{stats.total}}</div>
-      <div class="stat-label">Tß╗òng c├óu hß╗Åi</div>
+      <div class="stat-label">Tổng câu hỏi</div>
     </div>
     <div class="stat-card">
       <div class="stat-num">{{stats.reading}}</div>
@@ -55,7 +55,7 @@
     {{/if}}
 
     <select class="filter-select" name="type" onchange="this.form.submit()">
-      <option value="">Tß║Ñt cß║ú loß║íi</option>
+      <option value="">Tất cả loại</option>
       {{#each types}}
         <option value="{{this}}" {{#if (eq this ../filters.type)}}selected{{/if}}>
           {{this}}
@@ -64,7 +64,7 @@
     </select>
 
     <select class="filter-select" name="level" onchange="this.form.submit()">
-      <option value="">Tß║Ñt cß║ú cß║Ñp ─æß╗Ö</option>
+      <option value="">Tất cả trình độ</option>
       {{#each levels}}
         <option value="{{this}}" {{#if (eq this ../filters.level)}}selected{{/if}}>
           {{this}}
@@ -73,7 +73,7 @@
     </select>
 
     <select class="filter-select" name="topic" onchange="this.form.submit()">
-      <option value="">Chß╗º ─æß╗ü</option>
+      <option value="">Chủ đề</option>
       {{#each topics}}
         <option value="{{this}}" {{#if (eq this ../filters.topic)}}selected{{/if}}>
           {{this}}
@@ -85,7 +85,7 @@
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
         <path d="M2 4h12M4 8h8M6 12h4"/>
       </svg>
-      Bß╗Ö lß╗ìc n├óng cao
+      Bỏ lọc nâng cao
     </button>
   </form>
 
@@ -101,8 +101,8 @@
           <circle cx="7" cy="7" r="4.5"/>
           <path d="M10.5 10.5L13 13"/>
         </svg>
-        <p>Kh├┤ng t├¼m thß║Ñy c├óu hß╗Åi n├áo ph├╣ hß╗úp.</p>
-        <a href="/" class="btn btn-outline" style="margin-top:8px;">Xo├í bß╗Ö lß╗ìc</a>
+        <p>Không tìm thấy câu hỏi nào phù hợp.</p>
+        <a href="/" class="btn btn-outline" style="margin-top:8px;">Xoá bộ lọc</a>
       </div>
     {{/if}}
   </div>
@@ -111,14 +111,14 @@
   <div class="pagination">
     <span>{{paginationInfo}}</span>
     <div class="page-btns">
-      <button class="page-btn">ΓÇ╣</button>
+      <button class="page-btn">║</button>
       <button class="page-btn active">1</button>
       <button class="page-btn">2</button>
       <button class="page-btn">3</button>
-      <button class="page-btn">ΓÇ║</button>
+      <button class="page-btn">║</button>
     </div>
   </div>
 </div>
 
-{{! Drawer: Th├¬m c├óu hß╗Åi (rendered server-side, toggled via JS) }}
+{{! Drawer: Thêm câu hỏi (rendered server-side, toggled via JS) }}
 {{> drawer-form}}

@@ -26,21 +26,21 @@
         <input type="text" id="search-input" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm câu hỏi...">
       </div>
       <select class="form-select form-select-sm" id="filter-type" style="width:130px;">
-        <option value="">Tất cả</option>
+        <option value="">Loại câu hỏi</option>
         <option value="Reading">Reading</option>
         <option value="Listening">Listening</option>
         <option value="Grammar">Grammar</option>
         <option value="Vocabulary">Vocabulary</option>
       </select>
       <select class="form-select form-select-sm" id="filter-topic" style="width:140px;">
-        <option value="">Tất cả</option>
+        <option value="">Topic</option>
         <option value="TOEIC">TOEIC</option>
         <option value="IELTS">IELTS</option>
         <option value="Grammar">Grammar</option>
         <option value="Vocabulary">Vocabulary</option>
       </select>
       <select class="form-select form-select-sm" id="filter-level" style="width:140px;">
-        <option value="">Tất cả</option>
+        <option value="">Độ khó</option>
         <option value="Dễ">Dễ</option>
         <option value="Trung bình">Trung bình</option>
         <option value="Khó">Khó</option>
@@ -54,22 +54,24 @@
 <!-- Table -->
 <div class="card border-0 shadow-sm">
   <div class="card-body p-0">
-    <table class="table table-hover mb-0" id="questions-table">
-      <thead class="border-bottom">
-        <tr>
-          <th class="ps-4 py-3 text-muted fw-normal" style="width:60px;">ID <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal">Nội dung câu hỏi <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal" style="width:120px;">Loại <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal" style="width:110px;">Topic <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal" style="width:110px;">Độ khó <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal" style="width:120px;">Ngày tạo <i class="fas fa-sort fa-xs"></i></th>
-          <th class="py-3 text-muted fw-normal text-center" style="width:90px;">Thao tác</th>
-        </tr>
-      </thead>
-      <tbody id="questions-body">
-        <!-- JS render -->
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle" id="questions-table">
+        <thead class="border-bottom bg-light">
+          <tr>
+            <th class="ps-4 py-3 text-muted fw-normal text-nowrap" style="width:5%;">ID <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal" style="width:35%;">Nội dung câu hỏi <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Loại <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Topic <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Độ khó <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Ngày tạo <i class="fas fa-sort fa-xs ms-1"></i></th>
+            <th class="py-3 text-muted fw-normal text-center text-nowrap" style="width:12%;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="questions-body">
+          <!-- JS render -->
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -179,25 +181,33 @@
 
     tbody.innerHTML = data.map(q => {
       const tc = TYPE_COLORS[q.type] || { bg:'#f0f0f0', color:'#333', icon:'?' };
-      const lc = LEVEL_COLORS[q.level] || { bg:'#f0f0f0', color:'#333' };
+      
+      const levelMap = {
+        'D\u1EC5':         { label: 'D\u1EC5',  bg: '#e8f5e9', color: '#2e7d32', border: '#a5d6a7' },
+        'Trung b\u00ECnh': { label: 'Trung b\u00ECnh', bg: '#fff8e1', color: '#f57f17', border: '#ffe082' },
+        'Kh\u00F3':        { label: 'Kh\u00F3',  bg: '#fce4ec', color: '#c62828', border: '#f48fb1' }
+      };
+      const lc = levelMap[q.level] || { label: q.level, bg: '#eee', color: '#555', border: '#ccc' };
+      const levelBadge = `<span style="display:inline-block;padding:3px 12px;border-radius:20px;border:1px solid ${lc.border};background:${lc.bg};color:${lc.color};font-size:11px;font-weight:600;white-space:nowrap;">${lc.label}</span>`;
+
       return `<tr>
-        <td class="ps-4 text-muted small">${q.id}</td>
-        <td class="py-3" style="max-width:360px;">
-          <span class="text-truncate d-block" style="max-width:360px;" title="${q.text}">${q.text}</span>
+        <td class="ps-4 text-muted small fw-medium">${q.id}</td>
+        <td class="py-3">
+          <span class="text-truncate d-block" style="max-width:350px;" title="${q.text}">${q.text}</span>
         </td>
         <td>
-          <span class="badge rounded-pill px-2 py-1" style="background:${tc.bg};color:${tc.color};font-size:11px;">
+          <span style="display:inline-block;padding:3px 12px;border-radius:20px;background:${tc.bg};color:${tc.color};font-size:11px;font-weight:600;white-space:nowrap;">
             ${tc.icon} ${q.type}
           </span>
         </td>
-        <td class="small">${q.topic}</td>
+        <td class="small fw-medium text-secondary">${q.topic}</td>
         <td>
-          <span class="badge px-2 py-1" style="background:${lc.bg};color:${lc.color};font-size:11px;">${q.level}</span>
+          ${levelBadge}
         </td>
-        <td class="text-muted small">${q.date}</td>
-        <td class="text-center">
-          <button class="btn btn-link btn-sm p-0 me-1 text-secondary" title="Xem"><i class="fas fa-eye fa-sm"></i></button>
-          <button class="btn btn-link btn-sm p-0 me-1 text-secondary" title="Sửa"><i class="fas fa-pen fa-sm"></i></button>
+        <td class="text-muted small text-nowrap">${q.date}</td>
+        <td class="text-center text-nowrap">
+          <button class="btn btn-link btn-sm p-0 me-2 text-secondary" title="Xem"><i class="fas fa-eye fa-sm"></i></button>
+          <button class="btn btn-link btn-sm p-0 me-2 text-secondary" title="Sửa"><i class="fas fa-pen fa-sm"></i></button>
           <button class="btn btn-link btn-sm p-0 text-danger" title="Xóa" onclick="deleteQ('${q.id}')"><i class="fas fa-trash fa-sm"></i></button>
         </td>
       </tr>`;

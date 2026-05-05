@@ -2,7 +2,7 @@
 <div class="drawer-overlay hidden" id="drawerOverlay">
   <div class="drawer" id="drawer">
     <div class="drawer-header">
-      <span class="drawer-title">Th├¬m c├óu hß╗Åi Tiß║┐ng Anh</span>
+      <span class="drawer-title">Thêm câu hỏi Tiếng Anh</span>
       <button class="icon-btn" id="closeDrawerBtn" style="width:32px;height:32px;">
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
           <path d="M3 3l10 10M13 3L3 13"/>
@@ -16,7 +16,7 @@
         {{! Basic info }}
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label">Loß║íi c├óu hß╗Åi</label>
+            <label class="form-label">Loại câu hỏi</label>
             <select class="form-input" name="type" id="qTypeSelect">
               <option value="reading">Reading</option>
               <option value="listening">Audio Listening</option>
@@ -25,7 +25,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Cß║Ñp ─æß╗Ö</label>
+            <label class="form-label">Cấp độ</label>
             <select class="form-input" name="level">
               <option>A1</option><option>A2</option>
               <option selected>B1</option>
@@ -33,7 +33,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Chß╗º ─æß╗ü</label>
+            <label class="form-label">Chủ đề</label>
             <select class="form-input" name="topic">
               <option>Environment</option>
               <option>Technology</option>
@@ -46,16 +46,16 @@
         {{! Reading section }}
         <div id="readingSection">
           <div class="section-block">
-            <div class="section-block-title">B├ái ─æß╗ìc (Passage)</div>
+            <div class="section-block-title">Bài đọc (Passage)</div>
             <textarea class="passage-area" name="passage" rows="5"
-              placeholder="Nhß║¡p nß╗Öi dung ─æoß║ín v─ân Reading tß║íi ─æ├óy...">Climate change refers to long-term shifts in temperatures and weather patterns.</textarea>
+              placeholder="Nhập nội dung đoạn văn Reading tại đây...">Climate change refers to long-term shifts in temperatures and weather patterns.</textarea>
           </div>
         </div>
 
         {{! Listening section }}
         <div id="listeningSection" class="hidden">
           <div class="section-block">
-            <div class="section-block-title">File ├óm thanh</div>
+            <div class="section-block-title">File âm thanh</div>
             <div class="audio-box">
               <button type="button" class="audio-play-btn">
                 <svg width="14" height="14" viewBox="0 0 16 16" fill="white"><polygon points="4,2 14,8 4,14"/></svg>
@@ -69,28 +69,28 @@
                   <path d="M8 2v8M5 8l3 3 3-3"/>
                   <rect x="2" y="11" width="12" height="3" rx="1.5"/>
                 </svg>
-                Tß║úi l├¬n file MP3 / WAV
+                Tải lên file MP3 / WAV
                 <input type="file" name="audio" accept=".mp3,.wav" style="display:none;"/>
               </label>
             </div>
             <div class="form-group" style="margin-top:10px;">
-              <label class="form-label">Transcript (t├╣y chß╗ìn)</label>
+              <label class="form-label">Transcript (tùy chọn)</label>
               <textarea class="passage-area" name="transcript" rows="3"
-                placeholder="Nhß║¡p nß╗Öi dung lß╗¥i thoß║íi ├óm thanh..."></textarea>
+                placeholder="Nhập nội dung lời thoại âm thanh..."></textarea>
             </div>
           </div>
         </div>
 
         {{! Question text }}
         <div class="form-group">
-          <label class="form-label">C├óu hß╗Åi</label>
+          <label class="form-label">Câu hỏi</label>
           <textarea class="passage-area" name="questionText" rows="2"
-            placeholder="Nhß║¡p c├óu hß╗Åi...">What is the main cause of climate change according to the passage?</textarea>
+            placeholder="Nhập câu hỏi...">What is the main cause of climate change according to the passage?</textarea>
         </div>
 
         {{! Answer options }}
         <div class="section-block">
-          <div class="section-block-title">C├íc ─æ├íp ├ín</div>
+          <div class="section-block-title">Các đáp án</div>
           <div class="answer-options">
             <div class="answer-opt">
               <div class="answer-letter answer-correct" data-letter="A">A</div>
@@ -111,16 +111,16 @@
           </div>
           <input type="hidden" name="correctAnswer" id="correctAnswerInput" value="A"/>
           <div style="margin-top:8px; font-size:12px; color:var(--muted);">
-            ─É├íp ├ín ─æ├║ng: <strong id="correctAnswerLabel" style="color:var(--success);">A</strong>
-            ΓÇö click v├áo k├╜ tß╗▒ ─æß╗â chß╗ìn
+            Đáp án đúng: <strong id="correctAnswerLabel" style="color:var(--success);">A</strong>
+            (click vào ô chữ để chọn)
           </div>
         </div>
 
         {{! Explanation }}
         <div class="form-group">
-          <label class="form-label">Giß║úi th├¡ch ─æ├íp ├ín (t├╣y chß╗ìn)</label>
+          <label class="form-label">Giải thích đáp án (tùy chọn)</label>
           <textarea class="passage-area" name="explanation" rows="2"
-            placeholder="Giß║úi th├¡ch tß║íi sao ─æ├íp ├ín n├áy ─æ├║ng..."></textarea>
+            placeholder="Giải thích tại sao đáp án này đúng..."></textarea>
         </div>
 
       </div>{{! end drawer-body }}

@@ -6,6 +6,11 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www"
   },
+  "nodemonConfig": {
+    "delay": 1500,
+    "ignore": ["node_modules/*", "public/*"],
+    "ext": "js,mjs,json,hbs"
+  },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",

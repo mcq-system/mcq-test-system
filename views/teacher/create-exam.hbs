@@ -43,11 +43,11 @@
         </div>
         <div class="d-flex gap-2 mb-3">
           <select class="form-select form-select-sm" id="bank-type">
-            <option value="">Tất cả loại</option>
+            <option value="">Loại câu hỏi</option>
             <option>Reading</option><option>Listening</option><option>Grammar</option><option>Vocabulary</option>
           </select>
           <select class="form-select form-select-sm" id="bank-level">
-            <option value="">Tất cả</option>
+            <option value="">Độ khó</option>
             <option>Dễ</option><option>Trung bình</option><option>Khó</option>
           </select>
         </div>
@@ -74,13 +74,13 @@
           </button>
         </div>
       </div>
-      <div class="card-body" id="exam-drop-zone" style="min-height:480px;overflow-y:auto;">
-        <div id="exam-empty" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted py-5">
+      <div class="card-body d-flex flex-column" id="exam-drop-zone" style="min-height:480px;overflow-y:auto;">
+        <div id="exam-empty" class="m-auto d-flex flex-column align-items-center justify-content-center text-muted py-5">
           <i class="fas fa-file-alt fa-3x mb-3 opacity-25"></i>
           <p class="mb-0">Kéo thả câu hỏi vào đây</p>
           <small>hoặc click nút + để thêm</small>
         </div>
-        <div id="exam-list"></div>
+        <div id="exam-list" class="d-flex flex-column mt-2"></div>
       </div>
     </div>
   </div>
@@ -115,16 +115,25 @@
     'Khó':        { bg: '#fce4ec', color: '#c62828' },
   };
 
-  let examQuestions = []; // IDs in exam
+  let examQuestions = [];
 
   // ---- Helpers ----
-  function typeBadge(type) {
-    const c = TYPE_COLORS[type] || { bg:'#eee', color:'#555' };
-    return `<span class="badge rounded-pill px-2 py-1 me-1" style="background:${c.bg};color:${c.color};font-size:10px;">${type}</span>`;
+  function typeIcon(type) {
+    const icons = { Reading: '\uD83D\uDCD6', Listening: '\uD83C\uDFA7', Grammar: 'Aa', Vocabulary: 'Vv' };
+    const c = TYPE_COLORS[type] || { color: '#555' };
+    return '<span style="font-size:11px;font-weight:700;color:' + c.color + ';margin-right:2px;">' + (icons[type] || '?') + '</span>';
+  }
+  function topicBadge(topic) {
+    return '<span style="display:inline-block;padding:1px 8px;border-radius:20px;border:1px solid #ccc;background:#f5f5f5;color:#444;font-size:10px;font-weight:500;">' + topic + '</span>';
   }
   function levelBadge(level) {
-    const c = LEVEL_COLORS[level] || { bg:'#eee', color:'#555' };
-    return `<span class="badge px-2 py-1" style="background:${c.bg};color:${c.color};font-size:10px;">${level}</span>`;
+    var map = {
+      'D\u1EC5':         { label: 'D\u1EC5',  bg: '#e8f5e9', color: '#2e7d32', border: '#a5d6a7' },
+      'Trung b\u00ECnh': { label: 'TB',        bg: '#fff8e1', color: '#f57f17', border: '#ffe082' },
+      'Kh\u00F3':        { label: 'Kh\u00F3',  bg: '#fce4ec', color: '#c62828', border: '#f48fb1' }
+    };
+    var c = map[level] || { label: level, bg: '#eee', color: '#555', border: '#ccc' };
+    return '<span style="display:inline-block;padding:1px 8px;border-radius:20px;border:1px solid ' + c.border + ';background:' + c.bg + ';color:' + c.color + ';font-size:10px;font-weight:600;">' + c.label + '</span>';
   }
   function inExam(id) { return examQuestions.includes(id); }
 
@@ -141,24 +150,27 @@
   }
 
   function renderBank() {
-    const list = document.getElementById('bank-list');
-    const data = getBankFiltered();
-    document.getElementById('bank-count').textContent = data.length + ' câu hỏi có sẵn';
-
-    list.innerHTML = data.map(q => {
-      const added = inExam(q.id);
-      return `<div class="q-bank-item d-flex align-items-start gap-2 p-2 mb-2 border rounded" style="background:${added?'#f0f7ff':'#fff'};cursor:${added?'default':'pointer'};"
-        ${added ? '' : `onclick="addToExam(${q.id})"`} draggable="${!added}" ondragstart="dragStart(event,${q.id})">
-        <div class="flex-grow-1">
-          <div class="small">${typeBadge(q.type)}${levelBadge(q.level)}</div>
-          <div class="small mt-1 text-truncate" style="max-width:340px;" title="${q.text}">${q.text}</div>
-        </div>
-        ${added
-          ? '<span class="badge bg-success-subtle text-success border-0 align-self-start mt-1" style="font-size:10px;">Đã thêm</span>'
-          : '<button class="btn btn-link p-0 text-primary flex-shrink-0 mt-1" style="font-size:18px;line-height:1;" title="Thêm vào đề">+</button>'
-        }
-      </div>`;
-    }).join('') || '<div class="text-muted small text-center py-3">Không tìm thấy câu hỏi</div>';
+    var list = document.getElementById('bank-list');
+    var data = getBankFiltered();
+    document.getElementById('bank-count').textContent = data.length + ' c\u00E2u h\u1ECFi c\u00F3 s\u1EB5n';
+    if (!data.length) {
+      list.innerHTML = '<div style="text-align:center;color:#aaa;padding:16px;font-size:13px;">Kh\u00F4ng t\u00ECm th\u1EA5y c\u00E2u h\u1ECFi</div>';
+      return;
+    }
+    list.innerHTML = data.map(function(q) {
+      var added = inExam(q.id);
+      var badges = '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:4px;">' + typeIcon(q.type) + topicBadge(q.topic) + levelBadge(q.level) + '</div>';
+      var grip = '<i class="fas fa-grip-vertical" style="color:#ccc;font-size:11px;margin-top:3px;flex-shrink:0;"></i>';
+      var textDiv = '<div style="font-size:12px;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:310px;" title="' + q.text + '">' + q.text + '</div>';
+      var actionBtn = added
+        ? '<span style="font-size:10px;background:#d4edda;color:#155724;padding:2px 8px;border-radius:20px;flex-shrink:0;margin-top:2px;">\u0110\u00E3 th\u00EAm</span>'
+        : '<button onclick="event.stopPropagation();addToExam(' + q.id + ')" style="background:none;border:none;color:#0d6efd;font-size:20px;line-height:1;padding:0;cursor:pointer;flex-shrink:0;">+</button>';
+      var bg = added ? '#f0f7ff' : '#fff';
+      var cursor = added ? 'default' : 'pointer';
+      var clickAttr = added ? '' : 'onclick="addToExam(' + q.id + ')"';
+      return '<div ' + clickAttr + ' draggable="' + (!added) + '" ondragstart="dragStart(event,' + q.id + ')" style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;margin-bottom:6px;border:1px solid #e9ecef;border-radius:8px;background:' + bg + ';cursor:' + cursor + ';">' +
+        grip + '<div style="flex:1;min-width:0;">' + badges + textDiv + '</div>' + actionBtn + '</div>';
+    }).join('');
   }
 
   // ---- Render exam ----
@@ -173,31 +185,30 @@
     updateExamInfo();
 
     if (!examQuestions.length) {
-      empty.style.display = 'flex';
+      empty.classList.remove('d-none');
+      empty.classList.add('d-flex');
       examList.innerHTML = '';
       return;
     }
-    empty.style.display = 'none';
+    empty.classList.remove('d-flex');
+    empty.classList.add('d-none');
 
-    examList.innerHTML = examQuestions.map((id, idx) => {
-      const q = ALL_QUESTIONS.find(q => q.id === id);
-      return `<div class="d-flex align-items-start gap-2 p-2 mb-2 border rounded bg-white">
-        <i class="fas fa-grip-vertical text-muted mt-1 flex-shrink-0" style="cursor:grab;"></i>
-        <div class="flex-grow-1">
-          <div class="small">${typeBadge(q.type)}${levelBadge(q.level)}</div>
-          <div class="small mt-1 text-truncate" style="max-width:300px;" title="${q.text}">${q.text}</div>
-        </div>
-        <button class="btn btn-link p-0 text-danger flex-shrink-0 mt-1" onclick="removeFromExam(${q.id})" title="Xóa">
-          <i class="fas fa-times fa-sm"></i>
-        </button>
-      </div>`;
+    examList.innerHTML = examQuestions.map(function(id) {
+      var q = ALL_QUESTIONS.find(function(q) { return q.id === id; });
+      var badges = '<div style="display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:4px;">' + typeIcon(q.type) + topicBadge(q.topic) + levelBadge(q.level) + '</div>';
+      var textDiv = '<div style="font-size:12px;color:#333;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:270px;" title="' + q.text + '">' + q.text + '</div>';
+      return '<div style="display:flex;align-items:flex-start;gap:8px;padding:8px 10px;margin-bottom:6px;border:1px solid #e9ecef;border-radius:8px;background:#fff;">' +
+        '<i class="fas fa-grip-vertical" style="color:#ccc;font-size:11px;margin-top:3px;cursor:grab;flex-shrink:0;"></i>' +
+        '<div style="flex:1;min-width:0;">' + badges + textDiv + '</div>' +
+        '<button onclick="removeFromExam(' + q.id + ')" style="background:none;border:none;color:#dc3545;cursor:pointer;padding:0;flex-shrink:0;margin-top:2px;" title="X\u00F3a"><i class="fas fa-times fa-sm"></i></button>' +
+        '</div>';
     }).join('');
   }
 
   // ---- Actions ----
   window.addToExam = function(id) {
     if (!inExam(id)) {
-      examQuestions.push(id);
+      examQuestions.unshift(id); // xuất hiện ở trên cùng
       renderExam();
       renderBank();
     }

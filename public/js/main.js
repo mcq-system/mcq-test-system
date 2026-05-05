@@ -1,4 +1,4 @@
-﻿/* public/js/main.js */
+/* public/js/main.js */
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -101,5 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Sidebar Toggle
+  const toggleSidebarBtn = document.getElementById('toggle-sidebar');
+  const sidebar = document.querySelector('.sidebar');
+  if (toggleSidebarBtn && sidebar) {
+    toggleSidebarBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('expanded');
+    });
+  }
 
 });
