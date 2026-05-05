@@ -526,6 +526,7 @@ input:focus {
 /* Main Wrapper */
 .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-y: auto; }
 .main-header { height: 70px; background: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
+.main-header h2 { margin: 0; font-size: 1.25rem; font-weight: 700; color: #333; line-height: 1; }
 .header-tools { display: flex; align-items: center; gap: 20px; }
 .search-bar { position: relative; }
 .search-bar input { padding: 8px 15px 8px 35px !important; border-radius: 20px; border: 1px solid #eee; background: #f8f9fa; width: 250px; }
