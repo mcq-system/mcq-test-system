@@ -38,34 +38,31 @@
                 <tbody>
                     {{#each classes}}
                     <tr>
-                        <td class="text-primary fw-bold" style="color: #007bff !important;">{{this.code}}</td>
+                        <td class="text-primary fw-bold" style="color: #007bff !important;">{{@index}}</td>
                         <td>
-                            <div class="fw-bold">{{this.name}}</div>
-                            <div class="text-muted small">{{this.subject}}</div>
+                            <div class="fw-bold">{{ten}}</div>
+                            <div class="text-muted small">{{description}}</div>
                         </td>
                         <td>
                             <div class="user-info">
-                                <i class="fas fa-users text-muted"></i> {{this.students}}
+                                <i class="fas fa-users text-muted"></i> {{students}}
                             </div>
                         </td>
-                        <td>{{this.exams}} đề</td>
+                        <td>{{!-- number of exams for this class (optional) --}}-</td>
                         <td>
-                            <span class="status-pill 
-                                {{#if (eq this.status 'Đang hoạt động')}}status-active{{/if}}
-                                {{#if (eq this.status 'Nháp')}}status-locked{{/if}}
-                                {{#if (eq this.status 'Đã kết thúc')}}status-locked{{/if}}">
-                                {{this.status}}
-                            </span>
+                            <span class="status-pill status-active">Hoạt động</span>
                         </td>
                         <td>
                             <div class="small text-muted">
-                                <i class="far fa-calendar-alt me-1"></i> {{this.time}}
+                                <i class="far fa-calendar-alt me-1"></i> {{created_at}}
                             </div>
                         </td>
                         <td class="text-end">
-                            <button class="btn-action"><i class="far fa-eye"></i></button>
-                            <button class="btn-action"><i class="far fa-edit"></i></button>
-                            <button class="btn-action text-danger"><i class="far fa-trash-alt"></i></button>
+                            <a href="/teacher/my-classes/{{_id}}" class="btn-action"><i class="far fa-eye"></i></a>
+                            <a href="/teacher/my-classes/{{_id}}/edit" class="btn-action"><i class="far fa-edit"></i></a>
+                            <form method="POST" action="/teacher/my-classes/{{_id}}/delete" style="display:inline;">
+                                <button type="submit" class="btn-action text-danger"><i class="far fa-trash-alt"></i></button>
+                            </form>
                         </td>
                     </tr>
                     {{/each}}

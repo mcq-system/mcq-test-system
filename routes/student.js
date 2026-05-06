@@ -41,21 +41,22 @@ router.get('/profile', protect('student'), async (req, res, next) => {
 
 router.post('/update-profile', protect('student'), async (req, res, next) => {
   try {
-const userId = req.user?._id; 
-if (!userId) return res.redirect('/login');
+    const userId = req.user?._id; 
+    if (!userId) return res.redirect('/login');
 
     const { fullname, email, phone, dob, address } = req.body;
-    const nameParts = fullname.trim().split(' ');
+    if (!fullname || !email) return res.status(400).send('Thiếu thông tin cần thiết');
+    const nameParts = String(fullname).trim().split(' ');
     const firstName = nameParts.pop();
     const lastName = nameParts.join(' ');
 
     await User.findByIdAndUpdate(userId, {
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      phone,
-      dob,
-      address,
+      first_name: String(firstName).trim(),
+      last_name: String(lastName).trim(),
+      email: String(email).trim().toLowerCase(),
+      phone: phone ? String(phone).trim() : undefined,
+      dob: dob ? new Date(dob) : undefined,
+      address: address ? String(address).trim() : undefined,
     });
 
     res.redirect('/student/profile');

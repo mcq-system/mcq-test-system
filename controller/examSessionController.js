@@ -138,6 +138,23 @@ exports.submitExam = async (req, res) => {
       return res.status(400).json({ error: 'Bài đã nộp hoặc hết hạn' });
     }
 
+    // Compute score before marking submitted
+    const examQuestions = await ExamQuestion.find({ exam_id: session.exam_id }).lean();
+    const questionIds = examQuestions.map(eq => eq.question_id);
+    const questions = await Question.find({ _id: { $in: questionIds } }).lean();
+    const answers = await StudentAnswer.find({ exam_session_id }).lean();
+    const answerMap = {};
+    for (const a of answers) answerMap[String(a.question_id)] = a.option_content;
+
+    let correct = 0;
+    for (const q of questions) {
+      const correctOpt = q.options.find(o => o.is_correct);
+      if (correctOpt && answerMap[String(q._id)] === correctOpt.content) correct++;
+    }
+    const total = questions.length;
+    const score = total > 0 ? Number(((correct / total) * 10).toFixed(1)) : 0.0;
+
+    session.score = score;
     session.status = 'SUBMITTED';
     session.submitted_at = new Date();
     await session.save();

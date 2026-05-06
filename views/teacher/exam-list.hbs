@@ -348,56 +348,39 @@
                 </tr>
             </thead>
             <tbody>
+                {{#each exams}}
                 <tr>
                     <td>
                         <div class="test-name-cell">
-                            <span class="test-title">TOEIC Reading Practice Test 1</span>
+                            <span class="test-title">{{title}}</span>
                             <div class="test-meta">
-                                <span class="test-tag">TOEIC</span>
-                                <span><i class="fa-solid fa-list-ul"></i> 40 câu</span>
-                                <span><i class="fa-regular fa-clock"></i> 60 phút</span>
+                                <span class="test-tag">Lớp: {{class_id}}</span>
+                                <span><i class="fa-regular fa-clock"></i> {{duration_minutes}} phút</span>
                             </div>
                         </div>
                     </td>
-                    <td><span class="status-badge status-published">Đã xuất bản</span></td>
-                    <td>3</td>
-                    <td>87</td>
-                    <td class="score-green">72%</td>
-                    <td>2024-01-15</td>
+                    <td>
+                        {{#if (eq status 'PUBLISHED')}}
+                            <span class="status-badge status-published">Đã xuất bản</span>
+                        {{else}}
+                            <span class="status-badge status-draft">{{status}}</span>
+                        {{/if}}
+                    </td>
+                    <td>{{class_id}}</td>
+                    <td>{{!-- lượt thi - not available here --}}-</td>
+                    <td>{{!-- avg score - not available here --}}-</td>
+                    <td>{{created_at}}</td>
                     <td>
                         <div class="action-btns">
-                            <i class="fa-regular fa-eye"></i>
-                            <i class="fa-solid fa-pen"></i>
-                            <i class="fa-regular fa-copy"></i>
-                            <i class="fa-regular fa-trash-can"></i>
+                            <a href="/teacher/exams/{{_id}}"><i class="fa-regular fa-eye"></i></a>
+                            <a href="/teacher/exams/{{_id}}/edit"><i class="fa-solid fa-pen"></i></a>
+                            <a href="/teacher/exams/{{_id}}/duplicate"><i class="fa-regular fa-copy"></i></a>
+                            <a href="/teacher/exams/{{_id}}/delete"><i class="fa-regular fa-trash-can"></i></a>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <div class="test-name-cell">
-                            <span class="test-title">Grammar Fundamentals Quiz</span>
-                            <div class="test-meta">
-                                <span class="test-tag">Grammar</span>
-                                <span><i class="fa-solid fa-list-ul"></i> 25 câu</span>
-                                <span><i class="fa-regular fa-clock"></i> 30 phút</span>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="status-badge status-published">Đã xuất bản</span></td>
-                    <td>2</td>
-                    <td>124</td>
-                    <td class="score-yellow">68%</td>
-                    <td>2024-01-12</td>
-                    <td>
-                        <div class="action-btns">
-                            <i class="fa-regular fa-eye"></i>
-                            <i class="fa-solid fa-pen"></i>
-                            <i class="fa-regular fa-copy"></i>
-                            <i class="fa-regular fa-trash-can"></i>
-                        </div>
-                    </td>
-                </tr>
+                {{/each}}
+            </tbody>
                 <tr>
                     <td>
                         <div class="test-name-cell">

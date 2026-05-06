@@ -3,18 +3,36 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
+const Class = require('../models/Class');
+const ClassMember = require('../models/ClassMember');
+const Exam = require('../models/Exam');
+const ExamSession = require('../models/ExamSession');
+const Question = require('../models/Question');
+const StudentAnswer = require('../models/StudentAnswer');
 const bcrypt = require('bcryptjs');
 
 //======================= Dashboard ============================================================
 router.get('/dashboard', protect('admin'), async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).lean();
+    // compute stats
+    const activeClasses = await Class.countDocuments();
+
+    // examsDone: count of exam_sessions with status SUBMITTED
+    const examsDone = await ExamSession.countDocuments({ status: 'SUBMITTED' });
+
+    // avgScore: use stored score field on ExamSession (faster)
+    const agg = await ExamSession.aggregate([
+      { $match: { status: 'SUBMITTED', score: { $exists: true } } },
+      { $group: { _id: null, avgScore: { $avg: '$score' } } },
+    ]);
+    const avgScore = (agg && agg[0] && typeof agg[0].avgScore === 'number') ? agg[0].avgScore.toFixed(1) : 0;
+
     res.render('admin/dashboard', {
       user,
       title: 'Admin Dashboard',
       layout: 'layout-admin',
-      // TODO: thay bằng query thực khi có model lớp học
-      stats: { activeClasses: 0, examsDone: 0, avgScore: 0 },
+      stats: { activeClasses, examsDone, avgScore },
       courses: [],
     });
   } catch (err) {
@@ -101,20 +119,21 @@ router.get('/manager-user', protect('admin'), async (req, res) => {
 router.post('/manager-user', protect('admin'), async (req, res) => {
   try {
     const { first_name, last_name, email, password, role, student_id, department } = req.body;
+    if (!first_name || !last_name || !email || !password || !role) return res.status(400).send('Thiếu thông tin bắt buộc');
 
     const userExist = await User.findOne({ email });
     if (userExist) return res.status(400).send("Email này đã được sử dụng");
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(String(password), 10);
 
     const newUser = new User({
-      first_name,
-      last_name,
-      email,
+      first_name: String(first_name).trim(),
+      last_name: String(last_name).trim(),
+      email: String(email).trim().toLowerCase(),
       password: hashedPassword,
-      role,
-      student_id,
-      department,
+      role: String(role).trim(),
+      student_id: student_id ? String(student_id).trim() : undefined,
+      department: department ? String(department).trim() : undefined,
     });
 
     await newUser.save();
@@ -264,12 +283,22 @@ router.get('/question-list', protect('admin'), async (req, res, next) => {
 router.get('/dashboard-student-stats', protect('admin'), async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).lean();
+    // reuse some aggregates
+    const activeClasses = await Class.countDocuments();
+    const examsDone = await ExamSession.countDocuments({ status: 'SUBMITTED' });
+
+    // avgScore: use stored score field on ExamSession (faster)
+    const agg2 = await ExamSession.aggregate([
+      { $match: { status: 'SUBMITTED', score: { $exists: true } } },
+      { $group: { _id: null, avgScore: { $avg: '$score' } } },
+    ]);
+    const avgScore = (agg2 && agg2[0] && typeof agg2[0].avgScore === 'number') ? agg2[0].avgScore.toFixed(1) : 0;
+
     res.render('admin/dashboard-student-stats', {
       title: 'Thống kê lớp học',
       layout: 'layout-admin',
       user,
-      // TODO: thay mock data bằng query thực khi có model phù hợp
-      stats: { activeClasses: 3, examsDone: 12, avgScore: 7.8 },
+      stats: { activeClasses, examsDone, avgScore },
       courses: [],
     });
   } catch (err) {
@@ -278,4 +307,4 @@ router.get('/dashboard-student-stats', protect('admin'), async (req, res, next) 
 });
 
 module.exports = router;
-
+

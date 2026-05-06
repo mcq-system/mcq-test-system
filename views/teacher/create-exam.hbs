@@ -244,9 +244,39 @@
 
   document.getElementById('btn-save-exam').addEventListener('click', () => {
     const name = document.getElementById('exam-name').value.trim();
+    const duration = document.getElementById('exam-duration').value || 60;
     if (!name) { alert('Vui lòng nhập tên đề thi'); return; }
     if (!examQuestions.length) { alert('Vui lòng thêm ít nhất 1 câu hỏi'); return; }
-    alert(`✅ Đã lưu đề thi "${name}" với ${examQuestions.length} câu hỏi!\n(TODO: POST đến API khi có backend)`);
+
+    // Create a hidden form so browser will follow server redirect after POST
+    const form = document.createElement('form');
+    form.method = 'POST';
+    form.action = '/teacher/exams/store';
+
+    const inputTitle = document.createElement('input');
+    inputTitle.type = 'hidden';
+    inputTitle.name = 'title';
+    inputTitle.value = name;
+    form.appendChild(inputTitle);
+
+    const inputDuration = document.createElement('input');
+    inputDuration.type = 'hidden';
+    inputDuration.name = 'duration_minutes';
+    inputDuration.value = duration;
+    form.appendChild(inputDuration);
+
+    // Append each question id as question_ids[]
+    examQuestions.forEach(qid => {
+      const qi = document.createElement('input');
+      qi.type = 'hidden';
+      qi.name = 'question_ids[]';
+      qi.value = qid;
+      form.appendChild(qi);
+    });
+
+    // Append form to body and submit
+    document.body.appendChild(form);
+    form.submit();
   });
 
   document.getElementById('exam-duration').addEventListener('input', updateExamInfo);
