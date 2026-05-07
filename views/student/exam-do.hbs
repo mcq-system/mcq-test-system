@@ -44,7 +44,7 @@
                             <label class="option-item {{#if is_selected}}selected{{/if}}" id="label-{{../_id}}-{{@index}}">
                                 <input type="radio"
                                        name="ans-{{../_id}}"
-                                       value="{{content}}"
+                                       value="{{_id}}"
                                        data-question="{{../_id}}"
                                        data-session="{{../../session._id}}"
                                        {{#if is_selected}}checked{{/if}}
@@ -151,7 +151,7 @@
                 const resp = await fetch('/student/exam-sessions/answer', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ exam_session_id: sessionIdVal, question_id: questionId, option_content: content }),
+                    body: JSON.stringify({ exam_session_id: sessionIdVal, question_id: questionId, selected_option_id: content }),
                 });
                 if (resp.ok) indicator.textContent = '✓ Đã lưu';
                 else indicator.textContent = '⚠ Lỗi lưu đáp án';

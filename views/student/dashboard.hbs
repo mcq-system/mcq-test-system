@@ -5,7 +5,7 @@
         </div>
         <div>
             <div class="stat-label">Lớp đang học</div>
-            <div class="stat-value">3</div>
+            <div class="stat-value">{{stats.classCount}}</div>
         </div>
     </div>
     <div class="card stat-card d-flex flex-row">
@@ -14,7 +14,7 @@
         </div>
         <div>
             <div class="stat-label">Bài thi đã làm</div>
-            <div class="stat-value">12</div>
+            <div class="stat-value">{{stats.examCount}}</div>
         </div>
     </div>
     <div class="card stat-card d-flex flex-row">
@@ -23,7 +23,7 @@
         </div>
         <div>
             <div class="stat-label">Điểm trung bình</div>
-            <div class="stat-value">7.8</div>
+            <div class="stat-value">{{stats.avgScore}}</div>
         </div>
     </div>
 </div>
@@ -39,56 +39,26 @@
         </div>
 
         <div class="course-list">
+            {{#each classes}}
             <div class="course-item">
                 <div class="course-header">
                     <div>
-                        <div class="course-name">TOEIC Preparation A1</div>
-                        <div class="course-teacher">GV: Nguyễn Văn A</div>
+                        <div class="course-name">{{name}}</div>
+                        <div class="course-teacher">GV: {{teacherName}}</div>
                     </div>
-                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 2, 07:00</div>
+                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> {{scheduleStr}}</div>
                 </div>
                 <div class="progress-section">
                     <span class="progress-label">Tiến độ</span>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 65%;"></div>
+                        <div class="progress-fill" style="width: 0%;"></div>
                     </div>
-                    <span class="progress-percent">65%</span>
+                    <span class="progress-percent">0%</span>
                 </div>
             </div>
-
-            <div class="course-item">
-                <div class="course-header">
-                    <div>
-                        <div class="course-name">IELTS Writing</div>
-                        <div class="course-teacher">GV: Trần Thị B</div>
-                    </div>
-                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 3, 13:00</div>
-                </div>
-                <div class="progress-section">
-                    <span class="progress-label">Tiến độ</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 40%;"></div>
-                    </div>
-                    <span class="progress-percent">40%</span>
-                </div>
-            </div>
-
-            <div class="course-item">
-                <div class="course-header">
-                    <div>
-                        <div class="course-name">Grammar Advanced</div>
-                        <div class="course-teacher">GV: Lê Văn C</div>
-                    </div>
-                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 4, 09:00</div>
-                </div>
-                <div class="progress-section">
-                    <span class="progress-label">Tiến độ</span>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 80%;"></div>
-                    </div>
-                    <span class="progress-percent">80%</span>
-                </div>
-            </div>
+            {{else}}
+            <p style="text-align: center; padding: 20px; color: #888;">Bạn chưa tham gia lớp học nào.</p>
+            {{/each}}
         </div>
     </div>
 
@@ -102,53 +72,28 @@
         </div>
 
         <div class="exam-list">
+            {{#each exams}}
             <div class="exam-item">
                 <div class="exam-info">
                     <div>
-                        <div class="exam-title">TOEIC Practice Test 1</div>
-                        <div class="exam-subject">TOEIC Preparation A1</div>
+                        <div class="exam-title">{{title}}</div>
+                        <div class="exam-subject">{{#if class_id}}{{class_id.name}}{{else}}Tiếng Anh{{/if}}</div>
                     </div>
-                    <span class="tag tag-reading">Reading</span>
+                    <span class="tag tag-reading">English</span>
                 </div>
                 <div class="exam-meta">
-                    <span><i class="far fa-calendar"></i> 15/04/2024</span>
-                    <span><i class="far fa-clock"></i> 120 phút</span>
-                    <span><i class="far fa-file-alt"></i> 50 câu</span>
+                    <span><i class="far fa-calendar"></i> {{formatDate start_time}}</span>
+                    <span><i class="far fa-clock"></i> {{duration_minutes}} phút</span>
+                    <span><i class="far fa-file-alt"></i> {{questionCount}} câu</span>
                 </div>
-                <button class="btn-enter-exam">Vào phòng thi</button>
+                <form action="/student/exam-sessions/start" method="POST">
+                    <input type="hidden" name="exam_id" value="{{_id}}">
+                    <button type="submit" class="btn-enter-exam">Vào phòng thi</button>
+                </form>
             </div>
-
-            <div class="exam-item">
-                <div class="exam-info">
-                    <div>
-                        <div class="exam-title">Listening Mid-term</div>
-                        <div class="exam-subject">IELTS Writing</div>
-                    </div>
-                    <span class="tag tag-listening">Listening</span>
-                </div>
-                <div class="exam-meta">
-                    <span><i class="far fa-calendar"></i> 18/04/2024</span>
-                    <span><i class="far fa-clock"></i> 90 phút</span>
-                    <span><i class="far fa-file-alt"></i> 40 câu</span>
-                </div>
-                <button class="btn-enter-exam">Vào phòng thi</button>
-            </div>
-
-            <div class="exam-item">
-                <div class="exam-info">
-                    <div>
-                        <div class="exam-title">Grammar Quiz Week 8</div>
-                        <div class="exam-subject">Grammar Advanced</div>
-                    </div>
-                    <span class="tag tag-grammar">Grammar</span>
-                </div>
-                <div class="exam-meta">
-                    <span><i class="far fa-calendar"></i> 20/04/2024</span>
-                    <span><i class="far fa-clock"></i> 45 phút</span>
-                    <span><i class="far fa-file-alt"></i> 30 câu</span>
-                </div>
-                <button class="btn-enter-exam">Vào phòng thi</button>
-            </div>
+            {{else}}
+            <p style="text-align: center; padding: 20px; color: #888;">Hiện tại không có kỳ thi nào.</p>
+            {{/each}}
         </div>
     </div>
 </div>

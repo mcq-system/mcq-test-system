@@ -11,8 +11,8 @@ const studentAnswerSchema = new mongoose.Schema({
         ref: 'Question',
         required: true,
     },
-    option_content: {
-        type: String,
+    selected_option_id: {
+        type: mongoose.Schema.Types.ObjectId,
     },
 }, { timestamps: false });
 

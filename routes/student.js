@@ -7,16 +7,79 @@ const examSessionController = require('../controller/examSessionController');
 const Exam = require('../models/Exam');
 const Class = require('../models/Class');
 const ClassMember = require('../models/ClassMember');
+const ExamQuestion = require('../models/ExamQuestion');
 
 //============================= Dashboard ==========================================================
 router.get('/dashboard', protect('student'), async (req, res) => {
-    const userId = req.user._id;
-    const user = await User.findById(userId).lean();
-    res.render('student/dashboard', {
-        user,
-        title: 'Student Dashboard',
-        layout: 'layout-student',
-    });
+    try {
+        const userId = req.user._id;
+        
+        // 1. Stats
+        const classCount = await ClassMember.countDocuments({ student_id: userId });
+        const sessions = await require('../models/ExamSession').find({ student_id: userId, status: 'SUBMITTED' }).lean();
+        const examCount = sessions.length;
+        const avgScore = examCount > 0 
+            ? (sessions.reduce((acc, s) => acc + (s.score || 0), 0) / examCount).toFixed(1) 
+            : 0;
+
+        // 2. My Classes (Top 3)
+        const memberships = await ClassMember.find({ student_id: userId })
+            .populate({
+                path: 'class_id',
+                populate: { path: 'teacher_id', select: 'first_name last_name' }
+            })
+            .limit(3)
+            .lean();
+            
+        const Schedule = require('../models/Schedule');
+        const classes = await Promise.all(memberships.map(async (m) => {
+            const cls = m.class_id;
+            if (!cls) return null;
+            
+            // Get first schedule
+            const schedule = await Schedule.findOne({ class_id: cls._id }).lean();
+            let scheduleStr = 'Chưa có lịch';
+            if (schedule) {
+                const days = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+                scheduleStr = `${days[schedule.day_of_week]}, ${schedule.start_time}`;
+            }
+
+            return {
+                ...cls,
+                teacherName: cls.teacher_id ? `${cls.teacher_id.first_name} ${cls.teacher_id.last_name}` : 'N/A',
+                scheduleStr
+            };
+        })).then(results => results.filter(c => c != null));
+
+        // 3. Upcoming Exams (Top 3)
+        const examsData = await Exam.find({ status: 'PUBLISHED' })
+            .populate('class_id')
+            .limit(3)
+            .lean();
+        
+        const exams = await Promise.all(examsData.map(async (exam) => {
+            const questionCount = await ExamQuestion.countDocuments({ exam_id: exam._id });
+            return {
+                ...exam,
+                questionCount
+            };
+        }));
+
+        res.render('student/dashboard', {
+            user: req.user,
+            title: 'Student Dashboard',
+            layout: 'layout-student',
+            stats: {
+                classCount,
+                examCount,
+                avgScore
+            },
+            classes,
+            exams
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
 //============================= Profile ===========================================================
@@ -159,14 +222,28 @@ router.get('/my-classes', protect('student'), async (req, res, next) => {
 });
 
 router.get('/exam-do', protect('student'), async (req, res) => {
-    // For now, let's list all published exams
-    const exams = await Exam.find({ status: 'PUBLISHED' }).lean();
-    res.render('student/upcoming-exams', {
-        user: req.user,
-        title: 'Kỳ thi sắp tới',
-        layout: 'layout-student',
-        exams
-    });
+    try {
+        const examsData = await Exam.find({ status: 'PUBLISHED' })
+            .populate('class_id')
+            .lean();
+        
+        const exams = await Promise.all(examsData.map(async (exam) => {
+            const questionCount = await ExamQuestion.countDocuments({ exam_id: exam._id });
+            return {
+                ...exam,
+                questionCount
+            };
+        }));
+
+        res.render('student/upcoming-exams', {
+            user: req.user,
+            title: 'Kỳ thi sắp tới',
+            layout: 'layout-student',
+            exams
+        });
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
 });
 
 // Mount the session routes under /student/exam-sessions to match templates

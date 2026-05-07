@@ -1,7 +1,3 @@
-Thiên thần là gì?
-
----
-
 # Database Schema Samples
 
 ### 1. Bảng users
@@ -14,8 +10,12 @@ Thiên thần là gì?
     "email": "vana@example.com",
     "phone": "0123456789",
     "password": "<hash1>",
-    "role": "student", 
+    "role": "student",
     "status": "active",
+    "class_name": "CNTT K20",
+    "department": "Khoa CNTT",
+    "address": "TP.HCM",
+    "dob": "2002-05-15T00:00:00Z",
     "created_at": "2024-04-13T10:00:00Z"
 }
 ```
@@ -25,7 +25,7 @@ Thiên thần là gì?
 ```json
 {
     "_id": "000000000000000000000011",
-    "ten": "10A1",
+    "name": "10A1",
     "teacher_id": "000000000000000000000002",
     "description": "Lop chuyen Toan",
     "created_at": "2024-04-13T10:00:00Z"
@@ -60,7 +60,8 @@ Thiên thần là gì?
 {
     "_id": "000000000000000000000021",
     "name": "Toan hoc",
-    "description": "Cac cau hoi ve toan"
+    "description": "Cac cau hoi ve toan",
+    "created_at": "2024-04-13T10:00:00Z"
 }
 ```
 
@@ -76,10 +77,10 @@ Thiên thần là gì?
     "status": "active",
     "created_at": "2024-04-13T10:00:00Z",
     "options": [
-      { "content": "4", "is_correct": true },
-      { "content": "5", "is_correct": false },
-      { "content": "3", "is_correct": false },
-      { "content": "6", "is_correct": false }
+      { "_id": "aaa000000000000000000001", "content": "4", "is_correct": true },
+      { "_id": "aaa000000000000000000002", "content": "5", "is_correct": false },
+      { "_id": "aaa000000000000000000003", "content": "3", "is_correct": false },
+      { "_id": "aaa000000000000000000004", "content": "6", "is_correct": false }
     ]
 }
 ```
@@ -104,7 +105,8 @@ Thiên thần là gì?
 ```json
 {
     "exam_id": "000000000000000000000201",
-    "question_id": "000000000000000000000101"
+    "question_id": "000000000000000000000101",
+    "order": 1
 }
 ```
 
@@ -115,6 +117,7 @@ Thiên thần là gì?
     "_id": "000000000000000000000301",
     "exam_id": "000000000000000000000201",
     "student_id": "000000000000000000000001",
+    "score": 8.5,
     "started_at": "2024-04-14T08:00:00Z",
     "submitted_at": "2024-04-14T08:15:00Z",
     "status": "SUBMITTED"
@@ -127,6 +130,21 @@ Thiên thần là gì?
 {
     "exam_session_id": "000000000000000000000301",
     "question_id": "000000000000000000000101",
-    "option_content": "4"
+    "selected_option_id": "aaa000000000000000000001"
+}
+```
+
+### 11. notifications
+
+```json
+{
+    "recipient": "000000000000000000000001",
+    "sender": "000000000000000000000002",
+    "senderRole": "teacher",
+    "title": "Bai thi moi",
+    "message": "Giao vien da tao bai thi moi cho lop 10A1",
+    "type": "exam",
+    "isRead": false,
+    "created_at": "2024-04-14T07:00:00Z"
 }
 ```

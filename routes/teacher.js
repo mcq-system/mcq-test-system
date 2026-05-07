@@ -230,13 +230,13 @@ router.get('/create-class', protect('teacher'), async (req, res) => {
 router.post('/create-class', protect('teacher'), async (req, res) => {
   try {
     const teacherId = req.user?._id;
-    const { ten, description } = req.body;
-    if (!ten || !teacherId) return res.status(400).send('Thiếu tên lớp hoặc chưa đăng nhập');
+    const { name, description } = req.body;
+    if (!name || !teacherId) return res.status(400).send('Thiếu tên lớp hoặc chưa đăng nhập');
     // basic sanitize
-    const cleanTen = String(ten).trim();
+    const cleanName = String(name).trim();
     const cleanDesc = description ? String(description).trim() : '';
 
-    const newClass = await Class.create({ ten: cleanTen, description: cleanDesc, teacher_id: teacherId });
+    const newClass = await Class.create({ name: cleanName, description: cleanDesc, teacher_id: teacherId });
     res.redirect('/teacher/my-classes');
   } catch (err) {
     console.error('Lỗi tạo lớp:', err);

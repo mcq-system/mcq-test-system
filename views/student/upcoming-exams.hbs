@@ -173,20 +173,20 @@
         <div class="exam-header">
             <div>
                 <a href="#" class="exam-title">{{title}}</a>
-                {{!-- <span class="exam-class">{{#if class}}{{class.ten}}{{else}}Tiếng Anh cơ bản{{/if}}</span> --}}
+                <span class="exam-class">{{#if class_id}}{{class_id.name}}{{else}}N/A{{/if}}</span>
             </div>
-            <span class="exam-type type-reading">Reading</span>
+            <span class="exam-type type-reading">English</span>
         </div>
 
         <div class="exam-info-list">
             <div class="info-item">
-                <i class="far fa-calendar-alt"></i> Ngày thi: 15/04/2024
+                <i class="far fa-calendar-alt"></i> Ngày thi: {{formatDate start_time}}
             </div>
             <div class="info-item">
-                <i class="far fa-clock"></i> Thời gian: 120 phút
+                <i class="far fa-clock"></i> Thời gian: {{duration_minutes}} phút
             </div>
             <div class="info-item">
-                <i class="far fa-list-alt"></i> Số câu: 50 câu
+                <i class="far fa-list-alt"></i> Số câu: {{questionCount}}
             </div>
         </div>
 

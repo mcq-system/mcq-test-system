@@ -60,7 +60,7 @@ exports.doExamPage = async (req, res) => {
     const answers = await StudentAnswer.find({ exam_session_id: sessionId }).lean();
     const answerMap = {};
     for (const a of answers) {
-      answerMap[String(a.question_id)] = a.option_content;
+      answerMap[String(a.question_id)] = a.selected_option_id ? String(a.selected_option_id) : null;
     }
 
     const questionsWithAnswer = questions.map((q, idx) => ({
@@ -69,7 +69,7 @@ exports.doExamPage = async (req, res) => {
       selected_option: answerMap[String(q._id)] || null,
       options: q.options.map(o => ({
         ...o,
-        is_selected: answerMap[String(q._id)] === o.content,
+        is_selected: answerMap[String(q._id)] === String(o._id),
       })),
     }));
 
@@ -99,7 +99,7 @@ exports.doExamPage = async (req, res) => {
 // ============================================================
 exports.submitAnswer = async (req, res) => {
   try {
-    const { exam_session_id, question_id, option_content } = req.body;
+    const { exam_session_id, question_id, selected_option_id } = req.body;
     const student_id = req.user._id;
 
     const session = await ExamSession.findById(exam_session_id);
@@ -112,7 +112,7 @@ exports.submitAnswer = async (req, res) => {
 
     const answer = await StudentAnswer.findOneAndUpdate(
         { exam_session_id, question_id },
-        { option_content },
+        { selected_option_id },
         { upsert: true, new: true }
     );
     res.status(200).json({ ok: true, answer });
@@ -144,12 +144,12 @@ exports.submitExam = async (req, res) => {
     const questions = await Question.find({ _id: { $in: questionIds } }).lean();
     const answers = await StudentAnswer.find({ exam_session_id }).lean();
     const answerMap = {};
-    for (const a of answers) answerMap[String(a.question_id)] = a.option_content;
+    for (const a of answers) answerMap[String(a.question_id)] = a.selected_option_id ? String(a.selected_option_id) : null;
 
     let correct = 0;
     for (const q of questions) {
       const correctOpt = q.options.find(o => o.is_correct);
-      if (correctOpt && answerMap[String(q._id)] === correctOpt.content) correct++;
+      if (correctOpt && answerMap[String(q._id)] === String(correctOpt._id)) correct++;
     }
     const total = questions.length;
     const score = total > 0 ? Number(((correct / total) * 10).toFixed(1)) : 0.0;
@@ -191,23 +191,24 @@ exports.getResult = async (req, res) => {
     const answers = await StudentAnswer.find({ exam_session_id: sessionId }).lean();
     const answerMap = {};
     for (const a of answers) {
-      answerMap[String(a.question_id)] = a.option_content;
+      answerMap[String(a.question_id)] = a.selected_option_id ? String(a.selected_option_id) : null;
     }
 
     let correct = 0;
     const detail = questions.map((q, idx) => {
-      const selected = answerMap[String(q._id)] || null;
+      const selectedId = answerMap[String(q._id)] || null;
       const correctOption = q.options.find(o => o.is_correct);
-      const isCorrect = selected && correctOption && selected === correctOption.content;
+      const isCorrect = selectedId && correctOption && selectedId === String(correctOption._id);
       if (isCorrect) correct++;
+      const selectedOpt = selectedId ? q.options.find(o => String(o._id) === selectedId) : null;
       return {
         index: idx + 1,
         question: q.content,
         options: q.options.map(o => ({
           ...o,
-          is_selected: o.content === selected,
+          is_selected: String(o._id) === selectedId,
         })),
-        selected,
+        selected: selectedOpt ? selectedOpt.content : null,
         correct_answer: correctOption ? correctOption.content : null,
         is_correct: !!isCorrect,
       };
@@ -294,11 +295,11 @@ exports.getExamSessions = async (req, res) => {
       if (s.status !== 'SUBMITTED') return { ...s, score: null };
       const answers = await StudentAnswer.find({ exam_session_id: s._id }).lean();
       const answerMap = {};
-      for (const a of answers) answerMap[String(a.question_id)] = a.option_content;
+      for (const a of answers) answerMap[String(a.question_id)] = a.selected_option_id ? String(a.selected_option_id) : null;
       let correct = 0;
       for (const q of questions) {
         const correctOpt = q.options.find(o => o.is_correct);
-        if (correctOpt && answerMap[String(q._id)] === correctOpt.content) correct++;
+        if (correctOpt && answerMap[String(q._id)] === String(correctOpt._id)) correct++;
       }
       return { ...s, correct, score: total > 0 ? ((correct / total) * 10).toFixed(1) : '0.0' };
     }));
@@ -342,22 +343,23 @@ exports.getSessionResultForTeacher = async (req, res) => {
 
     const answers = await StudentAnswer.find({ exam_session_id: sessionId }).lean();
     const answerMap = {};
-    for (const a of answers) answerMap[String(a.question_id)] = a.option_content;
+    for (const a of answers) answerMap[String(a.question_id)] = a.selected_option_id ? String(a.selected_option_id) : null;
 
     let correct = 0;
     const detail = questions.map((q, idx) => {
-      const selected = answerMap[String(q._id)] || null;
+      const selectedId = answerMap[String(q._id)] || null;
       const correctOption = q.options.find(o => o.is_correct);
-      const isCorrect = selected && correctOption && selected === correctOption.content;
+      const isCorrect = selectedId && correctOption && selectedId === String(correctOption._id);
       if (isCorrect) correct++;
+      const selectedOpt = selectedId ? q.options.find(o => String(o._id) === selectedId) : null;
       return {
         index: idx + 1,
         question: q.content,
         options: q.options.map(o => ({
           ...o,
-          is_selected: o.content === selected,
+          is_selected: String(o._id) === selectedId,
         })),
-        selected,
+        selected: selectedOpt ? selectedOpt.content : null,
         correct_answer: correctOption ? correctOption.content : null,
         is_correct: !!isCorrect,
       };

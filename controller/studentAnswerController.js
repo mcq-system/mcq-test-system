@@ -17,7 +17,7 @@ exports.listStudentAnswers = async (req, res) => {
 // POST /student-answers
 exports.createStudentAnswer = async (req, res) => {
   try {
-    const { exam_session_id, question_id, option_content } = req.body;
+    const { exam_session_id, question_id, selected_option_id } = req.body;
     if (!exam_session_id || !question_id) {
       return res.status(400).json({ error: 'exam_session_id and question_id are required' });
     }
@@ -25,7 +25,7 @@ exports.createStudentAnswer = async (req, res) => {
     const answer = await StudentAnswer.create({
       exam_session_id,
       question_id,
-      option_content: option_content || null,
+      selected_option_id: selected_option_id || null,
     });
     return res.status(201).json({ success: true, data: answer });
   } catch (err) {
@@ -48,7 +48,7 @@ exports.getStudentAnswer = async (req, res) => {
 exports.updateStudentAnswer = async (req, res) => {
   try {
     const update = {};
-    if (req.body.option_content !== undefined) update.option_content = req.body.option_content;
+    if (req.body.selected_option_id !== undefined) update.selected_option_id = req.body.selected_option_id;
 
     const answer = await StudentAnswer.findByIdAndUpdate(req.params.id, update, { new: true }).lean();
     if (!answer) return res.status(404).json({ error: 'Student answer not found' });

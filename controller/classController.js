@@ -16,11 +16,11 @@ exports.getClasses = async (req, res) => {
 exports.createClass = async (req, res) => {
   try {
     const teacherId = req.user?._id;
-    const { ten, description } = req.body;
-    if (!ten) return res.status(400).json({ error: 'Class name is required' });
+    const { name, description } = req.body;
+    if (!name) return res.status(400).json({ error: 'Class name is required' });
 
     const cls = await Class.create({
-      ten: String(ten).trim(),
+      name: String(name).trim(),
       description: description ? String(description).trim() : '',
       teacher_id: teacherId,
     });
@@ -43,11 +43,11 @@ exports.getClass = async (req, res) => {
 
 exports.updateClass = async (req, res) => {
   try {
-    const { ten, description } = req.body;
+    const { name, description } = req.body;
     const updated = await Class.findByIdAndUpdate(
       req.params.id,
       {
-        ...(ten ? { ten: String(ten).trim() } : {}),
+        ...(name ? { name: String(name).trim() } : {}),
         ...(description !== undefined ? { description: String(description).trim() } : {}),
       },
       { new: true }
