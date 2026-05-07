@@ -58,7 +58,14 @@ app.engine(
         if (!str) return '';
         return str.length > len ? str.slice(0, len) + '…' : str;
       },
-      json: (v) => JSON.stringify(v || null)
+      json: (v) => JSON.stringify(v || null),
+      concat: function () {
+        let outStr = '';
+        for (let i = 0, len = arguments.length - 1; i < len; i++) {
+          outStr += arguments[i];
+        }
+        return outStr;
+      }
     },
     runtimeOptions: {
       allowProtoPropertiesByDefault: true,

@@ -1,6 +1,4 @@
 <title>Quản lý đề thi</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
     :root {
         --primary-color: #0284c7;
@@ -11,70 +9,8 @@
         --bg-card: #ffffff;
     }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg-body);
+    .exam-list-page {
         color: var(--text-main);
-    }
-
-    /* Stats Cards */
-    .stats-grid {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 24px;
-    }
-
-    .stat-card {
-        flex: 1;
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 20px;
-        display: flex;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
-    .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 18px;
-    }
-
-    .icon-blue {
-        background: #e0f2fe;
-        color: #0284c7;
-    }
-
-    .icon-green {
-        background: #dcfce7;
-        color: #16a34a;
-    }
-
-    .icon-yellow {
-        background: #fef08a;
-        color: #ca8a04;
-    }
-
-    .stat-info p {
-        font-size: 13px;
-        color: var(--text-muted);
-        margin-bottom: 4px;
-    }
-
-    .stat-info h3 {
-        font-size: 24px;
-        font-weight: 700;
     }
 
     /* Main Section */
@@ -277,36 +213,28 @@
 </style>
 </head>
 
-<body>
-
+<div class="exam-list-page">
     <!-- Stats Cards -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon icon-blue"><i class="fa-regular fa-file-lines"></i></div>
             <div class="stat-info">
                 <p>Tổng số đề</p>
-                <h3>6</h3>
+                <h3>{{stats.totalExams}}</h3>
             </div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon icon-green"><i class="fa-solid fa-chart-simple"></i></div>
+            <div class="stat-icon icon-green"><i class="fa-solid fa-check-circle"></i></div>
             <div class="stat-info">
                 <p>Đã xuất bản</p>
-                <h3>4</h3>
+                <h3>{{stats.publishedExams}}</h3>
             </div>
         </div>
         <div class="stat-card">
             <div class="stat-icon icon-yellow"><i class="fa-regular fa-file"></i></div>
             <div class="stat-info">
-                <p>Nháp</p>
-                <h3>1</h3>
-            </div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon icon-blue"><i class="fa-solid fa-chart-column"></i></div>
-            <div class="stat-info">
-                <p>Tổng lượt thi</p>
-                <h3>444</h3>
+                <p>Bản nháp</p>
+                <h3>{{stats.draftExams}}</h3>
             </div>
         </div>
     </div>
@@ -348,139 +276,52 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each exams}}
-                <tr>
-                    <td>
-                        <div class="test-name-cell">
-                            <span class="test-title">{{title}}</span>
-                            <div class="test-meta">
-                                <span class="test-tag">Lớp: {{class_id}}</span>
-                                <span><i class="fa-regular fa-clock"></i> {{duration_minutes}} phút</span>
+                {{#if exams.length}}
+                    {{#each exams}}
+                    <tr>
+                        <td>
+                            <div class="test-name-cell">
+                                <span class="test-title">{{title}}</span>
+                                <div class="test-meta">
+                                    <span><i class="fa-regular fa-clock"></i> {{duration_minutes}} phút</span>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        {{#if (eq status 'PUBLISHED')}}
-                        <span class="status-badge status-published">Đã xuất bản</span>
-                        {{else}}
-                        <span class="status-badge status-draft">{{status}}</span>
-                        {{/if}}
-                    </td>
-                    <td>{{class_id}}</td>
-                    <td>{{!-- lượt thi - not available here --}}-</td>
-                    <td>{{!-- avg score - not available here --}}-</td>
-                    <td>{{created_at}}</td>
-                    <td>
-                        <div class="action-btns">
-                            <a href="/teacher/exams/{{_id}}"><i class="fa-regular fa-eye"></i></a>
-                            <a href="/teacher/exams/{{_id}}/edit"><i class="fa-solid fa-pen"></i></a>
-                            <a href="/teacher/exams/{{_id}}/duplicate"><i class="fa-regular fa-copy"></i></a>
-                            <a href="/teacher/exams/{{_id}}/delete"><i class="fa-regular fa-trash-can"></i></a>
-                        </div>
-                    </td>
-                </tr>
-                {{/each}}
-            </tbody>
-            <tr>
-                <td>
-                    <div class="test-name-cell">
-                        <span class="test-title">IELTS Vocabulary Test</span>
-                        <div class="test-meta">
-                            <span class="test-tag">Vocabulary</span>
-                            <span><i class="fa-solid fa-list-ul"></i> 30 câu</span>
-                            <span><i class="fa-regular fa-clock"></i> 45 phút</span>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="status-badge status-draft">Nháp</span></td>
-                <td>0</td>
-                <td>0</td>
-                <td>-</td>
-                <td>2024-01-20</td>
-                <td>
-                    <div class="action-btns">
-                        <i class="fa-regular fa-eye"></i>
-                        <i class="fa-solid fa-pen"></i>
-                        <i class="fa-regular fa-copy"></i>
-                        <i class="fa-regular fa-trash-can"></i>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="test-name-cell">
-                        <span class="test-title">TOEIC Listening Mock Exam</span>
-                        <div class="test-meta">
-                            <span class="test-tag">TOEIC</span>
-                            <span><i class="fa-solid fa-list-ul"></i> 50 câu</span>
-                            <span><i class="fa-regular fa-clock"></i> 90 phút</span>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="status-badge status-published">Đã xuất bản</span></td>
-                <td>1</td>
-                <td>32</td>
-                <td class="score-green">75%</td>
-                <td>2024-01-08</td>
-                <td>
-                    <div class="action-btns">
-                        <i class="fa-regular fa-eye"></i>
-                        <i class="fa-solid fa-pen"></i>
-                        <i class="fa-regular fa-copy"></i>
-                        <i class="fa-regular fa-trash-can"></i>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="test-name-cell">
-                        <span class="test-title">Advanced Grammar Test</span>
-                        <div class="test-meta">
-                            <span class="test-tag">Grammar</span>
-                            <span><i class="fa-solid fa-list-ul"></i> 35 câu</span>
-                            <span><i class="fa-regular fa-clock"></i> 45 phút</span>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="status-badge status-archived">Đã lưu trữ</span></td>
-                <td>0</td>
-                <td>156</td>
-                <td class="score-yellow">65%</td>
-                <td>2023-12-01</td>
-                <td>
-                    <div class="action-btns">
-                        <i class="fa-regular fa-eye"></i>
-                        <i class="fa-solid fa-pen"></i>
-                        <i class="fa-regular fa-copy"></i>
-                        <i class="fa-regular fa-trash-can"></i>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <div class="test-name-cell">
-                        <span class="test-title">Business English Vocabulary</span>
-                        <div class="test-meta">
-                            <span class="test-tag">Vocabulary</span>
-                            <span><i class="fa-solid fa-list-ul"></i> 20 câu</span>
-                            <span><i class="fa-regular fa-clock"></i> 25 phút</span>
-                        </div>
-                    </div>
-                </td>
-                <td><span class="status-badge status-published">Đã xuất bản</span></td>
-                <td>2</td>
-                <td>45</td>
-                <td class="score-green">78%</td>
-                <td>2024-01-18</td>
-                <td>
-                    <div class="action-btns">
-                        <i class="fa-regular fa-eye"></i>
-                        <i class="fa-solid fa-pen"></i>
-                        <i class="fa-regular fa-copy"></i>
-                        <i class="fa-regular fa-trash-can"></i>
-                    </div>
-                </td>
-            </tr>
+                        </td>
+                        <td>
+                            {{#if (eq status 'PUBLISHED')}}
+                            <span class="status-badge status-published">Đã xuất bản</span>
+                            {{else}}
+                            <span class="status-badge status-draft">{{status}}</span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if class_id}}
+                                {{class_id.name}}
+                            {{else}}
+                                <em>Chưa gán lớp</em>
+                            {{/if}}
+                        </td>
+                        <td>{{!-- lượt thi --}}-</td>
+                        <td>{{!-- TB Điểm --}}-</td>
+                        <td>{{formatDate created_at}}</td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="/teacher/exams/{{_id}}" title="Xem chi tiết"><i class="fa-regular fa-eye"></i></a>
+                                <a href="/teacher/exams/{{_id}}/edit" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></a>
+                                <a href="/teacher/exams/{{_id}}/delete" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa đề thi này?')"><i class="fa-regular fa-trash-can"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #888;">
+                            <i class="fa-regular fa-folder-open" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+                            Chưa có đề thi nào được tạo.
+                        </td>
+                    </tr>
+                {{/if}}
             </tbody>
         </table>
     </main>
+</div>

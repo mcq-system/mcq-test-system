@@ -16,13 +16,20 @@ exports.getClasses = async (req, res) => {
 exports.createClass = async (req, res) => {
   try {
     const teacherId = req.user?._id;
-    const { name, description } = req.body;
+    const { name, description, starting_date, ending_date, study_schedule } = req.body;
     if (!name) return res.status(400).json({ error: 'Class name is required' });
+
+    // Generate random 6-char code if not provided
+    const class_code = req.body.class_code || Math.random().toString(36).substring(2, 8).toUpperCase();
 
     const cls = await Class.create({
       name: String(name).trim(),
+      class_code,
       description: description ? String(description).trim() : '',
       teacher_id: teacherId,
+      starting_date: starting_date ? new Date(starting_date) : null,
+      ending_date: ending_date ? new Date(ending_date) : null,
+      study_schedule: study_schedule || []
     });
 
     return res.status(201).json({ success: true, data: cls });
@@ -43,12 +50,16 @@ exports.getClass = async (req, res) => {
 
 exports.updateClass = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, starting_date, ending_date, class_code, study_schedule } = req.body;
     const updated = await Class.findByIdAndUpdate(
       req.params.id,
       {
         ...(name ? { name: String(name).trim() } : {}),
+        ...(class_code ? { class_code: String(class_code).toUpperCase() } : {}),
         ...(description !== undefined ? { description: String(description).trim() } : {}),
+        ...(starting_date !== undefined ? { starting_date: starting_date ? new Date(starting_date) : null } : {}),
+        ...(ending_date !== undefined ? { ending_date: ending_date ? new Date(ending_date) : null } : {}),
+        ...(study_schedule !== undefined ? { study_schedule } : {}),
       },
       { new: true }
     ).lean();

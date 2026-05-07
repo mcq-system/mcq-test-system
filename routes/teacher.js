@@ -42,14 +42,23 @@ router.get('/dashboard', protect('teacher'), async (req, res, next) => {
     // exam count created by teacher
     const examCount = await Exam.countDocuments({ created_by: teacherId });
 
-    // schedules for teacher's classes
+    // 1. Fetch data from Schedule model (old way/detailed)
     const schedulesRaw = await Schedule.find({ class_id: { $in: classIdList } })
       .populate('class_id', 'name')
       .lean();
 
-    // Map to frontend format
+    // 2. Fetch data from Class model (new structured schedule)
+    const classesForSchedule = await Class.find({ teacher_id: teacherId, study_schedule: { $exists: true, $ne: [] } }).lean();
+
+    const dayMap = {
+      'Sunday': 0, 'Monday': 1, 'Tuesday': 2, 'Wednesday': 3, 'Thursday': 4, 'Friday': 5, 'Saturday': 6,
+      'Chủ nhật': 0, 'Thứ 2': 1, 'Thứ 3': 2, 'Thứ 4': 3, 'Thứ 5': 4, 'Thứ 6': 5, 'Thứ 7': 6
+    };
+
     const colors = ['toeic', 'grammar', 'ielts', 'vocab', 'listen'];
-    const scheduleData = schedulesRaw.map((s, i) => ({
+    
+    // Map Schedule model data (Fallback)
+    const scheduleDataFromModel = schedulesRaw.map((s, i) => ({
       name: s.class_id ? s.class_id.name : 'N/A',
       room: 'Phòng học', 
       color: colors[i % colors.length],
@@ -57,6 +66,28 @@ router.get('/dashboard', protect('teacher'), async (req, res, next) => {
       slot: `${s.start_time} - ${s.end_time}`
     }));
 
+    // Map Class model study_schedule
+    const scheduleDataFromClass = [];
+    classesForSchedule.forEach((c, idx) => {
+      (c.study_schedule || []).forEach(item => {
+        const dayIdx = dayMap[item.day];
+        if (dayIdx !== undefined) {
+          (item.slots || []).forEach(slot => {
+            scheduleDataFromClass.push({
+              name: c.name,
+              room: 'Online',
+              color: colors[(schedulesRaw.length + idx) % colors.length],
+              days: [dayIdx],
+              slot: `${slot.start} - ${slot.end}`
+            });
+          });
+        }
+      });
+    });
+
+    // Merge both
+    const scheduleData = [...scheduleDataFromModel, ...scheduleDataFromClass];
+    
     res.render('teacher/dashboard', {
       title: 'Teacher Dashboard',
       stats: { classCount, studentCount, examCount },
@@ -200,10 +231,11 @@ router.get('/my-classes', protect('teacher'), async (req, res) => {
     // fetch classes and student counts
     const classes = await Class.find({ teacher_id: teacherId }).lean();
 
-    // add student counts per class
+    // add student and exam counts per class
     const enriched = await Promise.all(classes.map(async c => {
       const studentCount = await ClassMember.countDocuments({ class_id: c._id });
-      return { ...c, students: studentCount };
+      const examCount = await Exam.countDocuments({ class_id: c._id });
+      return { ...c, students: studentCount, examCount };
     }));
 
     res.render('teacher/class-management', {
@@ -219,13 +251,19 @@ router.get('/my-classes', protect('teacher'), async (req, res) => {
 
 router.get('/create-class', protect('teacher'), async (req, res) => {
   try {
-    const teacherId = req.user?._id;
-    const user = await User.findById(teacherId).lean();
     res.render('teacher/create-class', {
       title: 'Tạo lớp học mới',
+      daysList: [
+        { vi: 'Thứ 2', en: 'Monday' },
+        { vi: 'Thứ 3', en: 'Tuesday' },
+        { vi: 'Thứ 4', en: 'Wednesday' },
+        { vi: 'Thứ 5', en: 'Thursday' },
+        { vi: 'Thứ 6', en: 'Friday' },
+        { vi: 'Thứ 7', en: 'Saturday' },
+        { vi: 'Chủ nhật', en: 'Sunday' }
+      ]
     });
   } catch (err) {
-    console.error("Lỗi chi tiết:", err); 
     res.status(500).send("Lỗi Server: " + err.message);
   }
 });
@@ -234,9 +272,19 @@ router.get('/create-class', protect('teacher'), async (req, res) => {
 router.post('/create-class', protect('teacher'), async (req, res) => {
   try {
     const teacherId = req.user?._id;
-    const { name, description } = req.body;
+    const { name, description, starting_date, ending_date, study_schedule } = req.body;
     if (!name || !teacherId) return res.status(400).send('Thiếu tên lớp hoặc chưa đăng nhập');
-    // basic sanitize
+
+    // Parse study_schedule from hidden JSON input
+    let formattedSchedule = [];
+    try {
+      if (req.body.study_schedule_json) {
+        formattedSchedule = JSON.parse(req.body.study_schedule_json);
+      }
+    } catch (e) {
+      console.error('Error parsing study_schedule_json:', e);
+    }
+
     const cleanName = String(name).trim();
     const cleanDesc = description ? String(description).trim() : '';
 
@@ -247,12 +295,159 @@ router.post('/create-class', protect('teacher'), async (req, res) => {
         name: cleanName, 
         class_code, 
         description: cleanDesc, 
-        teacher_id: teacherId 
+        teacher_id: teacherId,
+        starting_date: starting_date ? new Date(starting_date) : null,
+        ending_date: ending_date ? new Date(ending_date) : null,
+        study_schedule: formattedSchedule
     });
     res.redirect('/teacher/my-classes');
   } catch (err) {
     console.error('Lỗi tạo lớp:', err);
     res.status(500).send('Lỗi tạo lớp: ' + err.message);
+  }
+});
+
+// GET view class detail (list students)
+router.get('/my-classes/:id', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+    console.log('Accessing class detail:', classId, 'Teacher:', teacherId);
+
+    const cls = await Class.findOne({ _id: classId, teacher_id: teacherId }).lean();
+    if (!cls) return res.status(404).send('Lớp học không tồn tại');
+
+    // Fetch members and exams
+    const members = await ClassMember.find({ class_id: classId }).populate('student_id').lean();
+    const exams = await Exam.find({ class_id: classId }).sort({ created_at: -1 }).lean();
+
+    // Map English day names to Vietnamese for display
+    const dayViMap = {
+      'Monday': 'Thứ 2', 'Tuesday': 'Thứ 3', 'Wednesday': 'Thứ 4',
+      'Thursday': 'Thứ 5', 'Friday': 'Thứ 6', 'Saturday': 'Thứ 7', 'Sunday': 'Chủ nhật'
+    };
+    if (cls.study_schedule) {
+      cls.study_schedule = cls.study_schedule.map(s => ({
+        ...s,
+        dayVi: dayViMap[s.day] || s.day
+      }));
+    }
+
+    res.render('teacher/class-detail', {
+      title: `Chi tiết lớp: ${cls.name}`,
+      cls,
+      members,
+      exams
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// GET edit class form
+router.get('/my-classes/:id/edit', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+
+    const cls = await Class.findOne({ _id: classId, teacher_id: teacherId }).lean();
+    if (!cls) return res.status(404).send('Lớp học không tồn tại');
+
+    if (cls.starting_date) cls.starting_date_val = cls.starting_date.toISOString().split('T')[0];
+    if (cls.ending_date) cls.ending_date_val = cls.ending_date.toISOString().split('T')[0];
+
+    // Helper for structured schedule in HBS
+    const days = [
+      { vi: 'Thứ 2', en: 'Monday' },
+      { vi: 'Thứ 3', en: 'Tuesday' },
+      { vi: 'Thứ 4', en: 'Wednesday' },
+      { vi: 'Thứ 5', en: 'Thursday' },
+      { vi: 'Thứ 6', en: 'Friday' },
+      { vi: 'Thứ 7', en: 'Saturday' },
+      { vi: 'Chủ nhật', en: 'Sunday' }
+    ];
+    cls.scheduleFlags = days.map((d, dIdx) => {
+      const match = (cls.study_schedule || []).find(s => s.day === d.en);
+      // Map slots to include the day index for safe Handlebars parsing
+      const formattedSlots = (match && match.slots ? match.slots : [{ start: '07:00', end: '09:00' }]).map(slot => {
+        return {
+          ...slot,
+          dayIdx: dIdx
+        };
+      });
+      
+      return {
+        vi: d.vi,
+        en: d.en,
+        selected: !!match,
+        slots: formattedSlots
+      };
+    });
+
+    res.render('teacher/edit-class', {
+      title: `Chỉnh sửa: ${cls.name}`,
+      cls
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// POST update class
+router.post('/my-classes/:id/edit', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+    const { name, description, starting_date, ending_date, study_schedule } = req.body;
+
+    // Parse study_schedule from hidden JSON input
+    let formattedSchedule = [];
+    try {
+      if (req.body.study_schedule_json) {
+        formattedSchedule = JSON.parse(req.body.study_schedule_json);
+      }
+    } catch (e) {
+      console.error('Error parsing study_schedule_json:', e);
+    }
+
+    const cls = await Class.findOneAndUpdate(
+      { _id: classId, teacher_id: teacherId },
+      { 
+        name: String(name).trim(), 
+        description: String(description).trim(),
+        starting_date: starting_date ? new Date(starting_date) : null,
+        ending_date: ending_date ? new Date(ending_date) : null,
+        study_schedule: formattedSchedule
+      },
+      { new: true }
+    );
+
+    if (!cls) return res.status(404).send('Lớp học không tồn tại');
+    res.redirect('/teacher/my-classes');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+});
+
+// POST delete class
+router.post('/my-classes/:id/delete', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+
+    // Check ownership
+    const cls = await Class.findOne({ _id: classId, teacher_id: teacherId });
+    if (!cls) return res.status(404).send('Lớp học không tồn tại hoặc bạn không có quyền xóa');
+
+    // Delete related data
+    await Schedule.deleteMany({ class_id: classId });
+    await ClassMember.deleteMany({ class_id: classId });
+    await Class.deleteOne({ _id: classId });
+
+    res.redirect('/teacher/my-classes');
+  } catch (err) {
+    console.error('Lỗi xóa lớp:', err);
+    res.status(500).send('Lỗi xóa lớp: ' + err.message);
   }
 });
 
@@ -317,11 +512,19 @@ router.get('/exams', protect('teacher'), async (req, res) => {
     const teacherId = req.user?._id;
     const user = await User.findById(teacherId).lean();
 
-    const exams = await Exam.find({ created_by: teacherId }).sort({ created_at: -1 }).lean();
+    const exams = await Exam.find({ created_by: teacherId })
+      .populate('class_id')
+      .sort({ created_at: -1 })
+      .lean();
+
+    const totalExams = exams.length;
+    const publishedExams = exams.filter(e => e.status === 'PUBLISHED').length;
+    const draftExams = exams.filter(e => e.status === 'DRAFT').length;
 
     res.render('teacher/exam-list', {
       title: 'Danh sách đề thi',
-      exams
+      exams,
+      stats: { totalExams, publishedExams, draftExams }
     });
   } catch (err) {
     res.status(500).send("Lỗi tải danh sách đề thi: " + err.message);
@@ -387,6 +590,31 @@ router.post('/exams/store', protect('teacher'), async (req, res) => {
 
       await session.commitTransaction();
       session.endSession();
+
+      // Send notifications to students in the class (Non-blocking)
+      if (class_id) {
+          try {
+              const Notification = require('../models/Notification');
+              const ClassMember = require('../models/ClassMember');
+              const students = await ClassMember.find({ class_id }).lean();
+              
+              if (students.length > 0) {
+                  const notifications = students.map(s => ({
+                      recipient: s.student_id,
+                      sender: teacherId,
+                      senderRole: 'teacher',
+                      title: 'Bài thi mới',
+                      message: `Giảng viên đã tạo bài thi mới: ${title}`,
+                      type: 'exam',
+                      created_at: new Date()
+                  }));
+                  await Notification.insertMany(notifications);
+              }
+          } catch (notifyErr) {
+              console.error('Failed to send notifications:', notifyErr);
+          }
+      }
+
       res.redirect('/teacher/exams');
     } catch (errTx) {
       await session.abortTransaction();

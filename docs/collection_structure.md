@@ -26,7 +26,24 @@
     "name": "10A1",
     "teacher_id": "000000000000000000000002",
     "description": "Lop chuyen Toan",
-    "created_at": "2024-04-13T10:00:00Z"
+    "created_at": "2024-04-13T10:00:00Z",
+    "starting_date": "",
+    "ending_date":"",
+    "study_schedule": [
+     {
+       "day": "Monday",
+        "slots": [
+          { "start": "08:00", "end": "10:00" },
+          { "start": "14:00", "end": "16:00" }
+        ]
+     },
+      {
+        "day": "Wednesday",
+        "slots": [
+          { "start": "09:00", "end": "11:00" }
+        ]
+     }
+  ]
 }
 ```
 

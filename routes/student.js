@@ -237,6 +237,42 @@ router.get('/my-classes', protect('student'), async (req, res, next) => {
     }
 });
 
+router.get('/my-classes/:id', protect('student'), async (req, res, next) => {
+    try {
+        const studentId = req.user._id;
+        const classId = req.params.id;
+
+        // Check if student is a member
+        const membership = await ClassMember.findOne({ class_id: classId, student_id: studentId });
+        if (!membership) return res.status(403).send('Bạn không có quyền truy cập lớp học này');
+
+        const cls = await Class.findById(classId).populate('teacher_id', 'first_name last_name email').lean();
+        if (!cls) return res.status(404).send('Lớp học không tồn tại');
+
+        const exams = await Exam.find({ class_id: classId, status: 'PUBLISHED' }).sort({ created_at: -1 }).lean();
+
+        // Map English day names to Vietnamese for display
+        const dayViMap = {
+            'Monday': 'Thứ 2', 'Tuesday': 'Thứ 3', 'Wednesday': 'Thứ 4',
+            'Thursday': 'Thứ 5', 'Friday': 'Thứ 6', 'Saturday': 'Thứ 7', 'Sunday': 'Chủ nhật'
+        };
+        if (cls.study_schedule) {
+            cls.study_schedule = cls.study_schedule.map(s => ({
+                ...s,
+                dayVi: dayViMap[s.day] || s.day
+            }));
+        }
+
+        res.render('student/class-detail', {
+            title: `Lớp: ${cls.name}`,
+            cls,
+            exams
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
 router.get('/exam-do', protect('student'), async (req, res) => {
     try {
         const examsData = await Exam.find({ status: 'PUBLISHED' })

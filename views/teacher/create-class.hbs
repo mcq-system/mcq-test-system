@@ -10,13 +10,7 @@
     --border-radius: 8px;
   }
 
-  * {
-    box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-
-  body {
-    background-color: var(--bg-main);
+  .create-class-page {
     color: var(--text-main);
   }
 
@@ -107,22 +101,23 @@
   }
 
   .day-checkbox {
-    display: none;
-  }
-
-  .day-label {
+    width: 18px;
+    height: 18px;
     cursor: pointer;
-    font-size: 14px;
-    padding: 8px 0;
-    color: var(--text-main);
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
   }
 
-  .day-checkbox:checked+.day-label {
+  .schedule-row {
+    transition: background-color 0.2s;
+    border-radius: 4px;
+  }
+
+  .schedule-row:hover {
+    background-color: #f8fafc;
+  }
+
+  .day-checkbox:checked ~ label {
     color: var(--primary-color);
-    border-bottom: 2px solid var(--primary-color);
-    font-weight: 500;
+    font-weight: 600;
   }
 
   .schedule-placeholder {
@@ -188,6 +183,7 @@
 
 
 
+  <form action="/teacher/create-class" method="POST">
   <div class="container">
     <!-- Section: Thông tin chung -->
     <div class="card">
@@ -196,7 +192,7 @@
 
       <div class="form-group">
         <label>Tên lớp học <span class="required">*</span></label>
-        <input type="text" placeholder="VD: TOEIC Preparation A1">
+        <input type="text" name="name" placeholder="VD: TOEIC Preparation A1" required>
       </div>
 
       <div class="form-row">
@@ -218,17 +214,17 @@
       <div class="form-row">
         <div class="form-group">
           <label>Ngày bắt đầu</label>
-          <input type="date">
+          <input type="date" name="starting_date">
         </div>
         <div class="form-group">
           <label>Ngày kết thúc</label>
-          <input type="date">
+          <input type="date" name="ending_date">
         </div>
       </div>
 
       <div class="form-group" style="margin-bottom: 0;">
         <label>Mô tả lớp học</label>
-        <textarea placeholder="Mô tả ngắn về nội dung, mục tiêu của lớp học..."></textarea>
+        <textarea name="description" placeholder="Mô tả ngắn về nội dung, mục tiêu của lớp học..."></textarea>
       </div>
     </div>
 
@@ -239,53 +235,49 @@
           <path
             d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
         </svg>
-        Lịch dạy trong tuần
+        Lịch học
       </div>
       <div class="section-subtitle">Chọn các ngày và thời gian dạy trong tuần</div>
 
       <div class="form-group">
-        <label>Chọn ngày dạy</label>
-        <div class="days-selector" id="daysSelector">
-          <div class="day-item">
-            <input type="checkbox" id="day2" class="day-checkbox">
-            <label for="day2" class="day-label">Thứ 2</label>
+        <label>Thiết lập lịch học <span class="text-muted">(Chọn ngày và thêm các ca học tương ứng)</span></label>
+        <div id="schedule-container" style="display: grid; gap: 16px;">
+          {{#each (lookup . 'daysList')}}
+          <div class="day-schedule-card" data-day-en="{{this.en}}" style="border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; background: #fff;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" class="day-checkbox-v2" id="day_{{@index}}">
+                <label for="day_{{@index}}" style="margin-bottom: 0; font-size: 15px; font-weight: 600;">{{this.vi}}</label>
+              </div>
+              <button type="button" class="btn-add-slot" style="background: #f0f7ff; color: var(--primary-color); border: 1px dashed var(--primary-color); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                + Thêm ca học
+              </button>
+            </div>
+            
+            <div class="slots-list" style="display: grid; gap: 8px; padding-left: 28px;">
+              <div class="slot-item" style="display: flex; align-items: center; gap: 8px;">
+                <select class="slot-select" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1;">
+                  <option value="07:00 - 09:00">07:00 - 09:00</option>
+                  <option value="09:00 - 11:00">09:00 - 11:00</option>
+                  <option value="13:00 - 15:00">13:00 - 15:00</option>
+                  <option value="15:00 - 17:00">15:00 - 17:00</option>
+                  <option value="18:00 - 20:00">18:00 - 20:00</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div class="day-item">
-            <input type="checkbox" id="day3" class="day-checkbox">
-            <label for="day3" class="day-label">Thứ 3</label>
-          </div>
-          <div class="day-item">
-            <input type="checkbox" id="day4" class="day-checkbox">
-            <label for="day4" class="day-label">Thứ 4</label>
-          </div>
-          <div class="day-item">
-            <input type="checkbox" id="day5" class="day-checkbox">
-            <label for="day5" class="day-label">Thứ 5</label>
-          </div>
-          <div class="day-item">
-            <input type="checkbox" id="day6" class="day-checkbox">
-            <label for="day6" class="day-label">Thứ 6</label>
-          </div>
-          <div class="day-item">
-            <input type="checkbox" id="day7" class="day-checkbox">
-            <label for="day7" class="day-label">Thứ 7</label>
-          </div>
-          <div class="day-item">
-            <input type="checkbox" id="day8" class="day-checkbox">
-            <label for="day8" class="day-label">Chủ nhật</label>
-          </div>
+          {{/each}}
         </div>
       </div>
 
-      <div class="schedule-placeholder" id="schedulePlaceholder">
-        Chọn ít nhất một ngày để cài đặt thời gian dạy
-      </div>
+      <!-- Hidden input to carry the final JSON -->
+      <input type="hidden" name="study_schedule_json" id="study_schedule_json">
     </div>
 
     <!-- Action Buttons -->
     <div class="action-buttons">
       <button class="btn btn-outline">Hủy</button>
-      <button class="btn btn-primary">
+      <button type="submit" class="btn btn-primary">
         <svg class="icon" style="fill: white;" viewBox="0 0 24 24">
           <path
             d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
@@ -293,23 +285,61 @@
         Tạo lớp học
       </button>
     </div>
+  </form>
   </div>
 
   <script>
-    // Script cơ bản để thay đổi text khi có ngày được chọn
-    const checkboxes = document.querySelectorAll('.day-checkbox');
-    const placeholder = document.getElementById('schedulePlaceholder');
+    // Add slot button
+    document.querySelectorAll('.btn-add-slot').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const card = this.closest('.day-schedule-card');
+        const container = card.querySelector('.slots-list');
+        
+        const newSlot = document.createElement('div');
+        newSlot.className = 'slot-item';
+        newSlot.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-top: 8px;';
+        newSlot.innerHTML = `
+          <select class="slot-select" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1;">
+            <option value="07:00 - 09:00">07:00 - 09:00</option>
+            <option value="09:00 - 11:00">09:00 - 11:00</option>
+            <option value="13:00 - 15:00">13:00 - 15:00</option>
+            <option value="15:00 - 17:00">15:00 - 17:00</option>
+            <option value="18:00 - 20:00">18:00 - 20:00</option>
+          </select>
+          <button type="button" class="btn-remove-slot" style="background: #fff; color: #ef4444; border: 1px solid #fee2e2; padding: 4px 8px; border-radius: 4px; cursor: pointer;">&times;</button>
+        `;
+        container.appendChild(newSlot);
+        newSlot.querySelector('.btn-remove-slot').addEventListener('click', function() {
+          newSlot.remove();
+        });
+      });
+    });
 
-    checkboxes.forEach(checkbox => {
-      checkbox.addEventListener('change', () => {
-        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-        if (anyChecked) {
-          placeholder.innerHTML = "<em>(Khu vực cấu hình thời gian cho các ngày đã chọn sẽ hiện tại đây)</em>";
-          placeholder.style.backgroundColor = "#fff";
-        } else {
-          placeholder.innerHTML = "Chọn ít nhất một ngày để cài đặt thời gian dạy";
-          placeholder.style.backgroundColor = "#fafafa";
+    // Build JSON on form submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      const schedule = [];
+      document.querySelectorAll('.day-schedule-card').forEach(card => {
+        const checkbox = card.querySelector('.day-checkbox-v2');
+        if (checkbox && checkbox.checked) {
+          const dayEn = card.dataset.dayEn;
+          const slots = [];
+          card.querySelectorAll('.slot-select').forEach(sel => {
+            if (sel.value) {
+              const parts = sel.value.split(' - ');
+              if (parts.length === 2) {
+                slots.push({ start: parts[0], end: parts[1] });
+              }
+            }
+          });
+          if (slots.length > 0) {
+            schedule.push({ day: dayEn, slots: slots });
+          }
         }
       });
+      
+      const jsonInput = document.getElementById('study_schedule_json');
+      jsonInput.value = JSON.stringify(schedule);
+      console.log('Final Schedule JSON:', jsonInput.value);
     });
   </script>

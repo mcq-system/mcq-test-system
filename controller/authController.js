@@ -230,3 +230,11 @@ exports.resetPassword = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Lỗi server: ' + err.message });
   }
 };
+
+exports.postLogout = (req, res) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.redirect('/auth/login');
+};
