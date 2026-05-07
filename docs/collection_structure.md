@@ -12,8 +12,6 @@
     "password": "<hash1>",
     "role": "student",
     "status": "active",
-    "class_name": "CNTT K20",
-    "department": "Khoa CNTT",
     "address": "TP.HCM",
     "dob": "2002-05-15T00:00:00Z",
     "created_at": "2024-04-13T10:00:00Z"

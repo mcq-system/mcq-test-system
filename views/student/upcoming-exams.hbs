@@ -180,7 +180,9 @@
 
         <div class="exam-info-list">
             <div class="info-item">
-                <i class="far fa-calendar-alt"></i> Ngày thi: {{formatDate start_time}}
+                <i class="far fa-calendar-alt"></i>
+                Thi lúc: {{formatDate start_time}} {{formatTime start_time}}
+
             </div>
             <div class="info-item">
                 <i class="far fa-clock"></i> Thời gian: {{duration_minutes}} phút

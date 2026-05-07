@@ -75,7 +75,9 @@
                     </div>
                     <a href="/student/notifications" class="noti-bell" style="text-decoration: none; position: relative;">
                         <i class="fas fa-bell"></i>
-                        <span style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
+                        {{#if unreadNotificationsCount}}
+                        <span style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">{{unreadNotificationsCount}}</span>
+                        {{/if}}
                     </a>
                 </div>
             </header>

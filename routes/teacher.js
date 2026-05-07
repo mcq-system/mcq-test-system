@@ -12,7 +12,20 @@ const Schedule = require('../models/Schedule');
 const Question = require('../models/Question');
 const QuestionTopic = require('../models/QuestionTopic');
 
-//======================= Dashboard ============================================================
+// Middleware to inject common data into all teacher views
+router.use(protect('teacher'), async (req, res, next) => {
+    try {
+        res.locals.user = req.user.toObject();
+        res.locals.layout = 'layout-teacher';
+        res.locals.unreadNotificationsCount = await Notification.countDocuments({ 
+            recipient: req.user._id, 
+            isRead: false 
+        });
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 router.get('/dashboard', protect('teacher'), async (req, res, next) => {
   try {
     const teacherId = req.user?._id;
@@ -31,13 +44,13 @@ router.get('/dashboard', protect('teacher'), async (req, res, next) => {
 
     // schedules for teacher's classes
     const schedulesRaw = await Schedule.find({ class_id: { $in: classIdList } })
-      .populate('class_id', 'ten')
+      .populate('class_id', 'name')
       .lean();
 
     // Map to frontend format
     const colors = ['toeic', 'grammar', 'ielts', 'vocab', 'listen'];
     const scheduleData = schedulesRaw.map((s, i) => ({
-      name: s.class_id ? s.class_id.ten : 'N/A',
+      name: s.class_id ? s.class_id.name : 'N/A',
       room: 'Phòng học', 
       color: colors[i % colors.length],
       days: [s.day_of_week],
@@ -45,9 +58,7 @@ router.get('/dashboard', protect('teacher'), async (req, res, next) => {
     }));
 
     res.render('teacher/dashboard', {
-      user,
       title: 'Teacher Dashboard',
-      layout: 'layout-teacher',
       stats: { classCount, studentCount, examCount },
       scheduleData
     });
@@ -127,8 +138,6 @@ router.get('/profile', protect('teacher'), async (req, res, next) => {
 
     res.render('teacher/profile', {
       title: 'Hồ sơ cá nhân',
-      user,
-      layout: 'layout-teacher',
     });
   } catch (err) {
     next(err);
@@ -173,9 +182,7 @@ router.get('/questions', protect('teacher'), async (req, res, next) => {
     const topics = await QuestionTopic.find().sort({ name: 1 }).lean();
 
     res.render('teacher/questions', {
-      user, 
       title: 'Ngân hàng câu hỏi', 
-      layout: 'layout-teacher',
       questions,
       topics
     });
@@ -201,7 +208,6 @@ router.get('/my-classes', protect('teacher'), async (req, res) => {
 
     res.render('teacher/class-management', {
       title: 'Quản lý lớp học',
-      layout: 'layout-teacher',
       classes: enriched
     });
   } catch (err) {
@@ -217,8 +223,6 @@ router.get('/create-class', protect('teacher'), async (req, res) => {
     const user = await User.findById(teacherId).lean();
     res.render('teacher/create-class', {
       title: 'Tạo lớp học mới',
-      layout: 'layout-teacher', 
-      user
     });
   } catch (err) {
     console.error("Lỗi chi tiết:", err); 
@@ -236,7 +240,15 @@ router.post('/create-class', protect('teacher'), async (req, res) => {
     const cleanName = String(name).trim();
     const cleanDesc = description ? String(description).trim() : '';
 
-    const newClass = await Class.create({ name: cleanName, description: cleanDesc, teacher_id: teacherId });
+    // Generate random 6-char code
+    const class_code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    const newClass = await Class.create({ 
+        name: cleanName, 
+        class_code, 
+        description: cleanDesc, 
+        teacher_id: teacherId 
+    });
     res.redirect('/teacher/my-classes');
   } catch (err) {
     console.error('Lỗi tạo lớp:', err);
@@ -309,8 +321,6 @@ router.get('/exams', protect('teacher'), async (req, res) => {
 
     res.render('teacher/exam-list', {
       title: 'Danh sách đề thi',
-      layout: 'layout-teacher',
-      user,
       exams
     });
   } catch (err) {
@@ -327,8 +337,6 @@ router.get('/create-exam', protect('teacher'), async (req, res) => {
 
         res.render('teacher/create-exams', {
             title: 'Tạo đề thi mới',
-            layout: 'layout-teacher',
-            user
         });
     } catch (err) {
         res.status(500).send("Lỗi hiển thị trang tạo đề thi: " + err.message);

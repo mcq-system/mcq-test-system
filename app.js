@@ -28,34 +28,43 @@ var app = express();
 const { engine } = require('express-handlebars');
 
 app.engine(
-    'hbs',
-    engine({
-      extname: '.hbs',
-      defaultLayout: false,
-      layoutsDir: path.join(__dirname, 'views', 'layouts'),
-      partialsDir: path.join(__dirname, 'views', 'partials'),
-      helpers: {
-        eq: function (a, b) {
-          return String(a) === String(b);
-        },
-        slice: function (str, start, end) {
-          return str ? str.slice(start, end) : "";
-        },
-        gt: (a, b) => a > b,
-        add: (a, b) => a + b,
-        subtract: (a, b) => a - b,
-        toString: (v) => String(v),
-        formatDate: (date) => {
-            if (!date) return '—';
-            return new Date(date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-        },
-        truncate: (str, len) => {
-            if (!str) return '';
-            return str.length > len ? str.slice(0, len) + '…' : str;
-        },
-        json: (v) => JSON.stringify(v || null)
-      }
-    })
+  'hbs',
+  engine({
+    extname: '.hbs',
+    defaultLayout: false,
+    layoutsDir: path.join(__dirname, 'views', 'layouts'),
+    partialsDir: path.join(__dirname, 'views', 'partials'),
+    helpers: {
+      eq: function (a, b) {
+        return String(a) === String(b);
+      },
+      slice: function (str, start, end) {
+        if (!str) return "";
+        return String(str).slice(start, end);
+      },
+      gt: (a, b) => a > b,
+      add: (a, b) => a + b,
+      subtract: (a, b) => a - b,
+      toString: (v) => String(v),
+      formatDate: (date) => {
+        if (!date) return '—';
+        return new Date(date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      },
+      formatTime: (date) => {
+        if (!date) return '—';
+        return new Date(date).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      },
+      truncate: (str, len) => {
+        if (!str) return '';
+        return str.length > len ? str.slice(0, len) + '…' : str;
+      },
+      json: (v) => JSON.stringify(v || null)
+    },
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    }
+  })
 );
 
 app.set('views', path.join(__dirname, 'views'));
@@ -70,7 +79,7 @@ app.use(cookieParser());
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/auth', authRouter);     
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/student', studentRouter);
@@ -83,10 +92,10 @@ app.use('/exams', examsRouter);
 app.use('/student-answers', studentAnswersRouter);
 app.use('/exam-sessions', examSessionsCrudRouter);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

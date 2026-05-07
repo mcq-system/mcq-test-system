@@ -8,7 +8,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // ─── 1. Tab Switching ──────────────────────────────────────────────────────
-  const tabItems  = document.querySelectorAll('.tab-item');
+  const tabItems = document.querySelectorAll('.tab-item');
   const tabPanels = document.querySelectorAll('.tab-panel');
 
   tabItems.forEach((tab, index) => {
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!input) return;
       const isPassword = input.type === 'password';
       input.type = isPassword ? 'text' : 'password';
-      btn.textContent = isPassword ? '🙈' : '👁️';
+      btn.innerHTML = isPassword ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
     });
   });
 
@@ -39,9 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     const currentPassword = document.getElementById('current-password').value.trim();
-    const newPassword     = document.getElementById('new-password').value.trim();
+    const newPassword = document.getElementById('new-password').value.trim();
     const confirmPassword = document.getElementById('confirm-password').value.trim();
-    const msgBox          = document.getElementById('cp-message');
+    const msgBox = document.getElementById('cp-message');
 
     // ── Validate phía client ─────────────────────────────────────────────────
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -73,17 +73,17 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        showMessage(msgBox, 'success', '✅ ' + data.message);
+        showMessage(msgBox, 'success', data.message);
         changePasswordForm.reset();
       } else {
-        showMessage(msgBox, 'error', '❌ ' + (data.message || 'Đổi mật khẩu thất bại.'));
+        showMessage(msgBox, 'error', data.message || 'Đổi mật khẩu thất bại.');
       }
     } catch (err) {
       console.error('Change password error:', err);
-      showMessage(msgBox, 'error', '❌ Lỗi kết nối. Vui lòng thử lại.');
+      showMessage(msgBox, 'error', 'Lỗi kết nối. Vui lòng thử lại.');
     } finally {
       submitBtn.disabled = false;
-      submitBtn.innerHTML = '🔒 Đổi mật khẩu';
+      submitBtn.innerHTML = 'Đổi mật khẩu';
     }
   });
 

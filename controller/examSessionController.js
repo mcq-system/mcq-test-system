@@ -14,23 +14,33 @@ exports.startExamSession = async (req, res) => {
     const student_id = req.user._id;
 
     const exam = await Exam.findById(exam_id);
-    if (!exam) return res.status(404).json({ error: 'Không tìm thấy kỳ thi' });
-    if (exam.status !== 'PUBLISHED') return res.status(400).json({ error: 'Kỳ thi chưa được mở' });
+    if (!exam) {
+        return res.render('error', { title: 'Lỗi', message: 'Không tìm thấy kỳ thi' });
+    }
+    if (exam.status !== 'PUBLISHED') {
+        return res.render('error', { title: 'Thông báo', message: 'Kỳ thi này hiện chưa được mở' });
+    }
 
     const now = new Date();
-    if (now < exam.start_time) return res.status(400).json({ error: 'Kỳ thi chưa bắt đầu' });
-    if (now > exam.end_time) return res.status(400).json({ error: 'Kỳ thi đã kết thúc' });
+    if (now < exam.start_time) {
+        return res.render('error', { title: 'Thông báo', message: 'Kỳ thi chưa đến thời gian bắt đầu' });
+    }
+    if (now > exam.end_time) {
+        return res.render('error', { title: 'Thông báo', message: 'Kỳ thi đã kết thúc' });
+    }
 
     let session = await ExamSession.findOne({ exam_id, student_id });
     if (session) {
-      if (session.status === 'SUBMITTED') return res.status(400).json({ error: 'Bạn đã nộp bài rồi' });
+      if (session.status === 'SUBMITTED') {
+          return res.render('error', { title: 'Thông báo', message: 'Bạn đã hoàn thành và nộp bài thi này rồi' });
+      }
       return res.redirect('/student/exam-sessions/' + session._id + '/do');
     }
 
     session = await ExamSession.create({ exam_id, student_id, started_at: now, status: 'DOING' });
     res.redirect('/student/exam-sessions/' + session._id + '/do');
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.render('error', { title: 'Lỗi hệ thống', message: err.message });
   }
 };
 
@@ -220,8 +230,6 @@ exports.getResult = async (req, res) => {
 
     res.render('student/exam-result', {
       title: 'Kết quả bài thi',
-      layout: 'layout-student',
-      user,
       exam,
       session,
       total,
@@ -256,8 +264,6 @@ exports.getHistory = async (req, res) => {
 
     res.render('student/exam-history', {
       title: 'Lịch sử làm bài',
-      layout: 'layout-student',
-      user,
       sessions: enriched,
     });
   } catch (err) {

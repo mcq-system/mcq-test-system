@@ -8,15 +8,34 @@ const Exam = require('../models/Exam');
 const Class = require('../models/Class');
 const ClassMember = require('../models/ClassMember');
 const ExamQuestion = require('../models/ExamQuestion');
+const ExamSession = require('../models/ExamSession');
+const Schedule = require('../models/Schedule');
 
-//============================= Dashboard ==========================================================
+// Middleware to inject common data into all student views
+router.use(protect('student'), async (req, res, next) => {
+    try {
+        // Use toObject() to avoid Handlebars prototype access issues
+        res.locals.user = req.user.toObject();
+        res.locals.layout = 'layout-student';
+        
+        // Optionally fetch unread notification count for the badge
+        res.locals.unreadNotificationsCount = await Notification.countDocuments({ 
+            recipient: req.user._id, 
+            isRead: false 
+        });
+        
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 router.get('/dashboard', protect('student'), async (req, res) => {
     try {
         const userId = req.user._id;
         
         // 1. Stats
         const classCount = await ClassMember.countDocuments({ student_id: userId });
-        const sessions = await require('../models/ExamSession').find({ student_id: userId, status: 'SUBMITTED' }).lean();
+        const sessions = await ExamSession.find({ student_id: userId, status: 'SUBMITTED' }).lean();
         const examCount = sessions.length;
         const avgScore = examCount > 0 
             ? (sessions.reduce((acc, s) => acc + (s.score || 0), 0) / examCount).toFixed(1) 
@@ -31,7 +50,6 @@ router.get('/dashboard', protect('student'), async (req, res) => {
             .limit(3)
             .lean();
             
-        const Schedule = require('../models/Schedule');
         const classes = await Promise.all(memberships.map(async (m) => {
             const cls = m.class_id;
             if (!cls) return null;
@@ -66,9 +84,7 @@ router.get('/dashboard', protect('student'), async (req, res) => {
         }));
 
         res.render('student/dashboard', {
-            user: req.user,
             title: 'Student Dashboard',
-            layout: 'layout-student',
             stats: {
                 classCount,
                 examCount,
@@ -98,8 +114,6 @@ router.get('/profile', protect('student'), async (req, res, next) => {
 
     res.render('student/profile', {
       title: 'Hồ sơ cá nhân',
-      user,
-      layout: 'layout-student',
     });
   } catch (err) {
     next(err);
@@ -150,8 +164,6 @@ if (!userId) return res.redirect('/auth/login');
       title: 'Thông báo - English MCQ',
       notifications,
       unreadCount,
-        user,
-      layout: 'layout-student',
     });
   } catch (err) {
     next(err);
@@ -194,7 +206,12 @@ router.get('/history', protect('student'), examSessionController.getHistory);
 router.get('/my-classes', protect('student'), async (req, res, next) => {
     try {
         const studentId = req.user._id;
-        const memberships = await ClassMember.find({ student_id: studentId }).populate('class_id').lean();
+        const memberships = await ClassMember.find({ student_id: studentId })
+            .populate({
+                path: 'class_id',
+                populate: { path: 'teacher_id', select: 'first_name last_name' }
+            })
+            .lean();
         
         const classes = await Promise.all(memberships.map(async (m) => {
             const cls = m.class_id;
@@ -205,15 +222,14 @@ router.get('/my-classes', protect('student'), async (req, res, next) => {
             
             return {
                 ...cls,
+                teacherName: cls.teacher_id ? `${cls.teacher_id.first_name} ${cls.teacher_id.last_name}` : 'N/A',
                 studentCount,
                 examCount
             };
         }));
 
         res.render('student/my-classes', {
-            user: req.user,
             title: 'Lớp học của tôi',
-            layout: 'layout-student',
             classes: classes.filter(c => c !== null)
         });
     } catch (err) {
@@ -236,9 +252,7 @@ router.get('/exam-do', protect('student'), async (req, res) => {
         }));
 
         res.render('student/upcoming-exams', {
-            user: req.user,
             title: 'Kỳ thi sắp tới',
-            layout: 'layout-student',
             exams
         });
     } catch (err) {
@@ -246,7 +260,39 @@ router.get('/exam-do', protect('student'), async (req, res) => {
     }
 });
 
+// POST join-class
+router.post('/join-class', async (req, res) => {
+    try {
+        const studentId = req.user._id;
+        const { classCode } = req.body;
+        
+        if (!classCode) return res.status(400).send('Vui lòng nhập mã lớp');
+        
+        const cls = await Class.findOne({ class_code: classCode.trim().toUpperCase() });
+        if (!cls) return res.status(404).send('Không tìm thấy lớp học với mã này');
+        
+        // Check if already a member
+        const existing = await ClassMember.findOne({ class_id: cls._id, student_id: studentId });
+        if (existing) return res.status(400).send('Bạn đã là thành viên của lớp này rồi');
+        
+        await ClassMember.create({ 
+            class_id: cls._id, 
+            student_id: studentId,
+            description: 'Sinh viên mới tham gia',
+            created_at: new Date()
+        });
+        
+        res.redirect('/student/my-classes');
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+});
+
 // Mount the session routes under /student/exam-sessions to match templates
+router.post('/exam-sessions/start', protect('student'), examSessionController.startExamSession);
+router.post('/exam-sessions/answer', protect('student'), examSessionController.submitAnswer);
+router.post('/exam-sessions/submit', protect('student'), examSessionController.submitExam);
+
 router.get('/exam-sessions/:sessionId/do', protect('student'), examSessionController.doExamPage);
 router.get('/exam-sessions/:sessionId/result', protect('student'), examSessionController.getResult);
 
