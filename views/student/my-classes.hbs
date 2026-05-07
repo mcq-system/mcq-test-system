@@ -1,0 +1,211 @@
+<style>
+    .page-header { margin-bottom: 25px; }
+    .page-header h2 { margin: 0; font-size: 20px; font-weight: 700; color: #333; }
+
+    /* Top Join Section */
+    .join-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+    .join-info { display: flex; align-items: center; gap: 20px; }
+    .join-icon {
+        width: 50px;
+        height: 50px;
+        background: #e7f1ff;
+        color: #007bff;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+    }
+    .join-text h3 { margin: 0 0 5px 0; font-size: 16px; font-weight: 700; }
+    .join-text p { margin: 0; font-size: 13px; color: #777; }
+    .btn-join-trigger {
+        background: #003d7a;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: 0.2s;
+    }
+    .btn-join-trigger:hover { background: #002d5a; }
+
+    /* Class Grid */
+    .section-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: #333; }
+    .class-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+    }
+    .class-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        padding: 20px;
+        border: 1px solid #eee;
+        transition: transform 0.2s, box-shadow 0.2s;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    .class-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+    .class-icon {
+        width: 45px;
+        height: 45px;
+        background: #f8f9fa;
+        color: #555;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        border: 1px solid #eee;
+    }
+    .class-info h4 { margin: 0 0 5px 0; font-size: 15px; font-weight: 700; color: #333; }
+    .class-info p { margin: 0; font-size: 12px; color: #888; }
+
+    /* Modal Styles */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+    }
+    .modal-content {
+        background: white;
+        width: 100%;
+        max-width: 500px;
+        border-radius: 15px;
+        padding: 30px;
+        position: relative;
+        animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px; right: 20px;
+        background: none; border: none;
+        font-size: 20px; color: #aaa; cursor: pointer;
+    }
+    .modal-header h3 { margin: 0 0 10px 0; font-size: 18px; font-weight: 700; }
+    .modal-header p { margin: 0 0 25px 0; font-size: 14px; color: #666; }
+    
+    .join-input-group { margin-bottom: 25px; }
+    .join-input {
+        width: 100%;
+        padding: 12px 15px !important;
+        border: 2px solid #007bff;
+        border-radius: 10px;
+        font-size: 15px;
+        outline: none;
+        text-align: center;
+        box-sizing: border-box;
+    }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; }
+    .btn-cancel {
+        background: white; border: 1px solid #ddd; padding: 10px 25px;
+        border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+    .btn-submit {
+        background: #0056b3; color: white; border: none; padding: 10px 25px;
+        border-radius: 8px; font-weight: 600; cursor: pointer;
+    }
+
+    .empty-state {
+        grid-column: 1 / -1;
+        text-align: center;
+        padding: 50px;
+        color: #888;
+    }
+</style>
+
+<div class="page-header">
+    <h2>Lớp học của tôi</h2>
+</div>
+
+<div class="join-section">
+    <div class="join-info">
+        <div class="join-icon">
+            <i class="fas fa-user-plus"></i>
+        </div>
+        <div class="join-text">
+            <h3>Tham gia lớp học</h3>
+            <p>Nhập mã lớp từ giảng viên để tham gia</p>
+        </div>
+    </div>
+    <button class="btn-join-trigger" id="open-join-modal">
+        <i class="fas fa-user-plus"></i> Nhập mã lớp
+    </button>
+</div>
+
+<h3 class="section-title">Danh sách các lớp đã tham gia</h3>
+
+<div class="class-grid">
+    {{#each classes}}
+    <div class="class-card">
+        <div class="class-icon">
+            <i class="fas fa-book"></i>
+        </div>
+        <div class="class-info">
+            <h4>{{ma_lop}}: {{ten}}</h4>
+            <p>GV: Nguyễn Văn A</p>
+        </div>
+    </div>
+    {{/each}}
+    
+    {{#unless classes.length}}
+    <div class="empty-state">
+        <i class="fas fa-folder-open" style="font-size: 40px; margin-bottom: 10px; opacity: 0.3;"></i>
+        <p>Bạn chưa tham gia lớp học nào.</p>
+    </div>
+    {{/unless}}
+</div>
+
+<!-- Join Modal -->
+<div class="modal-overlay" id="join-modal">
+    <div class="modal-content">
+        <button class="modal-close" id="close-join-modal">&times;</button>
+        <div class="modal-header">
+            <h3>Tham gia lớp học</h3>
+            <p>Nhập mã lớp học do giảng viên cung cấp</p>
+        </div>
+        <form action="/student/join-class" method="POST">
+            <div class="join-input-group">
+                <input type="text" name="classCode" class="join-input" placeholder="Nhập mã lớp (VD: ABC123)" required>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-cancel" id="cancel-join-modal">Đóng</button>
+                <button type="submit" class="btn-submit">Tham gia</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('join-modal');
+    const openBtn = document.getElementById('open-join-modal');
+    const closeBtn = document.getElementById('close-join-modal');
+    const cancelBtn = document.getElementById('cancel-join-modal');
+
+    openBtn.onclick = () => modal.style.display = 'flex';
+    closeBtn.onclick = () => modal.style.display = 'none';
+    cancelBtn.onclick = () => modal.style.display = 'none';
+    window.onclick = (e) => { if(e.target == modal) modal.style.display = 'none'; }
+</script>

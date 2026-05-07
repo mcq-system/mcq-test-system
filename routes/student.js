@@ -3,6 +3,10 @@ const router = express.Router();
 const { protect } = require('../middleware/auth');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
+const examSessionController = require('../controller/examSessionController');
+const Exam = require('../models/Exam');
+const Class = require('../models/Class');
+const ClassMember = require('../models/ClassMember');
 
 //============================= Dashboard ==========================================================
 router.get('/dashboard', protect('student'), async (req, res) => {
@@ -19,7 +23,7 @@ router.get('/dashboard', protect('student'), async (req, res) => {
 router.get('/profile', protect('student'), async (req, res, next) => {
   try {
       const userId = req.user?._id;
-      if (!userId) return res.redirect('/login');
+      if (!userId) return res.redirect('/auth/login');
 
     const user = await User.findById(userId).lean();
     if (!user) return res.status(404).send("Người dùng không tồn tại");
@@ -42,7 +46,7 @@ router.get('/profile', protect('student'), async (req, res, next) => {
 router.post('/update-profile', protect('student'), async (req, res, next) => {
   try {
     const userId = req.user?._id; 
-    if (!userId) return res.redirect('/login');
+    if (!userId) return res.redirect('/auth/login');
 
     const { fullname, email, phone, dob, address } = req.body;
     if (!fullname || !email) return res.status(400).send('Thiếu thông tin cần thiết');
@@ -70,7 +74,7 @@ router.get('/notifications', protect('student'), async (req, res, next) => {
   try {
 const userId = req.user?._id;
 const user = await User.findById(userId).lean();
-if (!userId) return res.redirect('/login');
+if (!userId) return res.redirect('/auth/login');
 
     const notifications = await Notification.find({ recipient: userId })
         .populate('sender', 'first_name last_name')
@@ -103,7 +107,7 @@ router.patch('/notifications/read/:id', protect('student'), async (req, res) => 
 router.patch('/notifications/read-all', protect('student'), async (req, res) => {
   try {
 const userId = req.user?._id; 
-if (!userId) return res.redirect('/login');
+if (!userId) return res.redirect('/auth/login');
 
     await Notification.updateMany({ recipient: userId, isRead: false }, { isRead: true });
     res.sendStatus(200);
@@ -120,5 +124,53 @@ router.delete('/notifications/:id', protect('student'), async (req, res) => {
     res.status(500).send(err);
   }
 });
+
+//============================= Exams & History ===================================================
+router.get('/history', protect('student'), examSessionController.getHistory);
+
+router.get('/my-classes', protect('student'), async (req, res, next) => {
+    try {
+        const studentId = req.user._id;
+        const memberships = await ClassMember.find({ student_id: studentId }).populate('class_id').lean();
+        
+        const classes = await Promise.all(memberships.map(async (m) => {
+            const cls = m.class_id;
+            if (!cls) return null;
+            
+            const studentCount = await ClassMember.countDocuments({ class_id: cls._id });
+            const examCount = await Exam.countDocuments({ class_id: cls._id, status: 'PUBLISHED' });
+            
+            return {
+                ...cls,
+                studentCount,
+                examCount
+            };
+        }));
+
+        res.render('student/my-classes', {
+            user: req.user,
+            title: 'Lớp học của tôi',
+            layout: 'layout-student',
+            classes: classes.filter(c => c !== null)
+        });
+    } catch (err) {
+        next(err);
+    }
+});
+
+router.get('/exam-do', protect('student'), async (req, res) => {
+    // For now, let's list all published exams
+    const exams = await Exam.find({ status: 'PUBLISHED' }).lean();
+    res.render('student/upcoming-exams', {
+        user: req.user,
+        title: 'Kỳ thi sắp tới',
+        layout: 'layout-student',
+        exams
+    });
+});
+
+// Mount the session routes under /student/exam-sessions to match templates
+router.get('/exam-sessions/:sessionId/do', protect('student'), examSessionController.doExamPage);
+router.get('/exam-sessions/:sessionId/result', protect('student'), examSessionController.getResult);
 
 module.exports = router;

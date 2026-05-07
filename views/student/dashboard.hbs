@@ -1,12 +1,342 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
+<div class="stats-row">
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-blue">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div>
+            <div class="stat-label">Lớp đang học</div>
+            <div class="stat-value">3</div>
+        </div>
+    </div>
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-cyan">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div>
+            <div class="stat-label">Bài thi đã làm</div>
+            <div class="stat-value">12</div>
+        </div>
+    </div>
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-blue-light">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div>
+            <div class="stat-label">Điểm trung bình</div>
+            <div class="stat-value">7.8</div>
+        </div>
+    </div>
+</div>
 
-  </body>
-</html>
+<div class="main-grid">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Lớp học của tôi</div>
+                <div class="card-subtitle">Các lớp đang tham gia</div>
+            </div>
+            <a href="/student/my-classes" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="course-list">
+            <div class="course-item">
+                <div class="course-header">
+                    <div>
+                        <div class="course-name">TOEIC Preparation A1</div>
+                        <div class="course-teacher">GV: Nguyễn Văn A</div>
+                    </div>
+                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 2, 07:00</div>
+                </div>
+                <div class="progress-section">
+                    <span class="progress-label">Tiến độ</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%;"></div>
+                    </div>
+                    <span class="progress-percent">65%</span>
+                </div>
+            </div>
+
+            <div class="course-item">
+                <div class="course-header">
+                    <div>
+                        <div class="course-name">IELTS Writing</div>
+                        <div class="course-teacher">GV: Trần Thị B</div>
+                    </div>
+                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 3, 13:00</div>
+                </div>
+                <div class="progress-section">
+                    <span class="progress-label">Tiến độ</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                    <span class="progress-percent">40%</span>
+                </div>
+            </div>
+
+            <div class="course-item">
+                <div class="course-header">
+                    <div>
+                        <div class="course-name">Grammar Advanced</div>
+                        <div class="course-teacher">GV: Lê Văn C</div>
+                    </div>
+                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> Thứ 4, 09:00</div>
+                </div>
+                <div class="progress-section">
+                    <span class="progress-label">Tiến độ</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 80%;"></div>
+                    </div>
+                    <span class="progress-percent">80%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Kỳ thi sắp tới</div>
+                <div class="card-subtitle">Dựa trên lịch của giảng viên</div>
+            </div>
+            <a href="/student/exam-do" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="exam-list">
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div>
+                        <div class="exam-title">TOEIC Practice Test 1</div>
+                        <div class="exam-subject">TOEIC Preparation A1</div>
+                    </div>
+                    <span class="tag tag-reading">Reading</span>
+                </div>
+                <div class="exam-meta">
+                    <span><i class="far fa-calendar"></i> 15/04/2024</span>
+                    <span><i class="far fa-clock"></i> 120 phút</span>
+                    <span><i class="far fa-file-alt"></i> 50 câu</span>
+                </div>
+                <button class="btn-enter-exam">Vào phòng thi</button>
+            </div>
+
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div>
+                        <div class="exam-title">Listening Mid-term</div>
+                        <div class="exam-subject">IELTS Writing</div>
+                    </div>
+                    <span class="tag tag-listening">Listening</span>
+                </div>
+                <div class="exam-meta">
+                    <span><i class="far fa-calendar"></i> 18/04/2024</span>
+                    <span><i class="far fa-clock"></i> 90 phút</span>
+                    <span><i class="far fa-file-alt"></i> 40 câu</span>
+                </div>
+                <button class="btn-enter-exam">Vào phòng thi</button>
+            </div>
+
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div>
+                        <div class="exam-title">Grammar Quiz Week 8</div>
+                        <div class="exam-subject">Grammar Advanced</div>
+                    </div>
+                    <span class="tag tag-grammar">Grammar</span>
+                </div>
+                <div class="exam-meta">
+                    <span><i class="far fa-calendar"></i> 20/04/2024</span>
+                    <span><i class="far fa-clock"></i> 45 phút</span>
+                    <span><i class="far fa-file-alt"></i> 30 câu</span>
+                </div>
+                <button class="btn-enter-exam">Vào phòng thi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-label {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .card-subtitle {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .view-all {
+        font-size: 12px;
+        font-weight: 600;
+        color: #333;
+        text-decoration: none;
+        padding: 6px 12px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+    }
+
+    .view-all:hover {
+        background: #f8f9fa;
+    }
+
+    .course-item {
+        padding: 15px;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .course-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+    }
+
+    .course-name {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .course-teacher {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .course-schedule {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .progress-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .progress-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #888;
+        min-width: 45px;
+    }
+
+    .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #0084ff;
+        border-radius: 4px;
+    }
+
+    .progress-percent {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        min-width: 35px;
+        text-align: right;
+    }
+
+    .exam-item {
+        padding: 15px;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .exam-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 12px;
+    }
+
+    .exam-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .exam-subject {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .tag {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .tag-reading {
+        background: #00bcd4;
+    }
+
+    .tag-listening {
+        background: #4caf50;
+    }
+
+    .tag-grammar {
+        background: #673ab7;
+    }
+
+    .exam-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 15px;
+    }
+
+    .exam-meta i {
+        margin-right: 5px;
+    }
+
+    .btn-enter-exam {
+        width: 100%;
+        padding: 10px;
+        background: #0076ba;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-enter-exam:hover {
+        background: #005f96;
+    }
+</style>

@@ -9,6 +9,8 @@ const ClassMember = require('../models/ClassMember');
 const Exam = require('../models/Exam');
 const ExamQuestion = require('../models/ExamQuestion');
 const Schedule = require('../models/Schedule');
+const Question = require('../models/Question');
+const QuestionTopic = require('../models/QuestionTopic');
 
 //======================= Dashboard ============================================================
 router.get('/dashboard', protect('teacher'), async (req, res, next) => {
@@ -27,11 +29,27 @@ router.get('/dashboard', protect('teacher'), async (req, res, next) => {
     // exam count created by teacher
     const examCount = await Exam.countDocuments({ created_by: teacherId });
 
+    // schedules for teacher's classes
+    const schedulesRaw = await Schedule.find({ class_id: { $in: classIdList } })
+      .populate('class_id', 'ten')
+      .lean();
+
+    // Map to frontend format
+    const colors = ['toeic', 'grammar', 'ielts', 'vocab', 'listen'];
+    const scheduleData = schedulesRaw.map((s, i) => ({
+      name: s.class_id ? s.class_id.ten : 'N/A',
+      room: 'Phòng học', 
+      color: colors[i % colors.length],
+      days: [s.day_of_week],
+      slot: `${s.start_time} - ${s.end_time}`
+    }));
+
     res.render('teacher/dashboard', {
       user,
       title: 'Teacher Dashboard',
       layout: 'layout-teacher',
       stats: { classCount, studentCount, examCount },
+      scheduleData
     });
   } catch (err) {
     next(err);
@@ -146,9 +164,20 @@ router.post('/update-profile', protect('teacher'), async (req, res, next) => {
 
 router.get('/questions', protect('teacher'), async (req, res, next) => {
   try {
-    const user = await User.findById(req.user._id).lean();
+    const teacherId = req.user._id;
+    const user = await User.findById(teacherId).lean();
+    const questions = await Question.find({ created_by: teacherId })
+        .populate('topic_id', 'name')
+        .sort({ created_at: -1 })
+        .lean();
+    const topics = await QuestionTopic.find().sort({ name: 1 }).lean();
+
     res.render('teacher/questions', {
-      user, title: 'Câu hỏi', layout: 'layout-teacher',
+      user, 
+      title: 'Ngân hàng câu hỏi', 
+      layout: 'layout-teacher',
+      questions,
+      topics
     });
   } catch (err) { next(err); }
 });

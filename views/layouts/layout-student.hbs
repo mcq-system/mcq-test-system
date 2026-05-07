@@ -4,6 +4,7 @@
 <head>
     <title>{{title}}</title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 
@@ -21,12 +22,20 @@
 
             <nav class="sidebar-nav">
                 <div class="nav-section">TỔNG QUAN</div>
-                <a href="/student/dashboard" class="nav-item active"><i class="fas fa-th-large"></i> <span>Dashboard</span></a>
+                <a href="/student/dashboard" class="nav-item">
+                    <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                </a>
 
                 <div class="nav-section">HỌC TẬP</div>
-                <a href="#" class="nav-item"><i class="fas fa-graduation-cap"></i> <span>Lớp học của tôi</span></a>
-                <a href="#" class="nav-item"><i class="fas fa-calendar-alt"></i> <span>Kỳ thi sắp tới</span></a>
-                <a href="#" class="nav-item"><i class="fas fa-history"></i> <span>Lịch sử làm bài</span></a>
+                <a href="/student/my-classes" class="nav-item">
+                    <i class="fas fa-graduation-cap"></i> <span>Lớp học của tôi</span>
+                </a>
+                <a href="/student/exam-do" class="nav-item">
+                    <i class="fas fa-calendar-alt"></i> <span>Kỳ thi sắp tới</span>
+                </a>
+                <a href="/student/history" class="nav-item">
+                    <i class="fas fa-history"></i> <span>Lịch sử làm bài</span>
+                </a>
             </nav>
 
             <div class="sidebar-footer">
@@ -43,7 +52,8 @@
                 </a>
                 <div class="footer-links">
                     <a href="/student/profile"><i class="fas fa-cog"></i> <span>Cài đặt</span></a>
-                    <a href="/auth/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> <span>Đăng xuất</span></a>
+                    <a href="/auth/logout" style="color: #dc3545;"><i class="fas fa-sign-out-alt"></i> <span>Đăng
+                            xuất</span></a>
                 </div>
             </div>
         </aside>
@@ -52,7 +62,8 @@
         <main class="main-wrapper">
             <header class="main-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <button id="toggle-sidebar" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #555;">
+                    <button id="toggle-sidebar"
+                        style="background: none; border: none; font-size: 20px; cursor: pointer; color: #555;">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h2 style="margin: 0;">{{title}}</h2>
@@ -62,7 +73,10 @@
                         <i class="fas fa-search"></i>
                         <input type="text" placeholder="Tìm kiếm...">
                     </div>
-                    <a href="/student/notifications" class="noti-bell" style="text-decoration: none;"><i class="fas fa-bell"></i></a>
+                    <a href="/student/notifications" class="noti-bell" style="text-decoration: none; position: relative;">
+                        <i class="fas fa-bell"></i>
+                        <span style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border-radius: 50%; width: 15px; height: 15px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">3</span>
+                    </a>
                 </div>
             </header>
 
@@ -72,6 +86,21 @@
         </main>
     </div>
     <script src="/js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href) && href !== '/student') {
+                    item.classList.add('active');
+                } else if (href === currentPath) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

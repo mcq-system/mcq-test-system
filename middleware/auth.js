@@ -9,7 +9,7 @@ const protect = (roles = []) => {
     const token = req.cookies.token;
 
     if (!token) {
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
 
     try {
@@ -20,7 +20,7 @@ const protect = (roles = []) => {
       const user = await User.findById(decoded.id);
       if (!user) {
         res.clearCookie('token');
-        return res.redirect('/login');
+        return res.redirect('/auth/login');
       }
 
       // Gán user vào req
@@ -39,7 +39,7 @@ const protect = (roles = []) => {
     } catch (err) {
       console.error('Auth Middleware Error:', err.message);
       res.clearCookie('token');
-      return res.redirect('/login');
+      return res.redirect('/auth/login');
     }
   };
 };
