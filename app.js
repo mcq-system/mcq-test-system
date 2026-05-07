@@ -13,6 +13,11 @@ var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
 var adminRouter = require('./routes/admin');
 var questionsRouter = require('./routes/questions');
+var classesRouter = require('./routes/classes');
+var topicsRouter = require('./routes/topics');
+var examsRouter = require('./routes/exams');
+var studentAnswersRouter = require('./routes/student-answers');
+var examSessionsCrudRouter = require('./routes/exam-sessions');
 
 const connectDB = require('./config/db');
 
@@ -72,6 +77,11 @@ app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
 app.use('/questions', questionsRouter);
+app.use('/classes', classesRouter);
+app.use('/topics', topicsRouter);
+app.use('/exams', examsRouter);
+app.use('/student-answers', studentAnswersRouter);
+app.use('/exam-sessions', examSessionsCrudRouter);
 
 app.use(function(req, res, next) {
   next(createError(404));

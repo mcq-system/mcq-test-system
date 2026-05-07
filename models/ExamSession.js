@@ -16,4 +16,4 @@ const examSessionSchema = new mongoose.Schema({
 
 examSessionSchema.index({ exam_id: 1, student_id: 1 }, { unique: true });
 
-module.exports = mongoose.model("ExamSession", examSessionSchema);
+module.exports = mongoose.model("ExamSession", examSessionSchema, "exam_sessions");

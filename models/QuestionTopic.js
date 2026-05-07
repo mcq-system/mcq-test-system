@@ -21,4 +21,4 @@ const questionTopicSchema = new mongoose.Schema(
     { timestamps: false }
 );
 
-module.exports = mongoose.model('QuestionTopic', questionTopicSchema);
+module.exports = mongoose.model('QuestionTopic', questionTopicSchema, 'question_topics');

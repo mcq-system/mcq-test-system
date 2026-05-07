@@ -8,4 +8,4 @@ const ClassSchema = new Schema({
   created_at: { type: Date, default: Date.now },
 });
 
-module.exports = mongoose.model('Class', ClassSchema);
+module.exports = mongoose.model('Class', ClassSchema, 'classes');

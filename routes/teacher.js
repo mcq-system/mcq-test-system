@@ -8,6 +8,7 @@ const Class = require('../models/Class');
 const ClassMember = require('../models/ClassMember');
 const Exam = require('../models/Exam');
 const ExamQuestion = require('../models/ExamQuestion');
+const Schedule = require('../models/Schedule');
 
 //======================= Dashboard ============================================================
 router.get('/dashboard', protect('teacher'), async (req, res, next) => {
@@ -214,6 +215,55 @@ router.post('/create-class', protect('teacher'), async (req, res) => {
   }
 });
 
+// ======================= Schedule endpoints ==================================
+// GET /teacher/classes/:id/schedule - get schedule for a class (JSON)
+router.get('/classes/:id/schedule', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+    const cls = await Class.findById(classId).lean();
+    if (!cls) return res.status(404).json({ error: 'Class not found' });
+    if (String(cls.teacher_id) !== String(teacherId)) return res.status(403).json({ error: 'Forbidden' });
+
+    const schedules = await Schedule.find({ class_id: classId }).sort({ day_of_week: 1, start_time: 1 }).lean();
+    return res.status(200).json({ success: true, data: schedules });
+  } catch (err) {
+    console.error('get schedule error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /teacher/classes/:id/schedule - replace schedule list for a class
+router.post('/classes/:id/schedule', protect('teacher'), async (req, res) => {
+  try {
+    const teacherId = req.user?._id;
+    const classId = req.params.id;
+    const cls = await Class.findById(classId).lean();
+    if (!cls) return res.status(404).json({ error: 'Class not found' });
+    if (String(cls.teacher_id) !== String(teacherId)) return res.status(403).json({ error: 'Forbidden' });
+
+    const schedules = Array.isArray(req.body.schedules) ? req.body.schedules : [];
+    // validate
+    for (const s of schedules) {
+      if (typeof s.day_of_week !== 'number' || !s.start_time || !s.end_time) {
+        return res.status(400).json({ error: 'Invalid schedule format' });
+      }
+    }
+
+    // replace
+    await Schedule.deleteMany({ class_id: classId });
+    if (schedules.length) {
+      const toInsert = schedules.map(s => ({ class_id: classId, day_of_week: s.day_of_week, start_time: s.start_time, end_time: s.end_time }));
+      await Schedule.insertMany(toInsert);
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (err) {
+    console.error('post schedule error:', err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 
 
 
@@ -311,3 +361,4 @@ router.post('/exams/store', protect('teacher'), async (req, res) => {
   }
 });
 module.exports = router;
+

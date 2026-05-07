@@ -5,4 +5,4 @@ const examQuestionSchema = new mongoose.Schema({
     question_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Question', required: true },
 }, { timestamps: false });
 
-module.exports = mongoose.model('ExamQuestion', examQuestionSchema);
+module.exports = mongoose.model('ExamQuestion', examQuestionSchema, 'exam_questions');

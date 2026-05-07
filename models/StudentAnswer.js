@@ -18,4 +18,4 @@ const studentAnswerSchema = new mongoose.Schema({
 
 studentAnswerSchema.index({ exam_session_id: 1, question_id: 1 }, { unique: true });
 
-module.exports = mongoose.model('StudentAnswer', studentAnswerSchema);
+module.exports = mongoose.model('StudentAnswer', studentAnswerSchema, 'student_answers');
