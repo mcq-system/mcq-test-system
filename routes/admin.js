@@ -243,10 +243,72 @@ router.get('/calendar-student', protect('admin'), async (req, res, next) => {
 router.get('/dashboard-admin', protect('admin'), async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id).lean();
+    // compute simple counts for dashboard widgets
+    const teacherCount = await User.countDocuments({ role: 'teacher' });
+    const studentCount = await User.countDocuments({ role: 'student' });
+    const examCount = await Exam.countDocuments();
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    // ExamSession schema uses `started_at`, not `created_at`.
+    const sessionsThisMonth = await ExamSession.countDocuments({ started_at: { $gte: startOfMonth } });
+
+    const [notifications, recentUsers] = await Promise.all([
+      Notification.find()
+        .populate('sender', 'first_name last_name role')
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean(),
+      User.find({})
+        .sort({ created_at: -1 })
+        .limit(5)
+        .lean(),
+    ]);
+
+    const formatRelativeTime = (value) => {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const diffMs = Date.now() - date.getTime();
+      const diffMinutes = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMinutes / 60);
+      const diffDays = Math.floor(diffHours / 24);
+
+      if (diffMinutes < 1) return 'Vừa xong';
+      if (diffMinutes < 60) return `${diffMinutes} phút trước`;
+      if (diffHours < 24) return `${diffHours} giờ trước`;
+      if (diffDays < 7) return `${diffDays} ngày trước`;
+      return date.toLocaleDateString('vi-VN');
+    };
+
+    const activities = [
+      ...notifications.map((item) => ({
+        timestamp: item.created_at ? new Date(item.created_at).getTime() : 0,
+        iconClass: 'text-warning',
+        title: item.title,
+        description: item.message,
+        timeText: formatRelativeTime(item.created_at),
+      })),
+      ...recentUsers.map((item) => ({
+        timestamp: item.created_at ? new Date(item.created_at).getTime() : 0,
+        iconClass: 'text-primary',
+        title: 'Tạo tài khoản mới',
+        description: `${item.first_name || ''} ${item.last_name || ''} (${item.role === 'teacher' ? 'Giảng viên' : item.role === 'student' ? 'Sinh viên' : 'Admin'})`.trim(),
+        timeText: formatRelativeTime(item.created_at),
+      })),
+    ].sort((a, b) => {
+      return b.timestamp - a.timestamp;
+    }).slice(0, 5);
+
     res.render('admin/dashboard-admin', {
       title: 'Bảng điều khiển Admin hệ thống',
       layout: 'layout-admin',
       user,
+      stats: { teacherCount, studentCount, examCount, sessionsThisMonth },
+      teacherCount,
+      studentCount,
+      examCount,
+      sessionsThisMonth,
+      activities,
     });
   } catch (err) {
     next(err);

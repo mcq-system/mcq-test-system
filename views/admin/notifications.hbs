@@ -15,10 +15,10 @@
                 <div class="form-group">
                     <label>Loại thông báo</label>
                     <select name="type" style="padding: 10px; border-radius: 8px;">
-                        <option value="system">Hệ thống ⚠️</option>
-                        <option value="exam">Bài thi 📄</option>
-                        <option value="result">Kết quả 🎓</option>
-                        <option value="reminder">Nhắc lịch 🕒</option>
+                        <option value="system">Hệ thống</option>
+                        <option value="exam">Bài thi</option>
+                        <option value="result">Kết quả</option>
+                        <option value="reminder">Nhắc lịch</option>
                     </select>
                 </div>
                 <div class="form-group full-width">
@@ -30,7 +30,7 @@
                     <textarea name="message" rows="3" style="padding: 10px; border-radius: 8px; border: 1px solid #ddd;" placeholder="Nhập nội dung chi tiết..." required></textarea>
                 </div>
             </div>
-            <button type="submit" class="btn-save" style="margin-top: 15px;">🚀 Gửi thông báo ngay</button>
+            <button type="submit" class="btn-save" style="margin-top: 15px;">Gửi thông báo ngay</button>
         </form>
     </section>
 
@@ -57,19 +57,19 @@
                     </td>
                     <td>
                         <div style="font-weight: 600;">{{this.title}}</div>
-                        <div style="font-size: 13px; color: #666;">{{this.message}}</div>
+                        <div style="font-size: 13px; color: #666; margin-top: 5px;">{{this.message}}</div>
                     </td>
                     <td><span class="status-pill icon-blue">{{this.type}}</span></td>
                     <td>
                         {{#if this.isRead}}
-                            <span style="color: green;">✔️ Đã đọc</span>
+                            <span style="color: green;">Đã đọc</span>
                         {{else}}
-                            <span style="color: orange;">⏳ Chưa đọc</span>
+                            <span style="color: orange;">Chưa đọc</span>
                         {{/if}}
                     </td>
                     <td>{{this.created_at}}</td>
                     <td>
-                        <button onclick="deleteNoti('{{this._id}}')" style="background:none; border:none; cursor:pointer; color:red;">🗑️ Xóa</button>
+                        <button onclick="deleteNoti('{{this._id}}')" style="background:none; border:none; cursor:pointer; color:red;">Xóa</button>
                     </td>
                 </tr>
             {{/each}}

@@ -17,6 +17,8 @@ exports.createTopic = async (req, res) => {
     const topic = await QuestionTopic.create({
       name: String(name).trim(),
       description: description ? String(description).trim() : '',
+      color: req.body.color ? String(req.body.color).trim() : '#000000',
+      icon: req.body.icon ? String(req.body.icon).trim() : '',
     });
 
     return res.status(201).json({ success: true, data: topic });
@@ -43,6 +45,8 @@ exports.updateTopic = async (req, res) => {
       {
         ...(name ? { name: String(name).trim() } : {}),
         ...(description !== undefined ? { description: String(description).trim() } : {}),
+        ...(req.body.color !== undefined ? { color: String(req.body.color).trim() } : {}),
+        ...(req.body.icon !== undefined ? { icon: String(req.body.icon).trim() } : {}),
       },
       { new: true }
     ).lean();

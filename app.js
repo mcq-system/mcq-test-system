@@ -94,7 +94,7 @@ app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
 app.use('/questions', questionsRouter);
 app.use('/classes', classesRouter);
-app.use('/topics', topicsRouter);
+app.use('/api/topics', topicsRouter);
 app.use('/exams', examsRouter);
 app.use('/student-answers', studentAnswersRouter);
 app.use('/exam-sessions', examSessionsCrudRouter);

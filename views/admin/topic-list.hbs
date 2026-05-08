@@ -3,89 +3,296 @@
         <h4 class="fw-bold m-0">Quản lý danh mục Topic</h4>
         <p class="text-muted small mt-2">Quản lý các chủ đề câu hỏi dùng chung trong hệ thống</p>
     </div>
-    <button class="btn btn-primary btn-sm shadow-sm">
+    <button class="btn btn-primary btn-sm shadow-sm" data-bs-toggle="modal" data-bs-target="#topicModal"
+        onclick="openCreateModal()">
         <i class="fas fa-plus me-1"></i> Thêm Topic
     </button>
 </div>
 
-<div class="row g-4">
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 topic-card">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-start justify-content-between">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="icon-shape bg-soft-primary text-primary rounded-3 me-3">
-                            <i class="fas fa-file-alt fs-4"></i>
-                        </div>
-                        <div>
-                            <h5 class="fw-bold mb-1">TOEIC</h5>
-                            <p class="text-muted small mb-0">Bài thi chuẩn quốc tế TOEIC</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-4 d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-dark border px-3 py-2">450 câu hỏi</span>
-                    <div class="dropdown">
-                        <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v text-muted"></i>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
-                            <li><a class="dropdown-item" href="#"><i class="fas fa-edit me-2 text-primary"></i> Chỉnh
-                                    sửa</a></li>
-                            <li><a class="dropdown-item text-danger" href="#"><i class="fas fa-trash-alt me-2"></i> Xoá
-                                    nó</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row g-4" id="data_topic">
+    <!-- Dynamic content will be rendered here by the script -->
+</div>
 
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 topic-card border-top border-4 border-success">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="icon-shape bg-soft-success text-success rounded-3 me-3">
-                        <i class="fas fa-graduation-cap fs-4"></i>
-                    </div>
-                    <div>
-                        <h5 class="fw-bold mb-1">IELTS</h5>
-                        <p class="text-muted small mb-0">Luyện thi IELTS Academic & General</p>
-                    </div>
-                </div>
-                <div class="mt-4 d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-dark border px-3 py-2">320 câu hỏi</span>
-                    <div class="dropdown">
-                        <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v text-muted"></i>
-                        </button>
-                    </div>
-                </div>
+<!-- Modal Form -->
+<div class="modal fade" id="topicModal" tabindex="-1" aria-labelledby="topicModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="topicModalLabel">Thêm Topic</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-        </div>
-    </div>
+            <div class="modal-body">
+                <form id="topicForm">
+                    <input type="hidden" id="topicId">
 
-    <div class="col-md-6 col-lg-4">
-        <div class="card border-0 shadow-sm h-100 topic-card border-top border-4 border-info">
-            <div class="card-body p-4">
-                <div class="d-flex align-items-center mb-3">
-                    <div class="icon-shape bg-soft-info text-info rounded-3 me-3">
-                        <i class="fas fa-spell-check fs-4"></i>
+                    <div class="mb-3">
+                        <label for="topicName" class="form-label">Tên Topic <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="topicName" placeholder="Nhập tên topic" required>
                     </div>
-                    <div>
-                        <h5 class="fw-bold mb-1">Grammar</h5>
-                        <p class="text-muted small mb-0">Ngữ pháp từ cơ bản đến nâng cao</p>
+
+                    <div class="mb-3">
+                        <label for="topicDescription" class="form-label">Mô tả</label>
+                        <textarea class="form-control" id="topicDescription" rows="3"
+                            placeholder="Nhập mô tả topic"></textarea>
                     </div>
-                </div>
-                <div class="mt-4 d-flex justify-content-between align-items-center">
-                    <span class="badge bg-light text-dark border px-3 py-2">580 câu hỏi</span>
-                    <div class="dropdown">
-                        <button class="btn btn-light btn-sm rounded-circle" data-bs-toggle="dropdown">
-                            <i class="fas fa-ellipsis-v text-muted"></i>
-                        </button>
+
+                    <div class="mb-3">
+                        <label for="topicColor" class="form-label">Màu sắc</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <input type="color" class="form-control" id="topicColor" style="width: 80px; height: 40px;"
+                                value="#000000">
+                            <span id="colorValue">#000000</span>
+                        </div>
                     </div>
-                </div>
+
+                    <div class="mb-2">
+                        <label for="topicIcon" class="form-label">Icon (Font Awesome class)</label>
+                        <select class="form-select mb-2" id="topicIcon">
+                            <option value="">-- Chọn icon --</option>
+                        </select>
+
+                        <div style="width: 100px; height: 100px; border: 1px solid #dee2e6; display: flex; align-items: center; justify-content: center;"
+                            class="mt-2 mb-2 border-1">
+                            <i class="" id="previewIcon"></i>
+                        </div>
+
+                        <small class="text-muted mt-3">Xem danh sách icon tại <a href="https://fontawesome.com/icons"
+                                target="_blank">Font Awesome</a></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitTopicForm()">Thêm
+                    Topic</button>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    const ICON_OPTIONS = [
+        'fas fa-file-alt',
+        'fas fa-book',
+        'fas fa-flask',
+        'fas fa-calculator',
+        'fas fa-globe',
+        'fas fa-microscope',
+        'fas fa-atom',
+        'fas fa-palette',
+        'fas fa-code',
+        'fas fa-angel',
+        'fas fa-dove',
+        'fas fa-feather',
+        'fas fa-halo',
+    ];
+
+    function renderIconOptions() {
+        const select = document.getElementById('topicIcon');
+        if (!select) return;
+
+        select.innerHTML = '<option value="">-- Chọn icon --</option>';
+        ICON_OPTIONS.forEach((icon) => {
+            const option = document.createElement('option');
+            option.value = icon;
+            option.textContent = icon;
+            select.appendChild(option);
+        });
+    }
+
+    function ensureIconOption(icon) {
+        if (!icon) return;
+        if (ICON_OPTIONS.includes(icon)) return;
+
+        const select = document.getElementById('topicIcon');
+        if (!select) return;
+        const option = document.createElement('option');
+        option.value = icon;
+        option.textContent = icon;
+        select.appendChild(option);
+    }
+
+    function updateIconPreview(iconClass) {
+        const previewIcon = document.getElementById('previewIcon');
+        if (!previewIcon) return;
+
+        const resolvedIcon = iconClass && iconClass.trim() ? iconClass.trim() : 'fas fa-file-alt';
+        previewIcon.className = `${resolvedIcon} fs-3 text-primary`;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderIconOptions();
+        updateIconPreview('');
+        loadTopics();
+
+        // Global click listeners for edit/delete buttons
+        document.addEventListener('click', (e) => {
+            const edit = e.target.closest('.edit-btn');
+            if (edit) {
+                e.preventDefault();
+                openEditFromDataset(edit.dataset);
+                return;
+            }
+
+            const del = e.target.closest('.delete-btn');
+            if (del) {
+                e.preventDefault();
+                if (confirm('Bạn chắc chắn muốn xoá topic này?')) deleteTopic(del.dataset.id);
+                return;
+            }
+        });
+
+        // color input change
+        const colorInput = document.getElementById('topicColor');
+        if (colorInput) {
+            colorInput.addEventListener('input', () => {
+                document.getElementById('colorValue').textContent = colorInput.value;
+            });
+        }
+
+        const iconSelect = document.getElementById('topicIcon');
+        if (iconSelect) {
+            iconSelect.addEventListener('change', () => {
+                updateIconPreview(iconSelect.value);
+            });
+        }
+    });
+
+    async function loadTopics() {
+        const topicContainer = document.querySelector('#data_topic');
+        topicContainer.innerHTML = '';
+
+        try {
+            const res = await fetch('/api/topics');
+            const data = await res.json();
+            if (!data.success) {
+                topicContainer.innerHTML = '<p class="text-danger">Không thể tải danh sách topic.</p>';
+                return;
+            }
+
+            data.data.forEach((topic) => {
+                const safeName = (topic.name || '').replace(/"/g, '&quot;');
+                const rawDesc = topic.description || '';
+                const safeDesc = rawDesc.replace(/"/g, '&quot;');
+                const safeDescHtml = rawDesc
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+                const safeIcon = topic.icon || '';
+                const safeColor = topic.color || '#000000';
+
+                const topicCard = `
+                <div class="col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100 topic-card border-0" style="border-top: 4px solid ${safeColor} !important;">
+                        <div class="card-body p-0 d-flex flex-column">
+                            <div class="d-flex mb-3">
+
+                                <div class="icon-shape bg-soft-primary text-primary rounded-3 me-3">
+                                    <i class="${safeIcon} fs-4"></i>
+                                </div>
+
+                                <div>
+                                    <h5 class="fw-bold mb-1">${topic.name}</h5>
+                                    <p class="text-muted normal mt-2 mb-0" style="white-space: pre-line;">${safeDescHtml}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="d-flex justify-content-between align-items-center mt-auto" style="margin-left: 15px;">
+                                <span class="badge bg-light text-dark border px-3 py-2">${topic.questionCount || 0} câu hỏi</span>
+                                <div class="dropdown">
+                                    <button class="btn btn-light btn-sm rounded-circle" style="border: 1px solid #dee2e6; width: 30px; height: 30px;" data-bs-toggle="dropdown">
+                                        <i class="fas fa-ellipsis-v text-muted"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow-sm border-1">
+                                        <li><a class="dropdown-item edit-btn" href="#" data-id="${topic._id}" data-name="${safeName}" data-description="${safeDesc}" data-color="${safeColor}" data-icon="${safeIcon}"><i class="fas fa-edit me-2 text-primary"></i> Chỉnh sửa</a></li>
+                                        <li><a class="dropdown-item delete-btn text-danger" href="#" data-id="${topic._id}"><i class="fas fa-trash-alt me-2"></i> Xoá</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+                topicContainer.insertAdjacentHTML('beforeend', topicCard);
+            });
+        } catch (err) {
+            console.error('Error fetching topics:', err);
+            topicContainer.innerHTML = '<p class="text-danger">Đã xảy ra lỗi khi tải danh sách topic.</p>';
+        }
+    }
+
+    function openCreateModal() {
+        document.getElementById('topicForm').reset();
+        document.getElementById('topicId').value = '';
+        document.getElementById('topicColor').value = '#000000';
+        document.getElementById('colorValue').textContent = '#000000';
+        document.getElementById('topicIcon').value = '';
+        updateIconPreview('');
+        document.getElementById('topicModalLabel').textContent = 'Thêm Topic';
+        document.getElementById('submitBtn').textContent = 'Thêm Topic';
+    }
+
+    function openEditFromDataset(dataset) {
+        document.getElementById('topicForm').reset();
+        document.getElementById('topicId').value = dataset.id || '';
+        document.getElementById('topicName').value = dataset.name || '';
+        document.getElementById('topicDescription').value = dataset.description || '';
+        document.getElementById('topicColor').value = dataset.color || '#000000';
+        document.getElementById('colorValue').textContent = dataset.color || '#000000';
+        ensureIconOption(dataset.icon || '');
+        document.getElementById('topicIcon').value = dataset.icon || '';
+        updateIconPreview(dataset.icon || '');
+        document.getElementById('topicModalLabel').textContent = 'Chỉnh sửa Topic';
+        document.getElementById('submitBtn').textContent = 'Cập nhật Topic';
+        const modal = new bootstrap.Modal(document.getElementById('topicModal'));
+        modal.show();
+    }
+
+    async function submitTopicForm() {
+        const topicId = document.getElementById('topicId').value;
+        const name = document.getElementById('topicName').value;
+        const description = document.getElementById('topicDescription').value;
+        const color = document.getElementById('topicColor').value;
+        const icon = document.getElementById('topicIcon').value;
+
+        if (!name.trim()) {
+            alert('Vui lòng nhập tên topic');
+            return;
+        }
+
+        try {
+            const url = topicId ? `/api/topics/${topicId}` : '/api/topics';
+            const method = topicId ? 'PATCH' : 'POST';
+            const response = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, description, color, icon })
+            });
+            const data = await response.json();
+            if (data.success) {
+                const modal = bootstrap.Modal.getInstance(document.getElementById('topicModal'));
+                if (modal) modal.hide();
+                loadTopics();
+            } else {
+                alert('Lỗi: ' + (data.error || 'Không xác định'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Đã xảy ra lỗi khi lưu topic');
+        }
+    }
+
+    async function deleteTopic(id) {
+        try {
+            const res = await fetch(`/api/topics/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.success) loadTopics(); else alert('Lỗi: ' + (data.error || 'Không xác định'));
+        } catch (err) {
+            console.error(err);
+            alert('Đã xảy ra lỗi khi xoá topic');
+        }
+    }
+</script>

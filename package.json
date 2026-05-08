@@ -22,12 +22,14 @@
     "dotenv": "^17.4.2",
     "express": "^4.22.1",
     "express-handlebars": "^9.0.1",
+    "geoip-lite": "^2.0.2",
     "hbs": "^4.2.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.3",
     "method-override": "^3.0.0",
     "mongoose": "^9.4.1",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
