@@ -71,8 +71,12 @@
                         <input type="text" placeholder="Tìm kiếm...">
                     </div>
 
-                    <a href="/admin/notifications" class="noti-bell" style="text-decoration: none;"><i
-                            class="fas fa-bell"></i></a>
+                    <a href="/admin/notifications" class="noti-bell" style="text-decoration: none;">
+                        <i class="fas fa-bell"></i>
+                        {{#if unreadCount}}
+                            <span class="noti-count">{{unreadCount}}</span>
+                        {{/if}}
+                    </a>
                 </div>
             </header>
             {{!-- <section class="content-body">{{{body}}}</section> --}}

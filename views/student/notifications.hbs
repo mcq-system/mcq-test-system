@@ -25,13 +25,9 @@
                     <div class="noti-title">
                         {{#unless isRead}}<span class="dot-unread"></span>{{/unless}}
                         {{this.title}}
-                        {{#if (eq senderRole 'admin')}}
-                            <span class="sender-tag admin-tag">Gửi bởi: Ban Quản Trị</span>
-                        {{else}}
-                            <span class="sender-tag teacher-tag">Gửi bởi: GV. {{this.sender.last_name}} {{this.sender.first_name}}</span>
-                        {{/if}}
+                         <span class="sender-tag teacher-tag"> [Gửi bở {{this.sender.last_name}}]</span>
                     </div>
-                    <div class="noti-text">{{this.message}}</div>
+                    <div class="noti-text" style="white-space: pre-line;">{{this.message}}</div>
                     <div class="noti-time">{{this.created_at}}</div>
                 </div>
 

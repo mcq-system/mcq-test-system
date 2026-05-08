@@ -66,7 +66,7 @@ exports.postLogin = async (req, res) => {
       sender: user._id,
       senderRole: user.role,
       title: `Đăng nhập tài khoản - ${user.last_name}`,
-      message: `Phát hiện lần đăng nhập mới vào tài khoản của bạn:\n` +
+      message: `Phát hiện lần đăng nhập mới vào tài khoản của bạn\n` +
         `Thiết bị: ${userAgentInfo.device || 'không xác định'}\n` +
         `Browser: ${userAgentInfo.browser || 'không xác định'}\n` +
         `Hệ điều hành: ${userAgentInfo.os || 'không xác định'}\n` +
