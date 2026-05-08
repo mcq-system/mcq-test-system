@@ -295,13 +295,13 @@ input:focus {
 
 .search-bar {
     position: relative;
-    background: #f1f5f9;
-    padding: 8px 15px;
+    /* background: #f1f5f9; */
+    /* padding: 1px 1px; */
     border-radius: 8px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    width: 300px;
+    /* gap: 10px; */
+    /* width: 300px; */
 }
 
 .search-bar input {
