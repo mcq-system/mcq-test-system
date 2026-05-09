@@ -92,7 +92,7 @@ app.use('/users', usersRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
-app.use('/questions', questionsRouter);
+app.use('/teacher/questions', questionsRouter);
 app.use('/classes', classesRouter);
 app.use('/api/topics', topicsRouter);
 app.use('/exams', examsRouter);

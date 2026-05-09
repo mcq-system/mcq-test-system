@@ -1,739 +1,447 @@
 <style>
     :root {
-        --primary-color: #38bdf8;
-        --primary-hover: #0284c7;
-        --text-main: #111827;
-        --text-muted: #6b7280;
-        --border-color: #e5e7eb;
-        --bg-body: #f9fafb;
-        --bg-card: #ffffff;
-        --bg-hover: #f3f4f6;
-
-        /* Tags colors */
-        --tag-de-bg: #dcfce7;
-        --tag-de-text: #166534;
-        --tag-tb-bg: #fef08a;
-        --tag-tb-text: #854d0e;
-        --tag-kho-bg: #fee2e2;
-        --tag-kho-text: #991b1b;
+        --primary-color: #38bdf8; --primary-hover: #0284c7;
+        --text-main: #111827; --text-muted: #6b7280;
+        --border-color: #e5e7eb; --bg-body: #f9fafb;
+        --bg-card: #ffffff; --bg-hover: #f3f4f6;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--text-main); }
 
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+    /* Confirm modal */
+    .confirm-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:9999; align-items:center; justify-content:center; }
+    .confirm-overlay.active { display:flex; }
+    .confirm-box { background:#fff; border-radius:12px; padding:28px 32px; max-width:380px; width:90%; box-shadow:0 20px 60px rgba(0,0,0,.2); text-align:center; }
+    .confirm-box p { font-size:15px; color:#111827; margin-bottom:20px; line-height:1.5; }
+    .confirm-actions { display:flex; gap:12px; justify-content:center; }
+    .confirm-actions button { padding:9px 22px; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer; border:none; }
+    .btn-confirm-ok { background:#ef4444; color:#fff; } .btn-confirm-ok:hover { background:#dc2626; }
+    .btn-confirm-no { background:#f3f4f6; color:#374151; } .btn-confirm-no:hover { background:#e5e7eb; }
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg-body);
-        color: var(--text-main);
-        width: 100%;
-        min-height: 100vh;
-    }
+    /* Toast */
+    .toast { display:none; position:fixed; bottom:28px; right:28px; background:#111827; color:#fff; padding:12px 20px; border-radius:8px; font-size:14px; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,.25); max-width:340px; }
+    .toast.success { background:#059669; } .toast.active { display:block; }
 
-    .container {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    /* Top Nav */
-    .back-nav {
-        font-size: 14px;
-        color: var(--text-muted);
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-weight: 500;
-    }
-
-    .back-nav:hover {
-        color: var(--text-main);
-    }
-
-    .card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        padding: 24px;
-    }
-
-    /* Settings Section */
-    .exam-settings {
-        display: flex;
-        flex-direction: row;
-        gap: 24px;
-        align-items: flex-end;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .form-group.flex-1 {
-        flex: 1;
-    }
-
-    .form-group label {
-        font-size: 13px;
-        font-weight: 500;
-        color: var(--text-main);
-    }
-
-    .input-control {
-        padding: 10px 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 6px;
-        font-size: 14px;
-        outline: none;
-        width: 100%;
-        transition: border-color 0.2s;
-    }
-
-    .input-control:focus {
-        border-color: var(--primary-color);
-    }
-
-    .input-with-icon {
-        position: relative;
-    }
-
-    .input-with-icon i {
-        position: absolute;
-        left: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-muted);
-    }
-
-    .input-with-icon input {
-        padding-left: 36px;
-    }
-
-    /* Select Control Customization */
-    select.input-control {
-        appearance: none;
-        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
-        background-repeat: no-repeat;
-        background-position: right 12px top 50%;
-        background-size: 10px auto;
-        padding-right: 32px;
-        background-color: white;
-    }
-
-    /* Main Grid */
-    .main-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        align-items: start;
-    }
-
-    /* Column Headers */
-    .col-header {
-        margin-bottom: 20px;
-    }
-
-    .col-header h3 {
-        font-size: 16px;
-        font-weight: 600;
-        margin-bottom: 4px;
-    }
-
-    .col-header p {
-        font-size: 13px;
-        color: var(--text-muted);
-    }
-
-    .col-header-flex {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    /* Filters */
-    .search-full {
-        margin-bottom: 12px;
-    }
-
-    .filter-row {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 16px;
-    }
-
-    /* Question List */
-    .question-list {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        height: 500px;
-        overflow-y: auto;
-        padding-right: 4px;
-    }
-
-    .question-item {
-        display: flex;
-        gap: 12px;
-        padding: 12px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: var(--bg-card);
-        cursor: grab;
-        transition: border-color 0.2s, background 0.2s;
-    }
-
-    .question-item:hover {
-        border-color: #cbd5e1;
-        background: var(--bg-hover);
-    }
-
-    /* Hiệu ứng mờ đi khi đang nắm kéo */
-    .question-item.dragging {
-        opacity: 0.5;
-        border: 2px dashed var(--primary-color);
-        background: var(--bg-hover);
-    }
-
-    .drag-handle {
-        color: #cbd5e1;
-        cursor: grab;
-        padding-top: 4px;
-    }
-
-    .btn-add-q {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-muted);
-        border-radius: 6px;
-        width: 32px;
-        height: 32px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.2s;
-        align-self: center;
-    }
-
-    .btn-add-q:hover {
-        border-color: var(--primary-color);
-        color: var(--primary-color);
-        background: #f0f9ff;
-    }
-
-    .q-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .q-tags {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        font-weight: 500;
-    }
-
-    .type-badge {
-        display: inline-block;
-        padding: 3px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        white-space: nowrap;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .type-reading {
-        background: #e8f4fd;
-        color: #1a73e8;
-    }
-
-    .type-listening {
-        background: #fce8f3;
-        color: #d63384;
-    }
-
-    .type-grammar {
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-
-    .type-vocabulary {
-        background: #fff3e0;
-        color: #e65100;
-    }
-
-    .level-badge {
-        display: inline-block;
-        padding: 3px 12px;
-        border-radius: 20px;
-        font-size: 11px;
-        font-weight: 600;
-        white-space: nowrap;
-        border: 1px solid transparent;
-    }
-
-    .level-de {
-        border-color: #a5d6a7;
-        background: #e8f5e9;
-        color: #2e7d32;
-    }
-
-    .level-tb {
-        border-color: #ffe082;
-        background: #fff8e1;
-        color: #f57f17;
-    }
-
-    .level-kho {
-        border-color: #f48fb1;
-        background: #fce4ec;
-        color: #c62828;
-    }
-
-    .q-text {
-        font-size: 14px;
-        line-height: 1.5;
-        color: var(--text-main);
-    }
-
-    .bottom-info {
-        margin-top: 16px;
-        font-size: 13px;
-        color: var(--text-muted);
-        text-align: left;
-    }
-
-    /* Right Column Buttons */
-    .actions {
-        display: flex;
-        gap: 12px;
-    }
-
-    .btn {
-        padding: 8px 16px;
-        border-radius: 6px;
-        font-size: 13px;
-        font-weight: 500;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        border: none;
-        transition: all 0.2s;
-    }
-
-    .btn-outline {
-        background: transparent;
-        border: 1px solid var(--border-color);
-        color: var(--text-muted);
-    }
-
-    .btn-outline:hover {
-        color: var(--text-main);
-        border-color: #9ca3af;
-    }
-
-    .btn-primary {
-        background: var(--primary-color);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--primary-hover);
-    }
-
-    /* Dropzone */
-    .dropzone-container {
-        height: 500px;
-        overflow-y: auto;
-        border: 2px dashed var(--border-color);
-        border-radius: 8px;
-        background: var(--bg-body);
-        transition: border-color 0.2s;
-        padding: 16px;
-    }
-
-    .dropzone {
-        min-height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .dropzone-container.drag-over {
-        border-color: var(--primary-color);
-        background: #f0f9ff;
-    }
-
-    .drop-content {
-        text-align: center;
-        color: var(--text-muted);
-    }
-
-    .drop-content i {
-        font-size: 32px;
-        margin-bottom: 12px;
-        color: #cbd5e1;
-    }
-
-    .drop-content p {
-        font-size: 14px;
-        line-height: 1.5;
-    }
+    .card { background:var(--bg-card); border:1px solid var(--border-color); border-radius:8px; padding:24px; }
+    .exam-settings { display:flex; flex-direction:row; gap:24px; align-items:flex-end; }
+    .form-group { display:flex; flex-direction:column; gap:8px; }
+    .form-group.flex-1 { flex:1; }
+    .form-group label { font-size:13px; font-weight:500; color:var(--text-main); }
+    .input-control { padding:10px 12px; border:1px solid var(--border-color); border-radius:6px; font-size:14px; outline:none; width:100%; transition:border-color .2s; }
+    .input-control:focus { border-color:var(--primary-color); }
+    .input-with-icon { position:relative; }
+    .input-with-icon i { position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--text-muted); }
+    .input-with-icon input { padding-left:36px; }
+    select.input-control { appearance:none; background-image:url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%22292.4%22 height%3D%22292.4%22%3E%3Cpath fill%3D%22%236b7280%22 d%3D%22M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E"); background-repeat:no-repeat; background-position:right 12px top 50%; background-size:10px auto; padding-right:32px; background-color:white; }
+    .main-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:start; }
+    .col-header { margin-bottom:20px; }
+    .col-header h3 { font-size:16px; font-weight:600; margin-bottom:4px; }
+    .col-header p { font-size:13px; color:var(--text-muted); }
+    .col-header-flex { display:flex; justify-content:space-between; align-items:flex-start; }
+    .search-full { margin-bottom:12px; }
+    .filter-row { display:flex; gap:12px; margin-bottom:16px; }
+    .question-list { display:flex; flex-direction:column; gap:8px; height:500px; overflow-y:auto; padding-right:4px; }
+    .question-item { display:flex; gap:12px; padding:12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-card); cursor:grab; transition:border-color .2s,background .2s; }
+    .question-item:hover { border-color:#cbd5e1; background:var(--bg-hover); }
+    .question-item.dragging { opacity:.5; border:2px dashed var(--primary-color); }
+    .drag-handle { color:#cbd5e1; cursor:grab; padding-top:4px; }
+    .btn-add-q { background:transparent; border:1px solid var(--border-color); color:var(--text-muted); border-radius:6px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all .2s; align-self:center; flex-shrink:0; }
+    .btn-add-q:hover { border-color:var(--primary-color); color:var(--primary-color); background:#f0f9ff; }
+    .q-content { flex:1; display:flex; flex-direction:column; gap:8px; }
+    .q-tags { display:flex; align-items:center; gap:8px; font-size:12px; font-weight:500; }
+    .type-badge { padding:3px 12px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; display:flex; align-items:center; gap:4px; }
+    .type-reading { background:#e8f4fd; color:#1a73e8; } .type-listening { background:#fce8f3; color:#d63384; }
+    .type-grammar  { background:#e8f5e9; color:#2e7d32; } .type-vocabulary { background:#fff3e0; color:#e65100; }
+    .level-badge { display:inline-block; padding:3px 12px; border-radius:20px; font-size:11px; font-weight:600; white-space:nowrap; border:1px solid transparent; }
+    .level-easy   { border-color:#a5d6a7; background:#e8f5e9; color:#2e7d32; }
+    .level-medium { border-color:#ffe082; background:#fff8e1; color:#f57f17; }
+    .level-hard   { border-color:#f48fb1; background:#fce4ec; color:#c62828; }
+    .q-text { font-size:14px; line-height:1.5; color:var(--text-main); }
+    .bottom-info { margin-top:16px; font-size:13px; color:var(--text-muted); }
+    .actions { display:flex; gap:12px; }
+    .btn { padding:8px 16px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; display:inline-flex; align-items:center; gap:6px; border:none; transition:all .2s; }
+    .btn-outline { background:transparent; border:1px solid var(--border-color); color:var(--text-muted); }
+    .btn-outline:hover { color:var(--text-main); border-color:#9ca3af; }
+    .btn-primary { background:var(--primary-color); color:white; }
+    .btn-primary:hover { background:var(--primary-hover); }
+    .btn-primary:disabled { opacity:.6; cursor:not-allowed; }
+    .dropzone-container { height:500px; overflow-y:auto; border:2px dashed var(--border-color); border-radius:8px; background:var(--bg-body); transition:border-color .2s; padding:16px; }
+    .dropzone { min-height:100%; display:flex; align-items:center; justify-content:center; }
+    .dropzone-container.drag-over { border-color:var(--primary-color); background:#f0f9ff; }
+    .drop-content { text-align:center; color:var(--text-muted); }
+    .drop-content i { font-size:32px; margin-bottom:12px; color:#cbd5e1; }
+    .drop-content p { font-size:14px; line-height:1.5; }
+    .empty-bank { text-align:center; padding:40px 20px; color:var(--text-muted); }
+    .empty-bank i { font-size:32px; margin-bottom:12px; display:block; }
+    .spinner { display:inline-block; width:14px; height:14px; border:2px solid rgba(255,255,255,.4); border-top-color:#fff; border-radius:50%; animation:spin .6s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .back-nav { font-size:14px; color:var(--text-muted); text-decoration:none; display:inline-flex; align-items:center; gap:8px; font-weight:500; }
+    .back-nav:hover { color:var(--text-main); }
 </style>
-</style>
+
+<!-- Confirm Modal -->
+<div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-box">
+        <p id="confirmMsg"></p>
+        <div class="confirm-actions">
+            <button class="btn-confirm-no" id="confirmNo">Hủy</button>
+            <button class="btn-confirm-ok" id="confirmOk">Xóa tất cả</button>
+        </div>
+    </div>
+</div>
+<div class="toast" id="toastMsg"></div>
 
 <div class="container-fluid py-4">
-    <!-- Top Nav -->
     <div>
-        <a href="#" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách</a>
+        <a href="/teacher/exams" class="back-nav"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách</a>
     </div>
 
     <!-- Exam Settings -->
-    <div class="card exam-settings" style="margin: 20px 0px;">
+    <div class="card exam-settings" style="margin:20px 0;">
         <div class="form-group flex-1">
             <label>Tên đề thi</label>
-            <input type="text" class="input-control" placeholder="VD: TOEIC Practice Test 1">
+            <input type="text" id="examNameInput" class="input-control" placeholder="VD: TOEIC Practice Test 1">
         </div>
-        <div class="form-group" style="width: 200px;">
+        <div class="form-group" style="width:200px;">
             <label>Thời gian (phút)</label>
             <div class="input-with-icon">
                 <i class="fa-regular fa-clock"></i>
-                <input type="number" class="input-control" value="60">
+                <input type="number" id="examTimeInput" class="input-control" value="60" min="1">
             </div>
         </div>
-        <div class="form-group" style="width: 200px;">
+        <div class="form-group" style="width:200px;">
             <label>Topic</label>
-            <select class="input-control">
-                <option>Chọn topic</option>
-                <option>TOEIC</option>
-                <option>IELTS</option>
+            <select id="examTopicSelect" class="input-control">
+                <option value="">Chọn topic</option>
+                {{#each topics}}
+                <option value="{{_id}}">{{name}}</option>
+                {{/each}}
             </select>
         </div>
     </div>
 
     <!-- Main Workspace -->
     <div class="main-grid">
-
-        <!-- Left Column: Question Bank -->
+        <!-- Left: Question Bank -->
         <div class="card">
             <div class="col-header">
                 <h3>Ngân hàng câu hỏi</h3>
-                <p>Kéo thả hoặc click để thêm vào đề thi</p>
+                <p>Kéo thả hoặc click + để thêm vào đề thi</p>
             </div>
-
             <div class="search-full input-with-icon">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="input-control" placeholder="Tìm kiếm câu hỏi...">
+                <input type="text" id="bankSearch" class="input-control" placeholder="Tìm kiếm câu hỏi...">
             </div>
-
             <div class="filter-row">
-                <select class="input-control flex-1">
-                    <option>Tất cả loại</option>
-                    <option>Ngữ pháp</option>
-                    <option>Từ vựng</option>
+                <select id="filterType" class="input-control flex-1">
+                    <option value="">Tất cả loại</option>
+                    <option value="Reading">Reading</option>
+                    <option value="Listening">Listening</option>
+                    <option value="Grammar">Grammar</option>
+                    <option value="Vocabulary">Vocabulary</option>
                 </select>
-                <select class="input-control flex-1">
-                    <option>Tất cả</option>
-                    <option>Dễ</option>
-                    <option>Trung bình</option>
-                    <option>Khó</option>
+                <select id="filterLevel" class="input-control flex-1">
+                    <option value="">Tất cả</option>
+                    <option value="easy">Dễ</option>
+                    <option value="medium">Trung bình</option>
+                    <option value="hard">Khó</option>
                 </select>
             </div>
 
             <div class="question-list" id="questionBank">
-                <!-- Q1 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-reading">📖 Reading</span>
-                            <span class="level-badge level-tb">Trung bình</span>
+                {{#if questions.length}}
+                    {{#each questions}}
+                    <div class="question-item"
+                         draggable="true"
+                         data-id="{{_id}}"
+                         data-level="{{level}}"
+                         data-topic="{{#if topic_id}}{{topic_id.name}}{{/if}}">
+                        <i class="fa-solid fa-grip-vertical drag-handle"></i>
+                        <div class="q-content">
+                            <div class="q-tags">
+                                {{#if topic_id}}
+                                <span class="type-badge type-reading">{{topic_id.name}}</span>
+                                {{/if}}
+                                <span class="level-badge level-{{level}}">
+                                    {{#if (eq level "easy")}}Dễ{{/if}}
+                                    {{#if (eq level "medium")}}Trung bình{{/if}}
+                                    {{#if (eq level "hard")}}Khó{{/if}}
+                                </span>
+                            </div>
+                            <p class="q-text">{{truncate content 120}}</p>
                         </div>
-                        <p class="q-text">According to the passage, what is the main purpose of the new policy?</p>
+                        <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
                     </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q2 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-listening">🎧 Listening</span>
-                            <span class="level-badge level-kho">Khó</span>
-                        </div>
-                        <p class="q-text">What does the speaker suggest about urban planning?</p>
+                    {{/each}}
+                {{else}}
+                    <div class="empty-bank">
+                        <i class="fa-solid fa-circle-question"></i>
+                        <p>Chưa có câu hỏi nào.<br>
+                        <a href="/teacher/questions/create">Tạo câu hỏi mới</a></p>
                     </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q3 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-grammar">Aa Grammar</span>
-                            <span class="level-badge level-de">Dễ</span>
-                        </div>
-                        <p class="q-text">Choose the correct form: She _____ to the office every day.</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q4 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-vocabulary">Vv Vocabulary</span>
-                            <span class="level-badge level-tb">Trung bình</span>
-                        </div>
-                        <p class="q-text">What is the synonym of "abundant"?</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q5 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-grammar">Aa Grammar</span>
-                            <span class="level-badge level-kho">Khó</span>
-                        </div>
-                        <p class="q-text">Identify the error: 'The team have decided to postpone their meeting'</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-
-                <!-- Q6 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-reading">📖 Reading</span>
-                            <span class="level-badge level-de">Dễ</span>
-                        </div>
-                        <p class="q-text">What is the main topic of the article?</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q7 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-vocabulary">Vv Vocabulary</span>
-                            <span class="level-badge level-tb">Trung bình</span>
-                        </div>
-                        <p class="q-text">Choose the word that best completes: 'The project was _____ success'</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q8 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-listening">🎧 Listening</span>
-                            <span class="level-badge level-tb">Trung bình</span>
-                        </div>
-                        <p class="q-text">According to the recording, what time does the train depart?</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q9 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-reading">📖 Reading</span>
-                            <span class="level-badge level-tb">Trung bình</span>
-                        </div>
-                        <p class="q-text">According to the passage, what is the main purpose of the new policy?</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
-                <!-- Q10 -->
-                <div class="question-item" draggable="true">
-                    <i class="fa-solid fa-grip-vertical drag-handle"></i>
-                    <div class="q-content">
-                        <div class="q-tags">
-                            <span class="type-badge type-listening">🎧 Listening</span>
-                            <span class="level-badge level-kho">Khó</span>
-                        </div>
-                        <p class="q-text">In the lecture, what is the main reason given for the economic decline?</p>
-                    </div>
-                    <button class="btn-add-q" title="Thêm vào đề thi"><i class="fa-solid fa-plus"></i></button>
-                </div>
+                {{/if}}
             </div>
 
             <div class="bottom-info">
-                <span>10 câu hỏi có sẵn</span>
+                <span id="bankCount">{{questions.length}} câu hỏi có sẵn</span>
             </div>
         </div>
 
-        <!-- Right Column: Current Exam -->
+        <!-- Right: Current Exam -->
         <div class="card">
             <div class="col-header col-header-flex">
                 <div>
                     <h3>Đề thi hiện tại</h3>
-                    <p>0 câu hỏi | 0 phút</p>
+                    <p id="examCount">0 câu hỏi | 0 phút</p>
                 </div>
                 <div class="actions">
-                    <button class="btn btn-outline"><i class="fa-regular fa-trash-can"></i> Xóa tất cả</button>
-                    <button class="btn btn-primary">Lưu đề thi</button>
+                    <button class="btn btn-outline" id="btnClearAll">
+                        <i class="fa-regular fa-trash-can"></i> Xóa tất cả
+                    </button>
+                    <button class="btn btn-primary" id="btnSaveExam">
+                        Lưu đề thi
+                    </button>
                 </div>
             </div>
             <div class="dropzone-container" id="examDropzoneContainer">
                 <div class="dropzone" id="examDropzone">
-                    <div class="drop-content">
+                    <div class="drop-content" id="dropPlaceholder">
                         <i class="fa-regular fa-file-lines"></i>
-                        <p>Kéo thả câu hỏi vào đây<br>hoặc click nút để thêm</p>
+                        <p>Kéo thả câu hỏi vào đây<br>hoặc click nút + để thêm</p>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
-<!-- JS mô phỏng Drag & Drop -->
 <script>
-    const draggables = document.querySelectorAll('.question-item');
-    const dropzone = document.getElementById('examDropzone');
-    const questionBank = document.getElementById('questionBank');
-    const dropContent = dropzone.querySelector('.drop-content');
+const dropzone       = document.getElementById('examDropzone');
+const questionBank   = document.getElementById('questionBank');
+const dropPlaceholder= document.getElementById('dropPlaceholder');
+const examCountEl    = document.getElementById('examCount');
+const examTimeInput  = document.getElementById('examTimeInput');
 
-    // Khởi tạo style cho dropzone để hoạt động như một list
-    dropzone.style.display = 'flex';
-    dropzone.style.flexDirection = 'column';
-    dropzone.style.gap = '8px';
+dropzone.style.cssText = 'display:flex;flex-direction:column;gap:8px;';
 
-    // Hàm kiểm tra và cập nhật giao diện của Dropzone
-    function updateDropzoneState() {
-        const items = dropzone.querySelectorAll('.question-item');
-        if (items.length === 0) {
-            dropContent.style.display = 'block';
-            dropzone.style.padding = '0';
-            dropzone.style.justifyContent = 'center';
-            dropzone.style.alignItems = 'center';
-        } else {
-            dropContent.style.display = 'none';
+/* ── State ─────────────────────────────────────── */
+function updateState() {
+    const items = dropzone.querySelectorAll('.question-item');
+    const n = items.length;
+    const mins = parseInt(examTimeInput.value) || 0;
+    dropPlaceholder.style.display  = n === 0 ? 'block' : 'none';
+    dropzone.style.padding         = n === 0 ? '0' : '16px';
+    dropzone.style.justifyContent  = n === 0 ? 'center' : 'flex-start';
+    dropzone.style.alignItems      = n === 0 ? 'center' : 'stretch';
+    examCountEl.textContent = `${n} câu hỏi | ${mins} phút`;
+}
+examTimeInput.addEventListener('input', updateState);
+
+/* ── Drag after helper ─────────────────────────── */
+function getDragAfterElement(container, y) {
+    const els = [...container.querySelectorAll('.question-item:not(.dragging)')];
+    return els.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        return (offset < 0 && offset > closest.offset) ? { offset, element: child } : closest;
+    }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+/* ── Mark bank item added ──────────────────────── */
+function markAdded(bankItem, cloneInExam) {
+    const btn = bankItem.querySelector('.btn-add-q');
+    btn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+    btn.title = 'Xóa khỏi đề thi';
+    btn.classList.add('added');
+    bankItem.style.opacity = '0.6';
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        cloneInExam.remove();
+        updateState();
+        restore(bankItem);
+    };
+}
+
+function restore(bankItem) {
+    const btn = bankItem.querySelector('.btn-add-q');
+    btn.innerHTML = '<i class="fa-solid fa-plus"></i>';
+    btn.title = 'Thêm vào đề thi';
+    btn.classList.remove('added');
+    bankItem.style.opacity = '';
+    btn.onclick = null;
+    bindAdd(bankItem);
+}
+
+/* ── Build exam clone ──────────────────────────── */
+function buildClone(sourceItem) {
+    const clone = sourceItem.cloneNode(true);
+    clone.style.display = 'flex';
+    clone.style.opacity = '';
+    clone.draggable = true;
+    clone.addEventListener('dragstart', () => clone.classList.add('dragging'));
+    clone.addEventListener('dragend', () => { clone.classList.remove('dragging'); updateState(); });
+
+    const cloneBtn = clone.querySelector('.btn-add-q');
+    cloneBtn.innerHTML = '<i class="fa-solid fa-minus"></i>';
+    cloneBtn.title = 'Xóa khỏi đề thi';
+    cloneBtn.classList.add('added');
+    cloneBtn.onclick = (e) => {
+        e.stopPropagation();
+        clone.remove();
+        updateState();
+        const id = sourceItem.dataset.id;
+        const bankItem = questionBank.querySelector(`.question-item[data-id="${id}"]`);
+        if (bankItem) restore(bankItem);
+    };
+    return clone;
+}
+
+function addToExam(bankItem, afterY) {
+    const clone = buildClone(bankItem);
+    const after = (afterY !== undefined) ? getDragAfterElement(dropzone, afterY) : null;
+    if (after) dropzone.insertBefore(clone, after);
+    else dropzone.appendChild(clone);
+    updateState();
+    markAdded(bankItem, clone);
+}
+
+/* ── Bind + button ─────────────────────────────── */
+function bindAdd(item) {
+    const btn = item.querySelector('.btn-add-q');
+    btn.onclick = (e) => {
+        e.stopPropagation();
+        if (btn.classList.contains('added')) return;
+        addToExam(item);
+    };
+}
+document.querySelectorAll('#questionBank .question-item').forEach(item => {
+    item.addEventListener('dragstart', () => item.classList.add('dragging'));
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); updateState(); });
+    bindAdd(item);
+});
+
+/* ── Drag & Drop ───────────────────────────────── */
+[questionBank, dropzone].forEach(container => {
+    container.addEventListener('dragover', e => {
+        e.preventDefault();
+        const dragging = document.querySelector('.dragging');
+        if (!dragging) return;
+        if (container === dropzone) {
+            container.parentElement.classList.add('drag-over');
+            dropPlaceholder.style.display = 'none';
             dropzone.style.padding = '16px';
             dropzone.style.justifyContent = 'flex-start';
             dropzone.style.alignItems = 'stretch';
         }
+        if (container === dropzone && questionBank.contains(dragging)) return;
+        const after = getDragAfterElement(container, e.clientY);
+        if (after) container.insertBefore(dragging, after);
+        else container.appendChild(dragging);
+    });
+    container.addEventListener('dragleave', e => {
+        if (container === dropzone && !container.contains(e.relatedTarget))
+            container.parentElement.classList.remove('drag-over');
+    });
+    container.addEventListener('drop', e => {
+        e.preventDefault();
+        if (container !== dropzone) return;
+        container.parentElement.classList.remove('drag-over');
+        const dragging = document.querySelector('.dragging');
+        if (dragging && questionBank.contains(dragging)) {
+            dragging.classList.remove('dragging');
+            addToExam(dragging, e.clientY);
+        }
+    });
+});
+
+/* ── Toast / Confirm ───────────────────────────── */
+function showToast(msg, type = '') {
+    const t = document.getElementById('toastMsg');
+    t.textContent = msg;
+    t.className = 'toast active' + (type ? ' ' + type : '');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('active'), 3500);
+}
+function showConfirm(msg, onOk) {
+    const overlay = document.getElementById('confirmOverlay');
+    document.getElementById('confirmMsg').textContent = msg;
+    overlay.classList.add('active');
+    const ok = document.getElementById('confirmOk');
+    const no = document.getElementById('confirmNo');
+    const close = () => { overlay.classList.remove('active'); ok.onclick = null; no.onclick = null; };
+    ok.onclick = () => { close(); onOk(); };
+    no.onclick = close;
+}
+
+/* ── Clear All ─────────────────────────────────── */
+document.getElementById('btnClearAll').addEventListener('click', () => {
+    const items = dropzone.querySelectorAll('.question-item');
+    if (!items.length) return;
+    showConfirm('Bạn có chắc muốn xóa tất cả câu hỏi khỏi đề thi không?', () => {
+        items.forEach(i => i.remove());
+        document.querySelectorAll('#questionBank .question-item').forEach(restore);
+        updateState();
+        showToast('Đã xóa tất cả câu hỏi.');
+    });
+});
+
+/* ── Save Exam → POST /teacher/exams/store ─────── */
+document.getElementById('btnSaveExam').addEventListener('click', async () => {
+    const examName = document.getElementById('examNameInput').value.trim();
+    const duration = parseInt(document.getElementById('examTimeInput').value) || 0;
+    const examItems = dropzone.querySelectorAll('.question-item');
+
+    if (!examName) {
+        showToast('Vui lòng nhập tên đề thi!');
+        document.getElementById('examNameInput').focus();
+        return;
+    }
+    if (!examItems.length) {
+        showToast('Vui lòng thêm ít nhất 1 câu hỏi vào đề thi!');
+        return;
     }
 
-    // Gắn sự kiện cho các item có thể kéo
-    draggables.forEach(draggable => {
-        draggable.addEventListener('dragstart', () => {
-            draggable.classList.add('dragging');
+    const question_ids = [...examItems].map(item => item.dataset.id).filter(Boolean);
+
+    const btn = document.getElementById('btnSaveExam');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Đang lưu...';
+
+    try {
+        const res = await fetch('/teacher/exams/store', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title: examName, duration_minutes: duration, question_ids })
         });
-
-        draggable.addEventListener('dragend', () => {
-            draggable.classList.remove('dragging');
-            updateDropzoneState();
-        });
-    });
-
-    const containers = [questionBank, dropzone];
-
-    // Xử lý sự kiện kéo thả cho cả 2 cột
-    containers.forEach(container => {
-        container.addEventListener('dragover', e => {
-            e.preventDefault();
-            const dragging = document.querySelector('.dragging');
-            if (!dragging) return;
-
-            // Xử lý riêng UI cho vùng thả đề thi
-            if (container === dropzone) {
-                container.parentElement.classList.add('drag-over');
-                dropContent.style.display = 'none';
-                dropzone.style.padding = '16px';
-                dropzone.style.justifyContent = 'flex-start';
-                dropzone.style.alignItems = 'stretch';
-            }
-
-            // Tính toán vị trí thả để sắp xếp thứ tự
-            const afterElement = getDragAfterElement(container, e.clientY);
-            if (afterElement == null) {
-                container.appendChild(dragging);
-            } else {
-                container.insertBefore(dragging, afterElement);
-            }
-        });
-
-        container.addEventListener('dragleave', () => {
-            if (container === dropzone) {
-                container.parentElement.classList.remove('drag-over');
-            }
-        });
-
-        container.addEventListener('drop', () => {
-            if (container === dropzone) {
-                container.parentElement.classList.remove('drag-over');
-            }
-        });
-    });
-
-    // Hàm tính toán element nằm ngay dưới vị trí chuột
-    function getDragAfterElement(container, y) {
-        const draggableElements = [...container.querySelectorAll('.question-item:not(.dragging)')];
-
-        return draggableElements.reduce((closest, child) => {
-            const box = child.getBoundingClientRect();
-            // Lấy khoảng cách từ tâm element đến con trỏ chuột
-            const offset = y - box.top - box.height / 2;
-
-            if (offset < 0 && offset > closest.offset) {
-                return { offset: offset, element: child };
-            } else {
-                return closest;
-            }
-        }, { offset: Number.NEGATIVE_INFINITY }).element;
+        const data = await res.json();
+        if (data.success) {
+            showToast(data.message, 'success');
+            setTimeout(() => window.location.href = '/teacher/exams', 1500);
+        } else {
+            showToast(data.message || 'Lỗi khi lưu đề thi!');
+        }
+    } catch (err) {
+        showToast('Lỗi kết nối server!');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Lưu đề thi';
     }
+});
 
-
-
-    // Xử lý nút + thêm câu hỏi vào đề
-    document.querySelectorAll('.btn-add-q').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const item = e.target.closest('.question-item');
-            if (!item) return;
-            // Clone item để cho vào đề thi
-            const clone = item.cloneNode(true);
-            // Bỏ nút +, thêm nút xóa nếu cần (ở đây chỉ thả vào)
-            clone.style.display = 'flex';
-
-            dropzone.appendChild(clone);
-            updateDropzoneState();
-
-            // Gắn lại drag event cho clone
-            clone.addEventListener('dragstart', () => clone.classList.add('dragging'));
-            clone.addEventListener('dragend', () => {
-                clone.classList.remove('dragging');
-                updateDropzoneState();
-            });
-
-            // (Tuỳ chọn) Gắn sự kiện xóa khi nhấp vào nút + của clone, hoặc đổi class...
-            const cloneBtn = clone.querySelector('.btn-add-q');
-            cloneBtn.innerHTML = '<i class="fa-solid fa-minus"></i>';
-            cloneBtn.title = "Xóa khỏi đề thi";
-            cloneBtn.addEventListener('click', () => {
-                clone.remove();
-                updateDropzoneState();
-            });
-        });
+/* ── Search / Filter ───────────────────────────── */
+function filterBank() {
+    const q = document.getElementById('bankSearch').value.toLowerCase();
+    const lvl = document.getElementById('filterLevel').value;
+    document.querySelectorAll('#questionBank .question-item').forEach(item => {
+        const text = item.querySelector('.q-text')?.textContent.toLowerCase() || '';
+        const itemLvl = item.dataset.level || '';
+        const matchText = !q || text.includes(q);
+        const matchLvl  = !lvl || itemLvl === lvl;
+        item.style.display = (matchText && matchLvl) ? '' : 'none';
     });
+}
+document.getElementById('bankSearch').addEventListener('input', filterBank);
+document.getElementById('filterLevel').addEventListener('change', filterBank);
+
+updateState();
 </script>

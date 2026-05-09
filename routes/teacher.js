@@ -11,6 +11,7 @@ const ExamQuestion = require('../models/ExamQuestion');
 const Schedule = require('../models/Schedule');
 const Question = require('../models/Question');
 const QuestionTopic = require('../models/QuestionTopic');
+const ExamController = require('../controller/examController');
 
 // Middleware to inject common data into all teacher views
 router.use(protect('teacher'), async (req, res, next) => {
@@ -200,25 +201,7 @@ router.post('/update-profile', protect('teacher'), async (req, res, next) => {
   }
 });
 
-//======================= Placeholder routes (từ sidebar links) ===================================
-
-router.get('/questions', protect('teacher'), async (req, res, next) => {
-  try {
-    const teacherId = req.user._id;
-    const user = await User.findById(teacherId).lean();
-    const questions = await Question.find({ created_by: teacherId })
-        .populate('topic_id', 'name')
-        .sort({ created_at: -1 })
-        .lean();
-    const topics = await QuestionTopic.find().sort({ name: 1 }).lean();
-
-    res.render('teacher/questions', {
-      title: 'Ngân hàng câu hỏi', 
-      questions,
-      topics
-    });
-  } catch (err) { next(err); }
-});
+// NOTE: /teacher/questions/* is handled by questionsRouter mounted in app.js
 
 // routes/teacher.js
 
@@ -504,126 +487,16 @@ router.post('/classes/:id/schedule', protect('teacher'), async (req, res) => {
 
 
 //======================= Quản lý đề thi (Teacher Exams) =======================================
+// Tất cả logic đã chuyển vào controller/examController.js
 
-// 1. Danh sách đề thi 
-// Link truy cập: localhost:3000/teacher/exams
-router.get('/exams', protect('teacher'), async (req, res) => {
-  try {
-    const teacherId = req.user?._id;
-    const user = await User.findById(teacherId).lean();
+// 1. Danh sách đề thi: GET /teacher/exams
+router.get('/exams', protect('teacher'), ExamController.getExamListPage);
 
-    const exams = await Exam.find({ created_by: teacherId })
-      .populate('class_id')
-      .sort({ created_at: -1 })
-      .lean();
+// 2. Trang tạo đề thi: GET /teacher/create-exam
+router.get('/create-exam', protect('teacher'), ExamController.getCreateExamPage);
 
-    const totalExams = exams.length;
-    const publishedExams = exams.filter(e => e.status === 'PUBLISHED').length;
-    const draftExams = exams.filter(e => e.status === 'DRAFT').length;
+// 3. API lưu đề thi: POST /teacher/exams/store
+router.post('/exams/store', protect('teacher'), ExamController.postSaveExam);
 
-    res.render('teacher/exam-list', {
-      title: 'Danh sách đề thi',
-      exams,
-      stats: { totalExams, publishedExams, draftExams }
-    });
-  } catch (err) {
-    res.status(500).send("Lỗi tải danh sách đề thi: " + err.message);
-  }
-});
-
-// 2. Trang tạo đề thi mới 
-// Link truy cập: localhost:3000/teacher/create-exam
-router.get('/create-exam', protect('teacher'), async (req, res) => {
-    try {
-        const teacherId = req.user?._id;
-        const user = await User.findById(teacherId).lean();
-
-        res.render('teacher/create-exams', {
-            title: 'Tạo đề thi mới',
-        });
-    } catch (err) {
-        res.status(500).send("Lỗi hiển thị trang tạo đề thi: " + err.message);
-    }
-});
-
-// 3. API xử lý lưu đề thi
-router.post('/exams/store', protect('teacher'), async (req, res) => {
-  try {
-    const teacherId = req.user?._id;
-    const { title, duration_minutes, start_time, end_time, class_id } = req.body;
-    // question_ids can be from form as question_ids[] => may be array or single string
-    let question_ids = req.body['question_ids[]'] || req.body.question_ids || [];
-    if (!title) return res.status(400).send('Thiếu tiêu đề đề thi');
-
-    if (typeof question_ids === 'string') question_ids = [question_ids];
-    if (!Array.isArray(question_ids)) question_ids = [];
-
-    // sanitize ids
-    question_ids = question_ids.map(q => String(q).trim()).filter(Boolean);
-
-    // validate existence of question ids
-    if (question_ids.length) {
-      const existing = await require('../models/Question').find({ _id: { $in: question_ids } }, '_id').lean();
-      const existingIds = existing.map(e => String(e._id));
-      const missing = question_ids.filter(q => !existingIds.includes(q));
-      if (missing.length) return res.status(400).send('Một vài câu hỏi không tồn tại: ' + missing.join(','));
-    }
-
-    // Use mongoose transaction if available
-    const mongoose = require('mongoose');
-    const session = await mongoose.startSession();
-    session.startTransaction();
-    try {
-      const exam = await Exam.create([{ class_id: class_id || null,
-        created_by: teacherId,
-        title: String(title).trim(),
-        duration_minutes: Number(duration_minutes) || 0,
-        start_time: start_time ? new Date(start_time) : null,
-        end_time: end_time ? new Date(end_time) : null,
-        status: 'DRAFT' }], { session });
-
-      const examId = exam[0]._id;
-      if (question_ids.length) {
-        const toInsert = question_ids.map(qid => ({ exam_id: examId, question_id: qid }));
-        await ExamQuestion.insertMany(toInsert, { session });
-      }
-
-      await session.commitTransaction();
-      session.endSession();
-
-      // Send notifications to students in the class (Non-blocking)
-      if (class_id) {
-          try {
-              const Notification = require('../models/Notification');
-              const ClassMember = require('../models/ClassMember');
-              const students = await ClassMember.find({ class_id }).lean();
-              
-              if (students.length > 0) {
-                  const notifications = students.map(s => ({
-                      recipient: s.student_id,
-                      sender: teacherId,
-                      senderRole: 'teacher',
-                      title: 'Bài thi mới',
-                      message: `Giảng viên đã tạo bài thi mới: ${title}`,
-                      type: 'exam',
-                      created_at: new Date()
-                  }));
-                  await Notification.insertMany(notifications);
-              }
-          } catch (notifyErr) {
-              console.error('Failed to send notifications:', notifyErr);
-          }
-      }
-
-      res.redirect('/teacher/exams');
-    } catch (errTx) {
-      await session.abortTransaction();
-      session.endSession();
-      throw errTx;
-    }
-  } catch (err) {
-    res.status(500).send("Lỗi khi lưu đề thi: " + err.message);
-  }
-});
 module.exports = router;
 
