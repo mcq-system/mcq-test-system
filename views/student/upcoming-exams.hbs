@@ -1,0 +1,210 @@
+<style>
+    .page-header {
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+
+    .search-wrapper {
+        position: relative;
+        flex: 1;
+    }
+
+    .search-wrapper i {
+        position: absolute;
+        left: 15px;
+        top: 12px;
+        color: #aaa;
+    }
+
+    .search-wrapper input {
+        width: 100%;
+        padding: 10px 15px 10px 40px !important;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        background: white;
+    }
+
+    .filter-select {
+        width: 180px;
+        border-radius: 10px;
+        border: 1px solid #eee;
+        padding: 10px;
+        outline: none;
+        background: white;
+    }
+
+    .exams-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
+    }
+
+    .exam-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #f0f0f0;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .exam-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .exam-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+    }
+
+    .exam-type {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding: 4px 10px;
+        border-radius: 6px;
+        color: white;
+    }
+
+    .type-reading {
+        background: #00bcd4;
+    }
+
+    .type-listening {
+        background: #4caf50;
+    }
+
+    .type-grammar {
+        background: #673ab7;
+    }
+
+    .exam-title {
+        font-size: 16px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .exam-class {
+        font-size: 13px;
+        color: #888;
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .exam-info-list {
+        margin-bottom: 20px;
+    }
+
+    .info-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 8px;
+    }
+
+    .info-item i {
+        width: 16px;
+        color: #007bff;
+    }
+
+    .btn-enter {
+        width: 100%;
+        padding: 12px;
+        background: #0056b3;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .btn-enter:hover {
+        background: #004494;
+    }
+</style>
+
+<div class="page-header">
+    <h2>Kỳ thi sắp tới</h2>
+</div>
+
+<div class="filter-row">
+    <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Tìm kiếm tên bài thi, môn học...">
+    </div>
+    <select class="filter-select">
+        <option>Tất cả môn học</option>
+        <option>TOEIC</option>
+        <option>IELTS</option>
+        <option>Grammar</option>
+    </select>
+</div>
+
+<div class="exams-grid">
+    {{#each exams}}
+    <div class="exam-card">
+        <div class="exam-header">
+            <div>
+                <a href="#" class="exam-title">{{title}}</a>
+                <span class="exam-class">{{#if class_id}}{{class_id.name}}{{else}}N/A{{/if}}</span>
+            </div>
+            <span class="ms-3 exam-type type-reading">English</span>
+        </div>
+
+        <div class="exam-info-list">
+            <div class="info-item">
+                <i class="far fa-calendar-alt"></i>
+                Thi lúc: {{formatDate start_time}} {{formatTime start_time}}
+
+            </div>
+            <div class="info-item">
+                <i class="far fa-clock"></i> Thời gian: {{duration_minutes}} phút
+            </div>
+            <div class="info-item">
+                <i class="far fa-list-alt"></i> Số câu: {{questionCount}}
+            </div>
+        </div>
+
+        <form action="/student/exam-sessions/start" method="POST">
+            <input type="hidden" name="exam_id" value="{{_id}}">
+            <button type="submit" class="btn-enter">
+                <i class="fas fa-sign-in-alt"></i> Vào phòng thi
+            </button>
+        </form>
+    </div>
+    {{/each}}
+
+    {{#unless exams.length}}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 100px 20px; color: #888;">
+        <i class="fas fa-calendar-times" style="font-size: 50px; margin-bottom: 20px; opacity: 0.3;"></i>
+        <p>Hiện tại không có kỳ thi nào sắp diễn ra.</p>
+    </div>
+    {{/unless}}
+</div>

@@ -1,9 +1,12 @@
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'mcq_secret_key';
 const JWT_EXPIRES = '7d';
+
+const { getUserAgentInfo, getClientIp, getGeoLocation } = require('../utils/helper');
 
 exports.getLogin = (req, res) => {
   res.render('auth/login', { title: 'Đăng nhập' });
@@ -54,6 +57,28 @@ exports.postLogin = async (req, res) => {
       student: '/student/dashboard',
     };
 
+    const userAgentInfo = getUserAgentInfo(req.headers['user-agent']);
+    const clientIp = getClientIp(req);
+    const geoLocation = getGeoLocation(clientIp);
+
+    Notification.create({
+      recipient: user._id,
+      sender: user._id,
+      senderRole: user.role,
+      title: `Đăng nhập tài khoản - ${user.last_name}`,
+      message: `Phát hiện lần đăng nhập mới vào tài khoản của bạn\n` +
+        `Thiết bị: ${userAgentInfo.device || 'không xác định'}\n` +
+        `Browser: ${userAgentInfo.browser || 'không xác định'}\n` +
+        `Hệ điều hành: ${userAgentInfo.os || 'không xác định'}\n` +
+        `IP: ${clientIp || 'không xác định'}\n` +
+        `Vị trí: ${geoLocation?.city || 'không xác định'}, ${geoLocation?.country || 'không xác định'}\n` +
+        `Thời gian: ${new Date().toLocaleString()}.\n` +
+        `Nếu đây không phải là bạn, vui lòng đổi mật khẩu ngay lập tức!`,
+      type: 'system',
+    }).catch((error) => {
+      console.error('Create login notification error:', error);
+    });
+
     return res.status(200).json({
       success: true,
       message: 'Đăng nhập thành công!',
@@ -99,11 +124,14 @@ exports.postRegister = async (req, res) => {
 };
 
 exports.postLogout = (req, res) => {
-  res.cookie('token', 'none', {
-    expires: new Date(Date.now() + 10 * 1000),
-    httpOnly: true,
-  });
+  res.clearCookie('token');
 
+  // GET: trực tiếp từ link <a> → redirect về trang login
+  if (req.method === 'GET') {
+    return res.redirect('/auth/login');
+  }
+
+  // POST: gọi từ fetch/AJAX → trả JSON để frontend xử lý
   return res.status(200).json({
     success: true,
     message: 'Đăng xuất thành công!',
@@ -129,7 +157,7 @@ exports.getMe = async (req, res) => {
 exports.updatePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword } = req.body;
-    
+
     if (!currentPassword || !newPassword) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp mật khẩu hiện tại và mới.' });
     }
@@ -171,9 +199,9 @@ exports.forgotPassword = async (req, res) => {
 
     // Since we don't have an email sender, we just return the token for testing purposes
     // In a real app we would NOT return the token directly in the response
-    return res.status(200).json({ 
-      success: true, 
-      message: 'Email khôi phục mật khẩu đã được gửi.', 
+    return res.status(200).json({
+      success: true,
+      message: 'Email khôi phục mật khẩu đã được gửi.',
       resetToken // include only for testing since we lack email functionality
     });
   } catch (err) {
@@ -185,7 +213,7 @@ exports.forgotPassword = async (req, res) => {
 exports.resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
-    
+
     if (!token || !password) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp token và mật khẩu mới.' });
     }
@@ -226,4 +254,12 @@ exports.resetPassword = async (req, res) => {
     console.error('resetPassword error:', err);
     return res.status(500).json({ success: false, message: 'Lỗi server: ' + err.message });
   }
+};
+
+exports.postLogout = (req, res) => {
+  res.cookie('token', 'none', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.redirect('/auth/login');
 };

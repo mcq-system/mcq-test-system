@@ -1,0 +1,77 @@
+<style>
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-header h2 { margin: 0; font-size: 22px; }
+    .history-table { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,.07); overflow: hidden; }
+    .history-table table { width: 100%; border-collapse: collapse; }
+    .history-table th { background: #4e73df; color: #fff; padding: 14px 16px; text-align: left; font-size: 13px; font-weight: 600; }
+    .history-table td { padding: 14px 16px; border-bottom: 1px solid #f0f0f0; font-size: 14px; color: #333; }
+    .history-table tr:last-child td { border-bottom: none; }
+    .history-table tr:hover td { background: #f8f9ff; }
+    .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-submitted { background: #d4edda; color: #155724; }
+    .badge-doing { background: #fff3cd; color: #856404; }
+    .badge-expired { background: #f8d7da; color: #721c24; }
+    .btn-sm { padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-block; }
+    .btn-primary { background: #4e73df; color: #fff; }
+    .btn-primary:hover { background: #224abe; color: #fff; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #888; }
+    .empty-state i { font-size: 48px; margin-bottom: 16px; opacity: .4; }
+</style>
+
+<div class="page-header">
+    <h2><i class="fas fa-history"></i> Lịch sử làm bài</h2>
+</div>
+
+<div class="history-table">
+    {{#if sessions.length}}
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Tên bài thi</th>
+                <th>Bắt đầu</th>
+                <th>Nộp lúc</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#each sessions}}
+                <tr>
+                    <td>{{add @index 1}}</td>
+                    <td><strong>{{exam.title}}</strong></td>
+                    <td>{{formatDate started_at}}</td>
+                    <td>{{#if submitted_at}}{{formatDate submitted_at}}{{else}}-{{/if}}</td>
+                    <td>
+                        {{#if (eq status "SUBMITTED")}}
+                            <span class="badge badge-submitted">Đã nộp</span>
+                        {{else if (eq status "DOING")}}
+                            <span class="badge badge-doing">Đang làm</span>
+                        {{else}}
+                            <span class="badge badge-expired">Hết hạn</span>
+                        {{/if}}
+                    </td>
+                    <td>
+                        {{#if (eq status "SUBMITTED")}}
+                            <a href="/student/exam-sessions/{{_id}}/result" class="btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> Xem kết quả
+                            </a>
+                        {{else if (eq status "DOING")}}
+                            <a href="/student/exam-sessions/{{_id}}/do" class="btn-sm btn-primary">
+                                <i class="fas fa-pencil-alt"></i> Tiếp tục
+                            </a>
+                        {{else}}
+                            -
+                        {{/if}}
+                    </td>
+                </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    {{else}}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <p>Bạn chưa có bài thi nào.</p>
+        </div>
+    {{/if}}
+</div>

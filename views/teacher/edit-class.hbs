@@ -1,0 +1,275 @@
+<title>Chỉnh sửa lớp học</title>
+<style>
+  :root {
+    --primary-color: #0070f3;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --border-radius: 8px;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .required {
+    color: red;
+  }
+
+  input[type="text"],
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus,
+  textarea:focus {
+    border-color: var(--primary-color);
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+
+  /* Buttons */
+  .action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 8px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .btn-outline {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+
+  .btn-primary {
+    background: var(--primary-color);
+    color: white;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+</style>
+
+<div class="edit-class-page">
+  <form action="/teacher/my-classes/{{cls._id}}/edit" method="POST">
+    <div class="container">
+      <div class="card">
+        <div class="section-title">Chỉnh sửa thông tin lớp học</div>
+        <div class="section-subtitle">Cập nhật tên và mô tả cho lớp <strong>{{cls.class_code}}</strong></div>
+
+        <div class="form-group">
+          <label>Tên lớp học <span class="required">*</span></label>
+          <input type="text" name="name" value="{{cls.name}}" required>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label>Ngày bắt đầu</label>
+            <input type="date" name="starting_date" value="{{cls.starting_date_val}}">
+          </div>
+          <div class="form-group">
+            <label>Ngày kết thúc</label>
+            <input type="date" name="ending_date" value="{{cls.ending_date_val}}">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 0;">
+          <label>Mô tả lớp học</label>
+          <textarea name="description" placeholder="Mô tả ngắn về nội dung, mục tiêu của lớp học...">{{cls.description}}</textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Thiết lập lịch học</div>
+        <div class="section-subtitle">Chỉnh sửa ngày và thời gian học trong tuần</div>
+
+        <div class="form-group">
+          <div id="schedule-container" style="display: grid; gap: 16px;">
+            {{#each cls.scheduleFlags}}
+            <div class="day-schedule-card" data-day-en="{{this.en}}" style="border: 1px solid var(--border-color); border-radius: 8px; padding: 16px; background: #fff;">
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                  <input type="checkbox" class="day-checkbox-v2" id="day_{{@index}}" 
+                    {{#if this.selected}}checked{{/if}}>
+                  <label for="day_{{@index}}" style="margin-bottom: 0; font-size: 15px; font-weight: 600;">{{this.vi}}</label>
+                </div>
+                <button type="button" class="btn-add-slot" style="background: #f0f7ff; color: var(--primary-color); border: 1px dashed var(--primary-color); padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer;">
+                  + Thêm ca học
+                </button>
+              </div>
+              
+              <div class="slots-list" style="display: grid; gap: 8px; padding-left: 28px;">
+                {{#each this.slots}}
+                <div class="slot-item" style="display: flex; align-items: center; gap: 8px;">
+                  <select class="slot-select" data-start="{{this.start}}" data-end="{{this.end}}" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1;">
+                    <option value="07:00 - 09:00">07:00 - 09:00</option>
+                    <option value="09:00 - 11:00">09:00 - 11:00</option>
+                    <option value="13:00 - 15:00">13:00 - 15:00</option>
+                    <option value="15:00 - 17:00">15:00 - 17:00</option>
+                    <option value="18:00 - 20:00">18:00 - 20:00</option>
+                  </select>
+                  {{#unless @first}}
+                  <button type="button" class="btn-remove-slot" style="background: #fff; color: #ef4444; border: 1px solid #fee2e2; padding: 4px 8px; border-radius: 4px; cursor: pointer;">&times;</button>
+                  {{/unless}}
+                </div>
+                {{/each}}
+              </div>
+            </div>
+            {{/each}}
+          </div>
+        </div>
+
+        <!-- Hidden input to carry the final JSON -->
+        <input type="hidden" name="study_schedule_json" id="study_schedule_json">
+      </div>
+
+      <div class="action-buttons">
+        <a href="/teacher/my-classes" class="btn btn-outline">Hủy</a>
+        <button type="submit" class="btn btn-primary">
+          <svg class="icon" style="fill: white;" viewBox="0 0 24 24">
+            <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
+          </svg>
+          Lưu thay đổi
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+  <script>
+    // Pre-select the correct option for existing slots
+    document.querySelectorAll('.slot-select[data-start]').forEach(sel => {
+      const val = sel.dataset.start + ' - ' + sel.dataset.end;
+      const option = sel.querySelector(`option[value="${val}"]`);
+      if (option) option.selected = true;
+    });
+
+    // Add slot button
+    document.querySelectorAll('.btn-add-slot').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const card = this.closest('.day-schedule-card');
+        const container = card.querySelector('.slots-list');
+        
+        const newSlot = document.createElement('div');
+        newSlot.className = 'slot-item';
+        newSlot.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-top: 8px;';
+        newSlot.innerHTML = `
+          <select class="slot-select" style="flex: 1; padding: 6px; border: 1px solid #cbd5e1;">
+            <option value="07:00 - 09:00">07:00 - 09:00</option>
+            <option value="09:00 - 11:00">09:00 - 11:00</option>
+            <option value="13:00 - 15:00">13:00 - 15:00</option>
+            <option value="15:00 - 17:00">15:00 - 17:00</option>
+            <option value="18:00 - 20:00">18:00 - 20:00</option>
+          </select>
+          <button type="button" class="btn-remove-slot" style="background: #fff; color: #ef4444; border: 1px solid #fee2e2; padding: 4px 8px; border-radius: 4px; cursor: pointer;">&times;</button>
+        `;
+        container.appendChild(newSlot);
+        newSlot.querySelector('.btn-remove-slot').addEventListener('click', function() {
+          newSlot.remove();
+        });
+      });
+    });
+
+    // Handle existing remove buttons
+    document.querySelectorAll('.btn-remove-slot').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.closest('.slot-item').remove();
+      });
+    });
+
+    // Build JSON on form submit
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+      const schedule = [];
+      document.querySelectorAll('.day-schedule-card').forEach(card => {
+        const checkbox = card.querySelector('.day-checkbox-v2');
+        if (checkbox && checkbox.checked) {
+          const dayEn = card.dataset.dayEn;
+          const slots = [];
+          card.querySelectorAll('.slot-select').forEach(sel => {
+            if (sel.value) {
+              const parts = sel.value.split(' - ');
+              if (parts.length === 2) {
+                slots.push({ start: parts[0], end: parts[1] });
+              }
+            }
+          });
+          if (slots.length > 0) {
+            schedule.push({ day: dayEn, slots: slots });
+          }
+        }
+      });
+      
+      const jsonInput = document.getElementById('study_schedule_json');
+      jsonInput.value = JSON.stringify(schedule);
+      console.log('Final Schedule JSON:', jsonInput.value);
+    });
+  </script>

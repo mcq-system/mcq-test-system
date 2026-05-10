@@ -1,12 +1,287 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
+<div class="stats-row">
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-blue">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div>
+            <div class="stat-label">Lớp đang học</div>
+            <div class="stat-value">{{stats.classCount}}</div>
+        </div>
+    </div>
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-cyan">
+            <i class="fas fa-file-alt"></i>
+        </div>
+        <div>
+            <div class="stat-label">Bài thi đã làm</div>
+            <div class="stat-value">{{stats.examCount}}</div>
+        </div>
+    </div>
+    <div class="card stat-card d-flex flex-row">
+        <div class="stat-icon icon-blue-light">
+            <i class="fas fa-chart-line"></i>
+        </div>
+        <div>
+            <div class="stat-label">Điểm trung bình</div>
+            <div class="stat-value">{{stats.avgScore}}</div>
+        </div>
+    </div>
+</div>
 
-  </body>
-</html>
+<div class="main-grid">
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Lớp học của tôi</div>
+                <div class="card-subtitle">Các lớp đang tham gia</div>
+            </div>
+            <a href="/student/my-classes" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="course-list">
+            {{#each classes}}
+            <div class="course-item">
+                <div class="course-header">
+                    <div>
+                        <div class="course-name">{{name}}</div>
+                        <div class="course-teacher">GV: {{teacherName}}</div>
+                    </div>
+                    <div class="course-schedule"><i class="far fa-calendar-alt"></i> {{scheduleStr}}</div>
+                </div>
+                <div class="progress-section">
+                    <span class="progress-label">Tiến độ</span>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                    <span class="progress-percent">0%</span>
+                </div>
+            </div>
+            {{else}}
+            <p style="text-align: center; padding: 20px; color: #888;">Bạn chưa tham gia lớp học nào.</p>
+            {{/each}}
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <div class="card-title">Kỳ thi sắp tới</div>
+                <div class="card-subtitle">Dựa trên lịch của giảng viên</div>
+            </div>
+            <a href="/student/exam-do" class="view-all">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+
+        <div class="exam-list">
+            {{#each exams}}
+            <div class="exam-item">
+                <div class="exam-info">
+                    <div>
+                        <div class="exam-title">{{title}}</div>
+                        <div class="exam-subject">{{#if class_id}}{{class_id.name}}{{else}}Tiếng Anh{{/if}}</div>
+                    </div>
+                    <span class="tag tag-reading">English</span>
+                </div>
+                <div class="exam-meta">
+                    <span><i class="far fa-calendar"></i> {{formatDate start_time}}</span>
+                    <span><i class="far fa-clock"></i> {{duration_minutes}} phút</span>
+                    <span><i class="far fa-file-alt"></i> {{questionCount}} câu</span>
+                </div>
+                <form action="/student/exam-sessions/start" method="POST">
+                    <input type="hidden" name="exam_id" value="{{_id}}">
+                    <button type="submit" class="btn-enter-exam">Vào phòng thi</button>
+                </form>
+            </div>
+            {{else}}
+            <p style="text-align: center; padding: 20px; color: #888;">Hiện tại không có kỳ thi nào.</p>
+            {{/each}}
+        </div>
+    </div>
+</div>
+
+<style>
+    .stat-label {
+        font-size: 13px;
+        color: #888;
+    }
+
+    .stat-value {
+        font-size: 24px;
+        font-weight: 700;
+        color: #333;
+    }
+
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 20px;
+    }
+
+    .card-title {
+        font-weight: 700;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .card-subtitle {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+    }
+
+    .view-all {
+        font-size: 12px;
+        font-weight: 600;
+        color: #333;
+        text-decoration: none;
+        padding: 6px 12px;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: 0.2s;
+    }
+
+    .view-all:hover {
+        background: #f8f9fa;
+    }
+
+    .course-item {
+        padding: 15px;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .course-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 15px;
+    }
+
+    .course-name {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .course-teacher {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .course-schedule {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .progress-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .progress-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #888;
+        min-width: 45px;
+    }
+
+    .progress-bar {
+        flex: 1;
+        height: 8px;
+        background: #f0f0f0;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-fill {
+        height: 100%;
+        background: #0084ff;
+        border-radius: 4px;
+    }
+
+    .progress-percent {
+        font-size: 13px;
+        font-weight: 700;
+        color: #333;
+        min-width: 35px;
+        text-align: right;
+    }
+
+    .exam-item {
+        padding: 15px;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+
+    .exam-info {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 12px;
+    }
+
+    .exam-title {
+        font-weight: 700;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .exam-subject {
+        font-size: 12px;
+        color: #888;
+    }
+
+    .tag {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 700;
+        color: white;
+    }
+
+    .tag-reading {
+        background: #00bcd4;
+    }
+
+    .tag-listening {
+        background: #4caf50;
+    }
+
+    .tag-grammar {
+        background: #673ab7;
+    }
+
+    .exam-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 12px;
+        color: #888;
+        margin-bottom: 15px;
+    }
+
+    .exam-meta i {
+        margin-right: 5px;
+    }
+
+    .btn-enter-exam {
+        width: 100%;
+        padding: 10px;
+        background: #0076ba;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .btn-enter-exam:hover {
+        background: #005f96;
+    }
+</style>

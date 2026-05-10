@@ -6,17 +6,30 @@
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www"
   },
+  "nodemonConfig": {
+    "delay": 1500,
+    "ignore": [
+      "node_modules/*",
+      "public/*"
+    ],
+    "ext": "js,mjs,json,hbs"
+  },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
-    "dotenv": "^17.4.1",
-    "express": "~4.16.1",
-    "hbs": "~4.0.4",
+    "dotenv": "^17.4.2",
+    "express": "^4.22.1",
+    "express-handlebars": "^9.0.1",
+    "geoip-lite": "^2.0.2",
+    "hbs": "^4.2.1",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^9.0.3",
+    "method-override": "^3.0.0",
     "mongoose": "^9.4.1",
-    "morgan": "~1.9.1"
+    "morgan": "^1.10.1",
+    "ua-parser-js": "^2.0.9"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"

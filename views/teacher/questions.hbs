@@ -1,0 +1,111 @@
+{{!-- views/teacher/questions.hbs — Ngân hàng câu hỏi --}}
+
+<div class="d-flex justify-content-end mb-3">
+  <div class="d-flex gap-2">
+    <button class="btn btn-outline-secondary btn-sm">
+      <i class="fas fa-file-excel me-1"></i> Nhập từ Excel
+    </button>
+    <a href="/teacher/questions/create" class="btn btn-primary btn-sm">
+      <i class="fas fa-plus me-1"></i> Thêm câu hỏi
+    </a>
+  </div>
+</div>
+
+<!-- Filters -->
+<div class="card border-0 shadow-sm mb-3">
+  <div class="card-body py-2 px-3">
+    <form action="/teacher/questions" method="GET" class="d-flex align-items-center gap-3 flex-wrap">
+      <div class="input-group input-group-sm" style="max-width:260px;">
+        <span class="input-group-text bg-white border-end-0">
+          <i class="fas fa-search text-muted"></i>
+        </span>
+        <input type="text" name="search" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm câu hỏi..." value="{{filters.search}}">
+      </div>
+      <select class="form-select form-select-sm" name="type" style="width:130px;">
+        <option value="">Loại câu hỏi</option>
+        <option value="Reading">Reading</option>
+        <option value="Listening">Listening</option>
+        <option value="Grammar">Grammar</option>
+        <option value="Vocabulary">Vocabulary</option>
+      </select>
+      <select class="form-select form-select-sm" name="topic" style="width:140px;">
+        <option value="">Topic</option>
+        {{#each topics}}
+          <option value="{{_id}}">{{name}}</option>
+        {{/each}}
+      </select>
+      <select class="form-select form-select-sm" name="level" style="width:140px;">
+        <option value="">Độ khó</option>
+        <option value="easy">Dễ</option>
+        <option value="medium">Trung bình</option>
+        <option value="hard">Khó</option>
+      </select>
+      <button type="submit" class="btn btn-primary btn-sm">Lọc</button>
+    </form>
+  </div>
+</div>
+
+<div id="result-info" class="text-muted small mb-2">Hiển thị {{questions.length}} kết quả</div>
+
+<!-- Table -->
+<div class="card border-0 shadow-sm">
+  <div class="card-body p-0">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0 align-middle" id="questions-table">
+        <thead class="border-bottom bg-light">
+          <tr>
+            <th class="ps-4 py-3 text-muted fw-normal text-nowrap" style="width:5%;">ID</th>
+            <th class="py-3 text-muted fw-normal" style="width:35%;">Nội dung câu hỏi</th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Chủ đề</th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Độ khó</th>
+            <th class="py-3 text-muted fw-normal text-nowrap" style="width:12%;">Ngày tạo</th>
+            <th class="py-3 text-muted fw-normal text-center text-nowrap" style="width:12%;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="questions-body">
+          {{#each questions}}
+          <tr>
+            <td class="ps-4 text-muted small fw-medium">{{add @index 1}}</td>
+            <td class="py-3">
+              <span class="text-truncate d-block" style="max-width:350px;" title="{{content}}">{{content}}</span>
+            </td>
+            <td class="small fw-medium text-secondary">{{#if topic_id}}{{topic_id.name}}{{else}}—{{/if}}</td>
+            <td>
+              {{#if (eq level "easy")}}<span class="badge bg-success bg-opacity-10 text-success px-3">Dễ</span>{{/if}}
+              {{#if (eq level "medium")}}<span class="badge bg-warning bg-opacity-10 text-warning px-3">Trung bình</span>{{/if}}
+              {{#if (eq level "hard")}}<span class="badge bg-danger bg-opacity-10 text-danger px-3">Khó</span>{{/if}}
+            </td>
+            <td class="text-muted small text-nowrap">{{formatDate created_at}}</td>
+            <td class="text-center text-nowrap">
+              <a href="/teacher/questions/{{_id}}/edit" class="btn btn-link btn-sm p-0 me-2 text-secondary" title="Sửa"><i class="fas fa-pen fa-sm"></i></a>
+              <button class="btn btn-link btn-sm p-0 text-danger" title="Xóa" onclick="deleteQuestion('{{_id}}')"><i class="fas fa-trash fa-sm"></i></button>
+            </td>
+          </tr>
+          {{else}}
+          <tr>
+            <td colspan="6" class="text-center py-5 text-muted">Chưa có câu hỏi nào.</td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+async function deleteQuestion(id) {
+  if (confirm('Bạn có chắc chắn muốn xóa câu hỏi này?')) {
+    try {
+      const res = await fetch(`/teacher/questions/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        location.reload();
+      } else {
+        alert('Có lỗi xảy ra khi xóa câu hỏi.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Lỗi kết nối server.');
+    }
+  }
+}
+</script>

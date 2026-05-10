@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg: #f5f6fa;
+            --surface: #ffffff;
+            --primary: #4361ee;
+            --primary-hover: #3451d1;
+            --danger: #ef233c;
+            --danger-hover: #d90429;
+            --warning: #f77f00;
+            --success: #06d6a0;
+            --text: #1a1a2e;
+            --text-secondary: #6c7293;
+            --border: #e2e5f1;
+            --shadow: 0 2px 12px rgba(67, 97, 238, .08);
+            --radius: 10px;
+        }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Main */
+        .main {
+            padding: 32px;
+        }
+
+        /* Header row */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 12px;
+        }
+
+        /* Filters */
+        .filters {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            padding: 16px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            font-size: 13px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            min-width: 140px;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .filter-group select:focus,
+        .filter-group input:focus {
+            border-color: var(--primary);
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px 20px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .stat-icon.blue {
+            background: #eef1fd;
+        }
+
+        .stat-icon.green {
+            background: #e6faf5;
+        }
+
+        .stat-icon.orange {
+            background: #fff3e0;
+        }
+
+        .stat-val {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Table */
+        .table-wrap {
+            background: var(--surface);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead th {
+            background: #f8f9fe;
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        tbody tr {
+            transition: background .12s;
+        }
+
+        tbody tr:hover {
+            background: #f8f9fe;
+        }
+
+        tbody td {
+            padding: 13px 16px;
+            font-size: 13.5px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .q-content {
+            max-width: 380px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-weight: 500;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .3px;
+        }
+
+        .badge-easy {
+            background: #e6faf5;
+            color: #06d6a0;
+        }
+
+        .badge-medium {
+            background: #fff3e0;
+            color: #f77f00;
+        }
+
+        .badge-hard {
+            background: #fce8ec;
+            color: #ef233c;
+        }
+
+        .badge-active {
+            background: #e6faf5;
+            color: #06a880;
+        }
+
+        .badge-inactive {
+            background: #f1f1f5;
+            color: #6c7293;
+        }
+
+        /* Actions */
+        .actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* Empty */
+        .empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+
+        .empty p {
+            font-size: 14px;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .page-btns {
+            display: flex;
+            gap: 6px;
+        }
+
+        .page-btn {
+            padding: 6px 13px;
+            border-radius: 7px;
+            border: 1px solid var(--border);
+            font-size: 13px;
+            cursor: pointer;
+            background: var(--surface);
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all .12s;
+        }
+
+        .page-btn:hover {
+            background: var(--bg);
+        }
+
+        .page-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        .page-btn:disabled,
+        .page-btn.disabled {
+            opacity: .4;
+            pointer-events: none;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1a1a2e;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .2);
+            z-index: 9999;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all .25s ease;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Modal confirm */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .2s;
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .modal {
+            background: var(--surface);
+            border-radius: 14px;
+            padding: 28px 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, .15);
+            transform: scale(.95);
+            transition: transform .2s;
+        }
+
+        .modal-overlay.open .modal {
+            transform: scale(1);
+        }
+
+        .modal h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <main class="main">
+            <div class="page-header">
+                <div>
+                    <div class="page-title">Quản lý Câu hỏi</div>
+                    <div class="page-subtitle">Tổng cộng {{totalCount}} câu hỏi</div>
+                </div>
+                <a href="/teacher/questions/create" class="btn btn-primary">
+                    <span>＋</span> Tạo câu hỏi mới
+                </a>
+            </div>
+
+            <!-- Filters -->
+            <form class="filters" method="GET" action="/teacher/questions">
+                <div class="filter-group">
+                    <label>Chủ đề</label>
+                    <select name="topic">
+                        <option value="">Tất cả chủ đề</option>
+                        {{#each topics}}
+                        <option value="{{_id}}" {{#if (eq ../filters.topic (toString _id))}}selected{{/if}}>{{name}}
+                        </option>
+                        {{/each}}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Độ khó</label>
+                    <select name="level">
+                        <option value="">Tất cả</option>
+                        <option value="easy" {{#if (eq ../filters.level "easy" )}}selected{{/if}}>Dễ</option>
+                        <option value="medium" {{#if (eq ../filters.level "medium" )}}selected{{/if}}>Trung bình
+                        </option>
+                        <option value="hard" {{#if (eq ../filters.level "hard" )}}selected{{/if}}>Khó</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Trạng thái</label>
+                    <select name="status">
+                        <option value="">Tất cả</option>
+                        <option value="active" {{#if (eq ../filters.status "active" )}}selected{{/if}}>Hoạt động
+                        </option>
+                        <option value="inactive" {{#if (eq ../filters.status "inactive" )}}selected{{/if}}>Tạm ẩn
+                        </option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tìm kiếm</label>
+                    <input type="text" name="search" placeholder="Nội dung câu hỏi..." value="{{filters.search}}" />
+                </div>
+                <div class="filter-group" style="justify-content: flex-end;">
+                    <button type="submit" class="btn btn-primary">🔍 Lọc</button>
+                </div>
+            </form>
+
+            <!-- Table -->
+            <div class="table-wrap">
+                {{#if questions.length}}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nội dung câu hỏi</th>
+                            <th>Chủ đề</th>
+                            <th>Độ khó</th>
+                            <th>Số lựa chọn</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày tạo</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each questions}}
+                        <tr>
+                            <td style="color: var(--text-secondary); font-size: 12px;">{{add @index 1}}</td>
+                            <td>
+                                <div class="q-content" title="{{content}}">{{content}}</div>
+                            </td>
+                            <td style="font-size: 12px; color: var(--text-secondary);">{{#if
+                                topic_id}}{{topic_id.name}}{{else}}—{{/if}}</td>
+                            <td>
+                                {{#if (eq level "easy")}}<span class="badge badge-easy">Dễ</span>{{/if}}
+                                {{#if (eq level "medium")}}<span class="badge badge-medium">TB</span>{{/if}}
+                                {{#if (eq level "hard")}}<span class="badge badge-hard">Khó</span>{{/if}}
+                            </td>
+                            <td style="text-align: center;">{{options.length}}</td>
+                            <td>
+                                {{#if (eq status "active")}}<span class="badge badge-active">Hoạt động</span>{{/if}}
+                                {{#if (eq status "inactive")}}<span class="badge badge-inactive">Tạm ẩn</span>{{/if}}
+                            </td>
+                            <td style="font-size: 12px; color: var(--text-secondary);">{{formatDate created_at}}</td>
+                            <td>
+                                <div class="actions">
+                                    <a href="/teacher/questions/{{_id}}/edit" class="btn btn-ghost btn-sm">✏️ Sửa</a>
+                                    <button class="btn btn-danger btn-sm"
+                                        onclick="confirmDelete('{{_id}}', '{{truncate content 40}}')">🗑 Xóa</button>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                {{#if (gt pagination.total 1)}}
+                <div class="pagination">
+                    <span class="page-info">Trang {{pagination.current}} / {{pagination.total}}</span>
+                    <div class="page-btns">
+                        <a href="?page={{subtract pagination.current 1}}&topic={{filters.topic}}&level={{filters.level}}&status={{filters.status}}&search={{filters.search}}"
+                            class="page-btn {{#unless pagination.hasPrev}}disabled{{/unless}}">← Trước</a>
+                        <a href="?page={{add pagination.current 1}}&topic={{filters.topic}}&level={{filters.level}}&status={{filters.status}}&search={{filters.search}}"
+                            class="page-btn {{#unless pagination.hasNext}}disabled{{/unless}}">Sau →</a>
+                    </div>
+                </div>
+                {{/if}}
+
+                {{else}}
+                <div class="empty">
+                    <div class="empty-icon">📭</div>
+                    <p>Chưa có câu hỏi nào. <a href="/teacher/questions/create"
+                            style="color: var(--primary); font-weight: 600;">Tạo câu hỏi đầu tiên</a></p>
+                </div>
+                {{/if}}
+            </div>
+        </main>
+    </div>
+
+    <!-- Delete confirm modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal">
+            <h3>Xác nhận xóa</h3>
+            <p id="deleteModalText">Bạn có chắc chắn muốn xóa câu hỏi này không? Hành động này không thể hoàn tác.</p>
+            <div class="modal-actions">
+                <button class="btn btn-ghost" onclick="closeModal()">Hủy</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let deleteId = null;
+
+        function confirmDelete(id, content) {
+            deleteId = id;
+            document.getElementById('deleteModalText').textContent = `Xóa câu hỏi: "${content}"? Hành động này không thể hoàn tác.`;
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+            deleteId = null;
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (!deleteId) return;
+            try {
+                const res = await fetch(`/teacher/questions/${deleteId}`, { method: 'DELETE' });
+                const data = await res.json();
+                closeModal();
+                showToast(data.message, data.success ? 'success' : 'error');
+                if (data.success) setTimeout(() => location.reload(), 800);
+            } catch (e) {
+                showToast('Lỗi kết nối', 'error');
+            }
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function (e) {
+            if (e.target === this) closeModal();
+        });
+
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast ${type} show`;
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+
+</html>

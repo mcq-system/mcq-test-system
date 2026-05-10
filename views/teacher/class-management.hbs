@@ -1,0 +1,87 @@
+<div class="main-content">
+    <div class="table-card bg-white shadow-sm rounded-3 p-4">
+        <div class="d-flex justify-content-end mb-4">
+            <a href="/teacher/create-class" class="btn-add"
+                style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; background-color: #00bcd4;">
+                <i class="fas fa-plus"></i> Tạo lớp mới
+            </a>
+        </div>
+
+        <!-- Thanh tìm kiếm và bộ lọc bên trong card -->
+        <div class="row g-3 mb-4 mt-2 d-flex gap-3">
+            <div class="search-container" style="width: 350px;">
+                <i class="fas fa-search" style="position: absolute; left: 15px; top: 12px; color: #aaa;"></i>
+                <input type="text" placeholder="Tìm kiếm lớp học..."
+                    style="width: 100%; padding: 10px 15px 10px 40px; border-radius: 8px; border: 1px solid #ddd; background: #fff;">
+            </div>
+            <div style="width: 150px;">
+                <select class="form-select"
+                    style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #ddd;">
+                    <option selected>Tất cả</option>
+                    <option>Đang hoạt động</option>
+                    <option>Đã kết thúc</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Bảng dữ liệu -->
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Mã lớp <i class="fas fa-sort small"></i></th>
+                        <th>Tên lớp học <i class="fas fa-sort small"></i></th>
+                        <th>Sinh viên <i class="fas fa-sort small"></i></th>
+                        <th>Số đề thi <i class="fas fa-sort small"></i></th>
+                        <th>Trạng thái <i class="fas fa-sort small"></i></th>
+                        <th>Thời gian <i class="fas fa-sort small"></i></th>
+                        <th class="text-end">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#each classes}}
+                    <tr>
+                        <td class="text-primary fw-bold" style="color: #007bff !important;">{{class_code}}</td>
+                        <td>
+                            <div class="fw-bold">{{name}}</div>
+                            <div class="text-muted small mt-2">{{description}}</div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <i class="fas fa-users text-muted"></i> {{students}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="user-info">
+                                <i class="fas fa-file-alt text-muted"></i> {{examCount}}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-pill status-active">Hoạt động</span>
+                        </td>
+                        <td>
+                            <div class="small text-muted">
+                                {{#each study_schedule}}
+                                    <span class="fw-bold">{{this.day}}:</span> 
+                                    {{#each this.slots}}{{this.start}}-{{this.end}}{{#unless @last}}, {{/unless}}{{/each}} <br>
+                                {{/each}}
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a href="/teacher/my-classes/{{_id}}" class="btn-action"><i class="far fa-eye"></i></a>
+                            <a href="/teacher/my-classes/{{_id}}/edit" class="btn-action"><i
+                                    class="far fa-edit"></i></a>
+                            <form method="POST" action="/teacher/my-classes/{{_id}}/delete" style="display:inline;">
+                                <button type="submit" class="btn-action text-danger" 
+                                    onclick="return confirm('Bạn có chắc chắn muốn xóa lớp học này? Hành động này sẽ xóa tất cả lịch học và không thể hoàn tác.')">
+                                    <i class="far fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {{/each}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

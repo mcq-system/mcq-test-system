@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{title}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f5f6fa; --surface: #ffffff; --primary: #4361ee; --primary-hover: #3451d1;
+            --danger: #ef233c; --success: #06d6a0; --text: #1a1a2e; --text-secondary: #6c7293;
+            --border: #e2e5f1; --radius: 10px;
+        }
+        body { font-family: 'Be Vietnam Pro', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        .main { flex: 1; padding: 32px; overflow-y: auto; }
+        .page-header { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+        .back-btn {
+            display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
+            color: var(--text-secondary); font-size: 13px; font-weight: 500;
+            padding: 7px 14px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface);
+            transition: all .15s;
+        }
+        .back-btn:hover { background: var(--bg); color: var(--text); }
+        .page-title { font-size: 22px; font-weight: 700; }
+
+        .form-card { background: var(--surface); border-radius: 14px; border: 1px solid var(--border); padding: 32px; max-width: 800px; }
+
+        .form-section { margin-bottom: 28px; }
+        .section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: var(--text-secondary); margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        label { font-size: 12px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: .4px; }
+        input[type="text"], textarea, select {
+            padding: 10px 14px; border: 1.5px solid var(--border); border-radius: 8px;
+            font-size: 14px; font-family: inherit; color: var(--text); background: var(--bg);
+            transition: border-color .15s; outline: none;
+        }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary); background: #fff; }
+        textarea { resize: vertical; min-height: 100px; }
+        .input-error { border-color: var(--danger) !important; }
+        .error-msg { font-size: 12px; color: var(--danger); margin-top: 2px; }
+
+        /* Options */
+        .options-list { display: flex; flex-direction: column; gap: 10px; }
+        .option-item {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--bg); border-radius: 9px; border: 1.5px solid var(--border); padding: 10px 14px;
+            transition: border-color .15s;
+        }
+        .option-item:hover { border-color: #c5cae8; }
+        .option-item.is-correct { border-color: var(--success); background: #f0fdf8; }
+
+        .option-radio { width: 18px; height: 18px; cursor: pointer; accent-color: var(--success); flex-shrink: 0; }
+        .option-input { flex: 1; border: none; background: transparent; font-size: 14px; font-family: inherit; color: var(--text); outline: none; }
+        .option-label { font-size: 12px; font-weight: 700; color: var(--text-secondary); width: 22px; flex-shrink: 0; }
+        .option-correct-badge { font-size: 11px; font-weight: 600; color: var(--success); white-space: nowrap; }
+
+        .remove-option-btn {
+            background: none; border: none; cursor: pointer; color: var(--text-secondary);
+            font-size: 16px; padding: 2px; border-radius: 4px; transition: color .12s;
+            flex-shrink: 0;
+        }
+        .remove-option-btn:hover { color: var(--danger); }
+
+        .add-option-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px;
+            border: 1.5px dashed var(--border); border-radius: 9px; background: none;
+            color: var(--text-secondary); font-size: 13px; font-weight: 500; cursor: pointer;
+            transition: all .15s; font-family: inherit; width: 100%;
+        }
+        .add-option-btn:hover { border-color: var(--primary); color: var(--primary); background: #eef1fd; }
+
+        /* Actions */
+        .form-actions { display: flex; gap: 12px; padding-top: 20px; border-top: 1px solid var(--border); margin-top: 24px; }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 10px 22px;
+            border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+            border: none; text-decoration: none; transition: all .15s; font-family: inherit;
+        }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-primary:disabled { opacity: .6; cursor: not-allowed; }
+        .btn-ghost { background: transparent; color: var(--text-secondary); border: 1px solid var(--border); }
+        .btn-ghost:hover { background: var(--bg); color: var(--text); }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; right: 24px; background: #1a1a2e; color: #fff;
+            padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 500;
+            box-shadow: 0 4px 20px rgba(0,0,0,.2); z-index: 9999;
+            transform: translateY(80px); opacity: 0; transition: all .25s ease;
+        }
+        .toast.show { transform: translateY(0); opacity: 1; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error   { border-left: 4px solid var(--danger); }
+
+        .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .hint { font-size: 11.5px; color: var(--text-secondary); margin-top: 4px; }
+        .required { color: var(--danger); }
+    </style>
+</head>
+<body>
+<div>
+    <main class="main">
+        <div class="page-header">
+            <a href="/teacher/questions" class="back-btn">← Quay lại</a>
+            <div class="page-title">{{title}}</div>
+        </div>
+
+        <div class="form-card">
+
+            <!-- Basic info -->
+            <div class="form-section">
+                <div class="section-title">Thông tin câu hỏi</div>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Nội dung câu hỏi <span class="required">*</span></label>
+                        <textarea id="content" placeholder="Nhập nội dung câu hỏi...">{{#if question}}{{question.content}}{{/if}}</textarea>
+                        <div class="error-msg" id="content-error"></div>
+                    </div>
+                    <div class="form-group">
+                        <label>Chủ đề</label>
+                        <select id="topic_id">
+                            <option value="">-- Không chọn --</option>
+                            {{#each topics}}
+                                <option value="{{_id}}" {{#if (eq ../question.topic_id._id _id)}}selected{{/if}}>{{name}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Độ khó <span class="required">*</span></label>
+                        <select id="level">
+                            <option value="easy"   {{#if (eq question.level "easy")}}selected{{/if}}>Dễ</option>
+                            <option value="medium" {{#if (eq question.level "medium")}}selected{{/if}}>Trung bình</option>
+                            <option value="hard"   {{#if (eq question.level "hard")}}selected{{/if}}>Khó</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select id="status">
+                            <option value="active"   {{#if (eq question.status "active")}}selected{{/if}}>Hoạt động</option>
+                            <option value="inactive" {{#if (eq question.status "inactive")}}selected{{/if}}>Tạm ẩn</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Options -->
+            <div class="form-section">
+                <div class="section-title">Các lựa chọn <span class="required">*</span></div>
+                <p class="hint" style="margin-bottom: 14px;">Tối thiểu 2 lựa chọn. Chọn radio để đánh dấu đáp án đúng.</p>
+                <div class="error-msg" id="options-error" style="margin-bottom: 10px;"></div>
+                <div class="options-list" id="optionsList"></div>
+                <button type="button" class="add-option-btn" onclick="addOption()">＋ Thêm lựa chọn</button>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-primary" id="submitBtn" onclick="submitForm()">
+                    💾 {{#if question}}Lưu thay đổi{{else}}Tạo câu hỏi{{/if}}
+                </button>
+                <a href="/teacher/questions" class="btn btn-ghost">Hủy</a>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    const LABELS = ['A', 'B', 'C', 'D', 'E', 'F'];
+    let optionCount = 0;
+    let correctIndex = 0;
+
+    // Existing data for edit mode
+    const existingOptions = {{{json question.options}}};
+    const isEdit = {{#if question}}true{{else}}false{{/if}};
+    const questionId = '{{#if question}}{{question._id}}{{/if}}';
+
+    function addOption(content = '', isCorrect = false) {
+        const list = document.getElementById('optionsList');
+        const idx = optionCount++;
+        const item = document.createElement('div');
+        item.className = 'option-item' + (isCorrect ? ' is-correct' : '');
+        item.dataset.idx = idx;
+
+        item.innerHTML = `
+      <span class="option-label">${LABELS[idx] || (idx + 1)}</span>
+      <input type="radio" class="option-radio" name="correct" value="${idx}" ${isCorrect ? 'checked' : ''} onchange="markCorrect(${idx})"/>
+      <input type="text" class="option-input" placeholder="Nội dung lựa chọn ${LABELS[idx] || (idx + 1)}..." value="${escapeHtml(content)}"/>
+      ${isCorrect ? '<span class="option-correct-badge">✓ Đúng</span>' : ''}
+      <button type="button" class="remove-option-btn" onclick="removeOption(this)" title="Xóa lựa chọn">✕</button>
+    `;
+        list.appendChild(item);
+        if (isCorrect) correctIndex = idx;
+    }
+
+    function markCorrect(idx) {
+        correctIndex = idx;
+        document.querySelectorAll('.option-item').forEach(item => {
+            const radio = item.querySelector('.option-radio');
+            const badge = item.querySelector('.option-correct-badge');
+            const isThis = parseInt(item.dataset.idx) === idx;
+            item.classList.toggle('is-correct', isThis);
+            if (isThis && !badge) {
+                const b = document.createElement('span');
+                b.className = 'option-correct-badge';
+                b.textContent = '✓ Đúng';
+                radio.after(item.querySelector('.option-input'));
+                item.querySelector('.remove-option-btn').before(b);
+            } else if (!isThis && badge) {
+                badge.remove();
+            }
+        });
+    }
+
+    function removeOption(btn) {
+        const item = btn.closest('.option-item');
+        const items = document.querySelectorAll('.option-item');
+        if (items.length <= 2) { showToast('Cần ít nhất 2 lựa chọn', 'error'); return; }
+        item.remove();
+        rebuildLabels();
+    }
+
+    function rebuildLabels() {
+        document.querySelectorAll('.option-item').forEach((item, i) => {
+            item.querySelector('.option-label').textContent = LABELS[i] || (i + 1);
+            const input = item.querySelector('.option-input');
+            input.placeholder = `Nội dung lựa chọn ${LABELS[i] || (i + 1)}...`;
+        });
+    }
+
+    function escapeHtml(str) {
+        return str ? str.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;') : '';
+    }
+
+    function getFormData() {
+        const content = document.getElementById('content').value.trim();
+        const level = document.getElementById('level').value;
+        const status = document.getElementById('status').value;
+        const topic_id = document.getElementById('topic_id').value;
+        const items = document.querySelectorAll('.option-item');
+        const option_contents = [];
+        let correct_option = null;
+        items.forEach((item, i) => {
+            const text = item.querySelector('.option-input').value.trim();
+            const radio = item.querySelector('.option-radio');
+            option_contents.push(text);
+            if (radio.checked) correct_option = i;
+        });
+        return { content, level, status, topic_id, option_contents, correct_option };
+    }
+
+    function validate(data) {
+        let valid = true;
+        document.getElementById('content-error').textContent = '';
+        document.getElementById('options-error').textContent = '';
+
+        if (!data.content) {
+            document.getElementById('content-error').textContent = 'Vui lòng nhập nội dung câu hỏi.';
+            document.getElementById('content').classList.add('input-error');
+            valid = false;
+        } else {
+            document.getElementById('content').classList.remove('input-error');
+        }
+
+        const nonEmpty = data.option_contents.filter(c => c !== '');
+        if (nonEmpty.length < 2) {
+            document.getElementById('options-error').textContent = 'Cần ít nhất 2 lựa chọn có nội dung.';
+            valid = false;
+        }
+        if (data.correct_option === null) {
+            document.getElementById('options-error').textContent = 'Vui lòng chọn đáp án đúng.';
+            valid = false;
+        }
+        return valid;
+    }
+
+    async function submitForm() {
+        const data = getFormData();
+        if (!validate(data)) return;
+
+        const btn = document.getElementById('submitBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner"></span> Đang lưu...';
+
+        try {
+            const url = isEdit ? `/teacher/questions/${questionId}` : '/teacher/questions/create';
+            const method = isEdit ? 'PUT' : 'POST';
+            const res = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ...data,
+                    correct_option: String(data.correct_option),
+                }),
+            });
+            const result = await res.json();
+            showToast(result.message, result.success ? 'success' : 'error');
+            if (result.success) {
+                setTimeout(() => window.location.href = '/teacher/questions', 1000);
+            }
+        } catch (e) {
+            showToast('Lỗi kết nối server', 'error');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '💾 {{#if question}}Lưu thay đổi{{else}}Tạo câu hỏi{{/if}}';
+        }
+    }
+
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.className = `toast ${type} show`;
+        setTimeout(() => t.classList.remove('show'), 3500);
+    }
+
+    // Init: add default 4 options or load existing
+    window.addEventListener('DOMContentLoaded', () => {
+        if (existingOptions && existingOptions.length > 0) {
+            existingOptions.forEach((opt, i) => addOption(opt.content, opt.is_correct));
+        } else {
+            addOption('', false);
+            addOption('', false);
+            addOption('', false);
+            addOption('', false);
+            // Mark first as correct by default
+            const firstRadio = document.querySelector('.option-radio');
+            if (firstRadio) { firstRadio.checked = true; markCorrect(0); }
+        }
+    });
+</script>
+</body>
+</html>

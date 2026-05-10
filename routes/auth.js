@@ -12,6 +12,7 @@ router.get('/profile', protect(), authController.getProfile);
 router.post('/login', authController.postLogin);
 router.post('/register', authController.postRegister);
 router.post('/logout', authController.postLogout);
+router.get('/logout', authController.postLogout);
 
 router.post('/forgot-password', authController.forgotPassword);
 router.post('/reset-password', authController.resetPassword);

@@ -1,0 +1,327 @@
+<title>Quản lý đề thi</title>
+<style>
+    :root {
+        --primary-color: #0284c7;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --border-color: #e5e7eb;
+        --bg-body: #f9fafb;
+        --bg-card: #ffffff;
+    }
+
+    .exam-list-page {
+        color: var(--text-main);
+    }
+
+    /* Main Section */
+    .main-section {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 24px;
+    }
+
+    .header-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 24px;
+    }
+
+    .header-title h2 {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .header-title p {
+        font-size: 14px;
+        color: var(--text-muted);
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-primary:hover {
+        background-color: #0369a1;
+    }
+
+    /* Filters */
+    .filters {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 10px 10px 10px 36px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 14px;
+        outline: none;
+    }
+
+    .filter-select {
+        padding: 10px 32px 10px 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        font-size: 14px;
+        background-color: white;
+        outline: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%236b7280%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px top 50%;
+        background-size: 10px auto;
+    }
+
+    .results-count {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 12px 16px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    th i {
+        margin-left: 4px;
+        font-size: 11px;
+    }
+
+    td {
+        padding: 16px;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        font-size: 14px;
+    }
+
+    .test-name-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .test-title {
+        font-weight: 600;
+        color: var(--text-main);
+    }
+
+    .test-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 12px;
+        color: var(--text-muted);
+    }
+
+    .test-tag {
+        border: 1px solid var(--border-color);
+        padding: 2px 6px;
+        border-radius: 4px;
+        background: var(--bg-body);
+    }
+
+    .status-badge {
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 500;
+        display: inline-block;
+    }
+
+    .status-published {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-draft {
+        background: #fef08a;
+        color: #854d0e;
+    }
+
+    .status-archived {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .score-green {
+        color: #16a34a;
+        font-weight: 500;
+    }
+
+    .score-yellow {
+        color: #ca8a04;
+        font-weight: 500;
+    }
+
+    .action-btns {
+        display: flex;
+        gap: 12px;
+        color: var(--text-muted);
+    }
+
+    .action-btns i {
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .action-btns i:hover {
+        color: var(--text-main);
+    }
+
+    .action-btns .fa-trash:hover {
+        color: #dc2626;
+    }
+</style>
+</head>
+
+<div class="exam-list-page">
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon icon-blue"><i class="fa-regular fa-file-lines"></i></div>
+            <div class="stat-info">
+                <p>Tổng số đề</p>
+                <h3>{{stats.totalExams}}</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-green"><i class="fa-solid fa-check-circle"></i></div>
+            <div class="stat-info">
+                <p>Đã xuất bản</p>
+                <h3>{{stats.publishedExams}}</h3>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon icon-yellow"><i class="fa-regular fa-file"></i></div>
+            <div class="stat-info">
+                <p>Bản nháp</p>
+                <h3>{{stats.draftExams}}</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-section">
+        <div class="d-flex justify-content-end mb-4">
+            <button class="btn-primary">
+                <a href="create-exam" style="text-decoration: none; color: white;">
+                    <i class="fa-solid fa-plus"></i> Tạo đề thi mới
+                </a>
+            </button>
+        </div>
+
+        <div class="filters">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Tìm kiếm đề thi...">
+            </div>
+            <select class="filter-select">
+                <option>Tất cả</option>
+                <option>Đã xuất bản</option>
+                <option>Nháp</option>
+            </select>
+        </div>
+
+        <p class="results-count">Hiển thị 6 trong số 6 kết quả</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Tên đề thi <i class="fa-solid fa-arrow-down-a-z"></i></th>
+                    <th>Trạng thái <i class="fa-solid fa-sort"></i></th>
+                    <th>Lớp học <i class="fa-solid fa-sort"></i></th>
+                    <th>Lượt thi <i class="fa-solid fa-sort"></i></th>
+                    <th>TB Điểm <i class="fa-solid fa-sort"></i></th>
+                    <th>Ngày tạo <i class="fa-solid fa-sort"></i></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#if exams.length}}
+                    {{#each exams}}
+                    <tr>
+                        <td>
+                            <div class="test-name-cell">
+                                <span class="test-title">{{title}}</span>
+                                <div class="test-meta">
+                                    <span><i class="fa-regular fa-clock"></i> {{duration_minutes}} phút</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            {{#if (eq status 'PUBLISHED')}}
+                            <span class="status-badge status-published">Đã xuất bản</span>
+                            {{else}}
+                            <span class="status-badge status-draft">{{status}}</span>
+                            {{/if}}
+                        </td>
+                        <td>
+                            {{#if class_id}}
+                                {{class_id.name}}
+                            {{else}}
+                                <em>Chưa gán lớp</em>
+                            {{/if}}
+                        </td>
+                        <td>{{!-- lượt thi --}}-</td>
+                        <td>{{!-- TB Điểm --}}-</td>
+                        <td>{{formatDate created_at}}</td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="/teacher/exams/{{_id}}" title="Xem chi tiết"><i class="fa-regular fa-eye"></i></a>
+                                <a href="/teacher/exams/{{_id}}/edit" title="Chỉnh sửa"><i class="fa-solid fa-pen"></i></a>
+                                <a href="/teacher/exams/{{_id}}/delete" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa đề thi này?')"><i class="fa-regular fa-trash-can"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/each}}
+                {{else}}
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 40px; color: #888;">
+                            <i class="fa-regular fa-folder-open" style="font-size: 40px; display: block; margin-bottom: 10px;"></i>
+                            Chưa có đề thi nào được tạo.
+                        </td>
+                    </tr>
+                {{/if}}
+            </tbody>
+        </table>
+    </main>
+</div>

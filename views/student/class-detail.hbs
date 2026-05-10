@@ -1,0 +1,186 @@
+<style>
+    .class-detail-header {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        margin-bottom: 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+    .class-title-section h2 { margin: 0 0 10px 0; font-size: 24px; color: #333; }
+    .class-meta { display: flex; gap: 20px; color: #666; font-size: 14px; }
+    .class-meta span { display: flex; align-items: center; gap: 8px; }
+
+    .content-grid {
+        display: grid;
+        grid-template-columns: 1fr 350px;
+        gap: 25px;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+    .section-header {
+        padding: 18px 25px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .section-header h3 { margin: 0; font-size: 16px; font-weight: 700; color: #333; }
+
+    /* Schedule Styles */
+    .schedule-list { padding: 20px 25px; }
+    .schedule-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .schedule-item:last-child { border-bottom: none; }
+    .day-badge {
+        width: 100px;
+        padding: 6px 12px;
+        background: #e7f1ff;
+        color: #007bff;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 13px;
+        text-align: center;
+    }
+    .slot-times { color: #555; font-size: 14px; }
+
+    /* Exam List Styles */
+    .exam-list { padding: 10px 0; }
+    .exam-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 25px;
+        border-bottom: 1px solid #eee;
+        transition: 0.2s;
+    }
+    .exam-row:hover { background: #fcfcfc; }
+    .exam-row:last-child { border-bottom: none; }
+    .exam-info h4 { margin: 0 0 5px 0; font-size: 15px; font-weight: 600; }
+    .exam-info p { margin: 0; font-size: 12px; color: #888; }
+    
+    .btn-take-exam {
+        background: #28a745;
+        color: white;
+        padding: 8px 18px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+    .btn-take-exam:hover { background: #218838; }
+
+    .teacher-card {
+        padding: 20px;
+        text-align: center;
+    }
+    .teacher-avatar {
+        width: 60px;
+        height: 60px;
+        background: #f0f2f5;
+        color: #555;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        margin: 0 auto 15px;
+        border: 1px solid #eee;
+    }
+    .teacher-name { font-weight: 700; color: #333; margin-bottom: 5px; }
+    .teacher-email { font-size: 13px; color: #888; }
+</style>
+
+<div class="class-detail-header">
+    <div class="class-title-section">
+        <h2>{{cls.name}}</h2>
+        <div class="class-meta">
+            <span><i class="fas fa-hashtag"></i> Mã lớp: {{cls.class_code}}</span>
+            <span><i class="fas fa-calendar-alt"></i> Bắt đầu: {{formatDate cls.starting_date}}</span>
+            <span><i class="fas fa-users"></i> SV tham gia: {{cls.studentCount}}</span>
+        </div>
+    </div>
+    <a href="/student/my-classes" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+</div>
+
+<div class="content-grid">
+    <div class="main-content">
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Danh sách bài thi</h3>
+            </div>
+            <div class="exam-list">
+                {{#each exams}}
+                <div class="exam-row">
+                    <div class="exam-info">
+                        <h4>{{title}}</h4>
+                        <p><i class="far fa-clock"></i> Thời gian: {{duration}} phút | {{questionCount}} câu hỏi</p>
+                    </div>
+                    <form action="/student/exam-sessions/start" method="POST">
+                        <input type="hidden" name="exam_id" value="{{_id}}">
+                        <button type="submit" class="btn-take-exam">Vào thi</button>
+                    </form>
+                </div>
+                {{else}}
+                <div style="padding: 40px; text-align: center; color: #888;">
+                    <i class="fas fa-info-circle" style="font-size: 30px; margin-bottom: 10px;"></i>
+                    <p>Hiện chưa có bài thi nào được công bố.</p>
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Lịch học hàng tuần</h3>
+            </div>
+            <div class="schedule-list">
+                {{#each cls.study_schedule}}
+                <div class="schedule-item">
+                    <div class="day-badge">{{this.dayVi}}</div>
+                    <div class="slot-times">
+                        {{#each this.slots}}
+                        <div>{{this.start}} - {{this.end}}</div>
+                        {{/each}}
+                    </div>
+                </div>
+                {{else}}
+                <div style="padding: 20px; text-align: center; color: #888; font-size: 13px;">
+                    Chưa cập nhật lịch học.
+                </div>
+                {{/each}}
+            </div>
+        </div>
+
+        <div class="section-card">
+            <div class="section-header">
+                <h3>Giảng viên</h3>
+            </div>
+            <div class="teacher-card">
+                <div class="teacher-avatar">
+                    <i class="fas fa-user-tie"></i>
+                </div>
+                <div class="teacher-name">{{cls.teacher_id.first_name}} {{cls.teacher_id.last_name}}</div>
+                <div class="teacher-email">{{cls.teacher_id.email}}</div>
+            </div>
+        </div>
+    </div>
+</div>

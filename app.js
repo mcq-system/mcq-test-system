@@ -12,6 +12,12 @@ var authRouter = require('./routes/auth');
 var studentRouter = require('./routes/student');
 var teacherRouter = require('./routes/teacher');
 var adminRouter = require('./routes/admin');
+var questionsRouter = require('./routes/questions');
+var classesRouter = require('./routes/classes');
+var topicsRouter = require('./routes/topics');
+var examsRouter = require('./routes/exams');
+var studentAnswersRouter = require('./routes/student-answers');
+var examSessionsCrudRouter = require('./routes/exam-sessions');
 
 const connectDB = require('./config/db');
 
@@ -19,27 +25,84 @@ connectDB();
 
 var app = express();
 
+const { engine } = require('express-handlebars');
+
+app.engine(
+  'hbs',
+  engine({
+    extname: '.hbs',
+    defaultLayout: false,
+    layoutsDir: path.join(__dirname, 'views', 'layouts'),
+    partialsDir: path.join(__dirname, 'views', 'partials'),
+    helpers: {
+      eq: function (a, b) {
+        return String(a) === String(b);
+      },
+      slice: function (str, start, end) {
+        if (!str) return "";
+        return String(str).slice(start, end);
+      },
+      gt: (a, b) => a > b,
+      add: (a, b) => a + b,
+      subtract: (a, b) => a - b,
+      toString: (v) => String(v),
+      formatDate: (date) => {
+        if (!date) return '—';
+        return new Date(date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+      },
+      formatTime: (date) => {
+        if (!date) return '—';
+        return new Date(date).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      },
+      truncate: (str, len) => {
+        if (!str) return '';
+        return str.length > len ? str.slice(0, len) + '…' : str;
+      },
+      json: (v) => JSON.stringify(v || null),
+      concat: function () {
+        let outStr = '';
+        for (let i = 0, len = arguments.length - 1; i < len; i++) {
+          outStr += arguments[i];
+        }
+        return outStr;
+      }
+    },
+    runtimeOptions: {
+      allowProtoPropertiesByDefault: true,
+      allowProtoMethodsByDefault: true,
+    }
+  })
+);
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+
+const methodOverride = require('method-override');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/auth', authRouter);     
+app.use('/auth', authRouter);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/student', studentRouter);
 app.use('/teacher', teacherRouter);
 app.use('/admin', adminRouter);
+app.use('/teacher/questions', questionsRouter);
+app.use('/classes', classesRouter);
+app.use('/api/topics', topicsRouter);
+app.use('/exams', examsRouter);
+app.use('/student-answers', studentAnswersRouter);
+app.use('/exam-sessions', examSessionsCrudRouter);
 
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

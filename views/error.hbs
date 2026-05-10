@@ -1,3 +1,14 @@
-<h1>{{message}}</h1>
-<h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+<div style="text-align: center; padding: 100px 20px;">
+    <div style="font-size: 60px; color: #dc3545; margin-bottom: 20px;">
+        <i class="fas fa-exclamation-circle"></i>
+    </div>
+    <h2 style="color: #333; margin-bottom: 10px;">{{message}}</h2>
+    <p style="color: #888; margin-bottom: 30px;">Vui lòng kiểm tra lại thông tin hoặc quay lại trang chủ.</p>
+    <a href="/student/dashboard" style="display: inline-block; padding: 12px 30px; background: #007bff; color: white; text-decoration: none; border-radius: 10px; font-weight: 600;">Quay lại Trang chủ</a>
+    
+    {{#if error.status}}
+    <div style="margin-top: 50px; border-top: 1px solid #eee; padding-top: 20px; font-size: 12px; color: #ccc;">
+        Error Code: {{error.status}}
+    </div>
+    {{/if}}
+</div>

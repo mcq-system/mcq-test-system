@@ -1,11 +1,294 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Dashboard</title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1>Dashboard</h1>
-    <p>Welcome to your dashboard!</p>
-  </body>
-</html>
+<div class="dashboard-container">
+
+  <div class="card border-0 shadow-sm mb-3 px-4 py-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <h6 class="fw-bold mb-0">Lịch dạy theo tuần</h6>
+        <small class="text-muted mt-2" id="week-label">...</small>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="btn-group btn-group-sm">
+          <button class="btn btn-outline-secondary" id="btn-prev"><i class="fas fa-chevron-left"></i></button>
+          <button class="btn btn-outline-secondary" id="btn-today">Tuần này</button>
+          <button class="btn btn-outline-secondary" id="btn-next"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <a href="/teacher/create-class" class="btn btn-primary btn-sm">
+          <i class="fas fa-plus me-1"></i> Tạo lớp mới
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="calendar-card mb-4">
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="table table-bordered calendar-table mb-0" id="schedule-table">
+          <thead class="bg-light">
+            <tr id="calendar-head">
+              <th style="width:110px;" class="text-muted small fw-normal py-3 ps-3">Ca học</th>
+              <!-- JS sẽ render các cột ngày -->
+            </tr>
+          </thead>
+          <tbody id="calendar-body">
+            <!-- JS sẽ render các hàng ca học -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-blue"><i class="fas fa-chalkboard-teacher"></i></div>
+      <div class="stat-info">
+        <p>Lớp đang dạy</p>
+        <h3>{{stats.classCount}}</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-green"><i class="fas fa-user-graduate"></i></div>
+      <div class="stat-info">
+        <p>Tổng sinh viên</p>
+        <h3>{{stats.studentCount}}</h3>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon icon-yellow"><i class="fas fa-file-alt"></i></div>
+      <div class="stat-info">
+        <p>Bài thi đã tạo</p>
+        <h3>{{stats.examCount}}</h3>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  /* Dashboard specific styles */
+  .dashboard-container {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  .calendar-card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .calendar-table {
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .calendar-table th {
+    background: #f8fafc;
+    border-bottom: 1px solid #edf2f7;
+    padding: 15px 0;
+  }
+
+  .calendar-table th,
+  .calendar-table td {
+    min-width: 120px;
+    border-right: 1px solid #edf2f7;
+  }
+
+  .calendar-table th:last-child,
+  .calendar-table td:last-child {
+    border-right: none;
+  }
+
+  .time-slot-cell {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 500;
+    text-align: center;
+    vertical-align: middle !important;
+    width: 120px;
+  }
+
+  .day-col .day-name {
+    font-size: 12px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .day-col .day-num {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+  }
+
+  .day-col.today {
+    background: #f0f7ff;
+  }
+
+  .day-col.today .day-num {
+    color: #0070f3;
+  }
+
+  .cal-event {
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #5c5c5c;
+    margin: 4px;
+    cursor: pointer;
+    line-height: 1.4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .cal-event:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .cal-event .ev-room {
+    font-size: 10px;
+    font-weight: 400;
+    display: block;
+    margin-top: 4px;
+    opacity: 0.9;
+  }
+
+  /* Event Colors */
+  .cal-event-toeic {
+    background: linear-gradient(135deg, #e8fff5, #dcfff2);
+  }
+
+  .cal-event-grammar {
+    background: linear-gradient(135deg, #7209b7, #b5179e);
+  }
+
+  .cal-event-ielts {
+    background: linear-gradient(135deg, #2d9e4f, #52b788);
+  }
+
+  .cal-event-vocab {
+    background: linear-gradient(135deg, #e9a319, #f48c06);
+  }
+
+  .cal-event-listen {
+    background: linear-gradient(135deg, #e63946, #fb6f92);
+  }
+
+  .cal-event-default {
+    background: linear-gradient(135deg, #457b9d, #1d3557);
+  }
+
+  .calendar-controls .btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+  }
+</style>
+
+<!-- Hidden element to safely store schedule data, preventing auto-formatters from breaking JS tags -->
+<div id="schedule-data-container" style="display: none;" data-schedule="{{json scheduleData}}"></div>
+
+<script>
+  (function () {
+    // ===== Real schedule data from backend (SUPER SAFE VERSION) =====
+    const scheduleDataContainer = document.getElementById('schedule-data-container');
+    const SCHEDULE = JSON.parse(scheduleDataContainer.dataset.schedule || '[]');
+
+    // Default time slots (Fixed as requested)
+    const TIME_SLOTS = [
+      '07:00 - 09:00',
+      '09:00 - 11:00',
+      '13:00 - 15:00',
+      '15:00 - 17:00',
+      '18:00 - 20:00',
+    ];
+
+    // No longer adding unique slots to keep the UI clean and standardized
+
+    const DAY_NAMES = ['CN', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    const MONTHS_VI = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+
+    let weekOffset = 0;
+
+    function getWeekDates(offset) {
+      const now = new Date();
+      const day = now.getDay(); // 0=CN
+      // Thứ 2 của tuần hiện tại
+      const monday = new Date(now);
+      monday.setDate(now.getDate() - (day === 0 ? 6 : day - 1) + offset * 7);
+      const dates = [];
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(monday);
+        d.setDate(monday.getDate() + i);
+        dates.push(d);
+      }
+      return dates;
+    }
+
+    function isSameDay(d1, d2) {
+      return d1.getDate() === d2.getDate() && d1.getMonth() === d2.getMonth() && d1.getFullYear() === d2.getFullYear();
+    }
+
+    function render() {
+      const dates = getWeekDates(weekOffset);
+      const today = new Date();
+
+      // Week label
+      const mon = dates[0], sun = dates[6];
+      document.getElementById('week-label').textContent =
+        MONTHS_VI[mon.getMonth()] + ' Năm ' + mon.getFullYear();
+
+      // Header
+      const head = document.getElementById('calendar-head');
+      head.innerHTML = '<th class="ps-3 text-muted small fw-normal py-3" style="width:110px;">Ca học</th>';
+      dates.forEach((d, i) => {
+        // i=0 -> Thứ 2, i=6 -> CN
+        const dayLabel = DAY_NAMES[i === 6 ? 0 : i + 1];
+        const isToday = isSameDay(d, today);
+        head.innerHTML += `<th class="text-center py-3 day-col${isToday ? ' today' : ''}">
+        <div class="day-name">${dayLabel}</div>
+        <div class="day-num mt-2">${d.getDate()}</div>
+      </th>`;
+      });
+
+      // Body
+      const body = document.getElementById('calendar-body');
+      body.innerHTML = '';
+      TIME_SLOTS.forEach(slot => {
+        let row = `<tr><td class="ps-3 py-3 time-slot-cell">${slot}</td>`;
+        dates.forEach((d, i) => {
+          // i=0 -> Mon(1), i=1->Tue(2),...,i=5->Sat(6), i=6->Sun(0)
+          const jsDay = i === 6 ? 0 : i + 1;
+          // Match classes that start with the same time as the slot
+          const slotStartTime = slot.split(' ')[0]; // e.g., "07:00"
+          const events = SCHEDULE.filter(e => {
+            const classStartTime = (e.slot || '').split(' ')[0];
+            return classStartTime === slotStartTime && e.days.includes(jsDay);
+          });
+          let cell = '<td class="time-slot-cell p-1">';
+          events.forEach(ev => {
+            cell += `<div class="cal-event cal-event-${ev.color}">
+            ${ev.name}<br>
+            <span class="ev-room">${ev.room}</span>
+          </div>`;
+          });
+          cell += '</td>';
+          row += cell;
+        });
+        row += '</tr>';
+        body.innerHTML += row;
+      });
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => { weekOffset--; render(); });
+    document.getElementById('btn-next').addEventListener('click', () => { weekOffset++; render(); });
+    document.getElementById('btn-today').addEventListener('click', () => { weekOffset = 0; render(); });
+
+    render();
+  })();
+</script>
